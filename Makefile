@@ -18,7 +18,7 @@ BIBTEX := bibtex
 #     - Makefile (this one)
 #     <directory01>/
 #         - <single source>.tex
-#     <directory01>/
+#     <directory02>/
 #         - <single source>.tex
 #     ...
 #
