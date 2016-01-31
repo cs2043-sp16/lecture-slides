@@ -1,0 +1,158 @@
+% Cornell CS 2043: Unix Tools and Scripting
+% Spring 2016
+%
+% http://cs2043-sp16.github.io/
+%
+% These slides have been created using the metroplis theme demo found here:
+%
+%     https://github.com/matze/mtheme.git
+%
+% I am a huge fan of the metropolis theme...thanks @matze!
+
+\documentclass[11pt]{beamer}
+\usetheme{metropolis}
+\metroset{background=dark} % easier on the eyes, in my opinion
+\setbeamertemplate{bibliography item}{\insertbiblabel}
+
+% linking
+\usepackage{hyperref}
+
+% Nicer tables
+\usepackage{booktabs}
+\usepackage[scale=2]{ccicons}
+
+% finer control over enumerations
+% example:
+%   \begin{enumerate}[(1)]
+%     \item first
+%     \item second
+%     \item ...
+%   \end{enumerate}
+%
+%   and also
+%
+%   \begin{enumerate}[a)]
+%   \begin{enumerate}[i.]
+%   \begin{enumerate}[$\mathbb{R}$\textsuperscript{\arabic{enumi}}]
+%
+% and so on
+\usepackage{enumerate}
+
+% sultry code listings
+\usepackage{minted}
+\BeforeBeginEnvironment{minted}{\begin{block}{}} % These surround minted code with beamer blocks
+\AfterEndEnvironment{minted}{\end{block}}        % to accentuate them
+
+%
+% Colors thanks to various themes from Monokai: http://www.colourlovers.com/lover/Monokai
+%
+\definecolor{make-it-concrete}{rgb}{0.670588, 0.666667, 0.596078}      % (171, 170, 152) / 255
+\definecolor{cheap-carpet}{rgb}{0.145098, 0.196078, 0.200000}% (37,50,51) / 255
+\definecolor{hairball}{rgb}{0.403922, 0.411765, 0.380392}% (103,105,97) / 255
+
+%
+% General slide coloring
+%
+\setbeamercolor{frametitle}{% adjusts too-white colors from beamer-metropolis
+  bg=hairball!66,
+  fg=cheap-carpet
+}
+\setbeamercolor{normal text}{
+  bg=mDarkTeal,   % note: defined by beamer-metropolis
+  fg=hairball!44
+}
+%
+% beamer-block shaping and colors
+%
+\setbeamertemplate{blocks}[rounded]
+\setbeamercolor{block title}{
+  bg=make-it-concrete!66,
+  fg=cheap-carpet
+}
+\setbeamercolor{block body}{
+  bg=cheap-carpet,
+  fg=make-it-concrete!66
+}
+
+% Custom commands
+\newcommand{\colbf}[1]{\textcolor{mLightBrown!77!black}{#1}}% bold with color; mLightBrown defined by beamer-metropolis
+\newcommand{\tsub}{\textsubscript}                          % more compact
+\newcommand{\tsup}{\textsuperscript}                        % " " " " " "
+\def\wl{\par \vspace{\baselineskip}}                        % force newline; MANY thanks:
+                                                            %   https://groups.google.com/d/msg/comp.text.tex/abxw5nTALzg/puXHnyx6pM8J
+
+% Titles etc
+\title{01 \-- Introduction}
+\subtitle{CS 2043: Unix Tools and Scripting, Spring 2016 \cite{prevSemesters}}
+\date{January 27th, 2016}
+\author{Stephen McDowell}
+\institute{Cornell University}
+
+\begin{document}
+\maketitle
+
+% TOC
+\begin{frame}{Table of contents}
+  \setbeamertemplate{section in toc}[sections numbered]
+  \tableofcontents[hideallsubsections]
+\end{frame}
+
+%
+%%
+%%%
+%%%%
+%%%%% section welcome
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+\section{Welcome}
+\label{sec:welcome}
+
+\begin{frame}{Redacted...}
+  \begin{itemize}
+    \item Due to technical complications on the first day, and reduced attendance due to Snowzilla,  I choose
+          not to release the original slides.
+    \item All we did was talk about course logistics, which you can find at
+          \href{http://cs2043-sp16.github.io/}{\texttt{\colbf{http://cs2043-sp16.github.io/}}}.
+    \item My original slides were greatly tailored to the words that would have been said.  Ultimately, all of
+          the information presented can be obtained from the course website.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Redacted...}
+  \href{http://www.cs.cornell.edu/courses/cs2043/2015sp/lectures/lecture01.pdf}{\colbf{Last year's intro lecture}}
+  gives an excellent introduction to UNIX, the history, and the goals of this course. Note that some of the
+  logistics of this year are quite different \-- anything written on the current semester's course website
+  takes precedence.  A couple of notes about the differences:
+
+  \begin{itemize}
+    \item You must use a VM in this course if you are using Windows, Cygwin is not sufficient.
+    \item I strongly discourage configuring a dual-boot \emph{at this time}.  We will talk about it more later...
+    \item You do not have \texttt{ssh} access yet, I am waiting for enrollment to stabilize
+    \item OSX: do \colbf{not} install Macports.  It is far inferior to \emph{brew}.  We will discuss \emph{brew}
+          later in the course.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Redacted...}
+  You are welcome to browse the other slides posted for last year, but do keep in mind that this is a different
+  course and I will be covering things at a different level as well as the order will likely be switched.
+\end{frame}
+
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+%%%%% section welcome
+%%%%
+%%%
+%%
+%
+
+\begin{frame}[allowframebreaks]{References}
+  \bibliography{lecture01/references}
+  \bibliographystyle{abbrv}
+\end{frame}
+
+\end{document}

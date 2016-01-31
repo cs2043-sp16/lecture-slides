@@ -1,0 +1,617 @@
+% Cornell CS 2043: Unix Tools and Scripting
+% Spring 2016
+%
+% http://cs2043-sp16.github.io/
+%
+% These slides have been created using the metroplis theme demo found here:
+%
+%     https://github.com/matze/mtheme.git
+%
+% I am a huge fan of the metropolis theme...thanks @matze!
+
+\documentclass[11pt]{beamer}
+\usetheme{metropolis}
+\metroset{background=dark} % easier on the eyes, in my opinion
+\setbeamertemplate{bibliography item}{\insertbiblabel}
+
+% linking
+\usepackage{hyperref}
+
+% Nicer tables
+\usepackage{booktabs}
+\usepackage[scale=2]{ccicons}
+
+% finer control over enumerations
+% example:
+%   \begin{enumerate}[(1)]
+%     \item first
+%     \item second
+%     \item ...
+%   \end{enumerate}
+%
+%   and also
+%
+%   \begin{enumerate}[a)]
+%   \begin{enumerate}[i.]
+%   \begin{enumerate}[$\mathbb{R}$\textsuperscript{\arabic{enumi}}]
+%
+% and so on
+\usepackage{enumerate}
+
+% sultry code listings
+\usepackage{minted}
+\BeforeBeginEnvironment{minted}{\begin{block}{}} % These surround minted code with beamer blocks
+\AfterEndEnvironment{minted}{\end{block}}        % to accentuate them
+
+%
+% Colors thanks to various themes from Monokai: http://www.colourlovers.com/lover/Monokai
+%
+\definecolor{make-it-concrete}{rgb}{0.670588, 0.666667, 0.596078}      % (171, 170, 152) / 255
+\definecolor{cheap-carpet}{rgb}{0.145098, 0.196078, 0.200000}% (37,50,51) / 255
+\definecolor{hairball}{rgb}{0.403922, 0.411765, 0.380392}% (103,105,97) / 255
+
+%
+% General slide coloring
+%
+\setbeamercolor{frametitle}{% adjusts too-white colors from beamer-metropolis
+  bg=hairball!66,
+  fg=cheap-carpet
+}
+\setbeamercolor{normal text}{
+  bg=mDarkTeal,   % note: defined by beamer-metropolis
+  fg=hairball!44
+}
+%
+% beamer-block shaping and colors
+%
+\setbeamertemplate{blocks}[rounded]
+\setbeamercolor{block title}{
+  bg=make-it-concrete!66,
+  fg=cheap-carpet
+}
+\setbeamercolor{block body}{
+  bg=cheap-carpet,
+  fg=make-it-concrete!66
+}
+
+% Custom commands
+\newcommand{\colbf}[1]{\textcolor{mLightBrown!77!black}{#1}}% bold with color; mLightBrown defined by beamer-metropolis
+\newcommand{\tsub}{\textsubscript}                          % more compact
+\newcommand{\tsup}{\textsuperscript}                        % " " " " " "
+\def\wl{\par \vspace{\baselineskip}}                        % force newline; MANY thanks:
+                                                            %   https://groups.google.com/d/msg/comp.text.tex/abxw5nTALzg/puXHnyx6pM8J
+
+% Titles etc
+\title{02 \-- The Unix File System, First Glimpse at Git}
+\subtitle{CS 2043: Unix Tools and Scripting, Spring 2016 \cite{prevSemesters}}
+\date{January 29th, 2016}
+\author{Stephen McDowell}
+\institute{Cornell University}
+
+\begin{document}
+\maketitle
+
+% TOC
+\begin{frame}{Table of contents}
+  \setbeamertemplate{section in toc}[sections numbered]
+  \tableofcontents[hideallsubsections]
+\end{frame}
+
+\begin{frame}{Some Logistics}
+  \begin{itemize}[<+- | alert@+>]
+    \item \alert<4>{HW0: You need GitHub.  And \only<4>{\textsc{\textbf{must have }}}a Unix environment.}
+    \item Getting Started page updated with some videos, 32bit option available.
+    \item (Poll) OH scheduling.  Thanks Jerome!
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Notation}
+  Commands will be shown on slides using \texttt{teletype text}.
+
+  \begin{block}{Introducing new commands}
+    New commands will be introduced in block boxes like this one.  A summary of calling the command will
+    be shown listing the command name and potential optional arguments / flags.
+
+    \begin{center}
+      some-command [opt1] [opt2]
+    \end{center}
+    \vspace*{1em}
+  \end{block}
+
+  To execute a command, just type its name into the shell and press return / enter.
+\end{frame}
+
+%
+%%
+%%%
+%%%%
+%%%%% section unix_filesystem_overview
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+\section{Unix Filesystem Overview}
+\label{sec:unix_filesystem_overview}
+
+\begin{frame}{The Unix Filesystem}
+  \begin{itemize}[<+- | alert@+>]
+    \item Unlike Windows, UNIX has a single global "root" directory (instead of a root directory for each disk or volume)
+    \begin{itemize}[<+- | alert@+>]
+      \item The root directory is just \texttt{/}
+    \end{itemize}
+    \item All files and directories are case sensitive
+    \begin{itemize}[<+- | alert@+>]
+      \item \texttt{hello.txt != hElLo.TxT}
+    \end{itemize}
+    \item Directories are separated by \texttt{/} instead of \texttt{\textbackslash}
+    \begin{itemize}[<+- | alert@+>]
+      \item UNIX: \texttt{/home/sven/lemurs}
+      \item Windows: \texttt{E:\textbackslash Documents\textbackslash lemurs}
+    \end{itemize}
+    \item Hidden files and folders begin with a "\texttt{.}"
+    \begin{itemize}[<+- | alert@+>]
+      \item e.g. \texttt{.git/} (a hidden directory)
+    \end{itemize}
+    \item Example: my home directory
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{What's Where?}
+  \begin{itemize}[<+- | alert@+>]
+    \item \texttt{/dev}: Hardware devices, like your hard drive, USB devices
+    \item \texttt{/lib}: Stores libraries, along with \texttt{/usr/lib}, \texttt{/usr/local/lib}, etc.
+    \item \texttt{/mnt}: Frequently used to mount disk drives
+    \item \texttt{/usr}: Mostly user-installed programs and amenities
+    \item \texttt{/etc}: System-wide settings
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{What's Where: Programs Edition}
+  Programs are usually installed in one of the "binaries" directories:
+  \begin{itemize}[<+- | alert@+>]
+    \item \texttt{/bin}: System programs
+    \item \texttt{/usr/bin}: Most user programs
+    \item \texttt{/usr/local/bin}: A few other user programs
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Personal Files}
+  Your personal files are in your home directory (and its subdirectories), which is \emph{usually}\tsup{*}
+  located at
+
+  \begin{center}
+    \begin{tabular}{|c|c|}
+      \hline
+      Linux & Mac\\ \hline
+      \texttt{/home/username} & \texttt{/Users/username}\\ \hline
+    \end{tabular}
+  \end{center}
+
+  There is also a built-in alias for it: \texttt{\textasciitilde}
+
+  For example, the Desktop for the user \texttt{sven} is located at
+
+  \begin{center}
+    \begin{tabular}{|c|c|}
+      \hline
+      Linux & Mac\\ \hline
+      \texttt{/home/sven/Desktop} & \texttt{/Users/sven/Desktop}\\ \hline
+      \texttt{\textasciitilde/Desktop} & \texttt{\textasciitilde/Desktop}\\ \hline
+    \end{tabular}
+  \end{center}
+\end{frame}
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+%%%%% section unix_filesystem_overview
+%%%%
+%%%
+%%
+%
+
+%
+%%
+%%%
+%%%%
+%%%%% section basic_navigational_commands
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+\section{Basic Navigational Commands}
+\label{sec:basic_navigational_commands}
+
+\begin{frame}[fragile]{Where am I?}
+  Most shells default to using the current path in their prompt.  If not
+
+  \begin{block}{\colbf{P}rint \colbf{w}orking \colbf{d}irectory}
+    \texttt{pwd}
+    \begin{enumerate}[\--]
+      \item prints the "full" path of the current directory
+      \item handy on minimalist systems when you get lost
+      \item can be used in scripts
+    \end{enumerate}
+    \vspace*{1em}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{What's here?}
+  Knowing where you are is useful, but understanding what (or who?) else is there is too...
+
+  \begin{block}{The \colbf{l}i\colbf{s}t command}
+    \texttt{ls}
+    \begin{enumerate}[\--]
+      \item lists directory contents (including subdirectories)
+      \item works like the dir command in Windows
+      \item the \texttt{-l} flag lists detailed file / directory information (we'll learn more about flags later).
+      \item use \texttt{-a} to list hidden files
+    \end{enumerate}
+    \vspace*{1em}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Ok lets go!}
+  Moving around is as easy as
+
+  \begin{block}{\colbf{C}hanging \colbf{d}irectories}
+    \texttt{cd [directory name]}
+    \begin{enumerate}[\--]
+      \item changes directory to \texttt{[directory name]}
+      \item if not given a destination defaults to the user's home directory
+      \item you can specify both absolute and relative paths
+    \end{enumerate}
+    \vspace*{1em}
+  \end{block}
+
+  \begin{itemize}
+    \item Absolute paths start at \texttt{/}
+    \begin{itemize}
+      \item e.g. \texttt{cd /home/sven/Desktop}
+    \end{itemize}
+    \item Relative paths start at the current directory
+    \begin{itemize}
+      \item e.g. \texttt{cd Desktop}, if you were already at \texttt{/home/sven}
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Relative Path Shortcuts}
+  Shortcuts
+
+  \begin{tabular}{|c|l|}
+    \hline
+    \texttt{\textasciitilde} & current user's home directory\\ \hline
+    \texttt{.} & the current directory (this is actually useful...)\\ \hline
+    \texttt{..} & the parent directory of the current directory\\ \hline
+    \texttt{-} & for \texttt{cd} command, return to previous working directory\\ \hline
+  \end{tabular}
+
+  An example: starting in \texttt{/usr/local/src}
+
+  \begin{minted}[bgcolor=bg, gobble=4]{bash}
+    > cd    # now at /home/sven
+    > cd -  # now at /usr/local/src
+    > cd .. # now at /usr/local
+  \end{minted}
+
+\end{frame}
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+%%%%% section basic_navigational_commands
+%%%%
+%%%
+%%
+%
+
+%
+%%
+%%%
+%%%%
+%%%%% section file_and_folder_manipulation
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+\section{File and Folder Manipulation}
+\label{sec:file_and_folder_manipulation}
+
+\begin{frame}[fragile]{Creating a new File}
+  The easiest way to create an empty file is using
+
+  \begin{block}{\colbf{touch}}
+    \texttt{touch [flags] <file>}
+    \begin{enumerate}[\--]
+      \item adjusts the timestamp of the specified file
+      \item with no flags uses the current date and time
+      \item if the file does not exist, \texttt{touch} creates it
+    \end{enumerate}
+    \vspace*{1em}
+  \end{block}
+
+  File extensions (\texttt{.txt}, \texttt{.c}, \texttt{.py}, etc) often \textbf{don't} matter in Unix.
+  Using \texttt{touch} to create a file results in a blank plain-text file (so you don't necessarily
+  have to hadd \texttt{.txt} to it).
+\end{frame}
+
+\begin{frame}[fragile]{Creating a new Directory}
+  No magic here...
+
+  \begin{block}{\colbf{M}a\colbf{k}e \colbf{dir}ectory}
+    \texttt{mkdir [flags] <directory1> <directory2> <...>}
+    \begin{enumerate}[\--]
+      \item can use relative or absolute paths
+      \begin{enumerate}[\--]
+        \item a.k.a. you are not restricted to making directorys in the current directory only
+      \end{enumerate}
+      \item need to specify at least one directory name
+      \item can specify multiple, separated by spaces
+    \end{enumerate}
+    \vspace*{1em}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{File Deletion}
+  Warning: once you delete a file (from the command line) there is no easy way to recover the file.
+
+  \begin{block}{\colbf{R}e\colbf{m}ove File}
+    \texttt{rm [flags] <filename>}
+    \begin{enumerate}[\--]
+      \item removes the file \texttt{<filename>}
+      \item using wildcards (more on this later) you can remove multiple files
+      \begin{enumerate}[\--]
+        \item \texttt{rm *} \-- removes every file in the current directory
+        \item \texttt{rm *.jpg} \-- removes every \texttt{.jpg} file in the current directory
+      \end{enumerate}
+      \item \texttt{rm -i <filename>} \-- prompt before deletion
+    \end{enumerate}
+    \vspace*{1em}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Deleting Directories}
+  By default, \texttt{rm} cannot remove directories. Instead we use...
+
+  \begin{block}{\colbf{R}e\colbf{m}ove \colbf{dir}ectory}
+    \texttt{rmdir [flags] <directory>}
+    \begin{enumerate}[\--]
+      \item removes an \textbf{empty} directory
+      \item throws an error if the directory is not empty
+    \end{enumerate}
+    \vspace*{1em}
+  \end{block}
+
+  To delete a directory and all its subdirectories, we pass \texttt{rm} the flag \texttt{-r} (for recursive),
+  e.g. \texttt{rm -r /home/sven/oldstuff}
+\end{frame}
+
+\begin{frame}[fragile]{Copy That!}
+  \begin{block}{\colbf{C}o\colbf{p}y}
+    \texttt{cp [flags] <file> <destination>}
+    \begin{enumerate}[\--]
+      \item copies from one location to another
+      \item to copy multiple files, use wildcards (such as \texttt{*})
+      \item to copy a complete directory use \texttt{cp -r <src> <dest>}
+    \end{enumerate}
+    \vspace*{1em}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Move it!}
+  Unlike the \texttt{cp} command, the move command automatically recurses for directories.
+
+  \begin{block}{\colbf{M}o\colbf{v}e}
+    \texttt{mv [flags] <source> <destination>}
+    \begin{enumerate}[\--]
+      \item moves a file or directory from one place to another
+      \item also used for renaming, just move from \texttt{<oldname>} to \texttt{<newname>}
+    \end{enumerate}
+    \vspace*{1em}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Recap}
+  \begin{itemize}
+    \item \texttt{ls} \-- list directory contents
+    \item \texttt{cd} \-- change directory
+    \item \texttt{pwd} \-- print working directory
+    \item \texttt{rm} \-- remove file
+    \item \texttt{rmdir} \-- remove directory
+    \item \texttt{cp} \-- copy file
+    \item \texttt{mv} \-- move file
+  \end{itemize}
+\end{frame}
+
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+%%%%% section file_and_folder_manipulation
+%%%%
+%%%
+%%
+%
+
+%
+%%
+%%%
+%%%%
+%%%%% section flags_&_command_clarifaction
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+\section{Flags \& Command Clarifaction}
+\label{sec:flags_&_command_clarifaction}
+
+\begin{frame}[fragile]{Flags and Options}
+  Most commands take flags and optional arguments.  These come in two general forms: switches (no argument
+  required), and argument specifiers for lack of a better name.
+
+  When specifying flags for a given command, these will modify the behavior of the command and how it
+  executes.  Some flags take precedence over others, and some flags you specify can implicitly pass
+  additional flags to the command.
+\end{frame}
+
+\begin{frame}[fragile]{Flags and Options: A bad Analogy}
+  If you think of a command as a computer, you could think of the flags as the different
+  hardware components installed.  Let's say that in this case a hard drive is a flag.
+
+  The computer shipped to you with a CPU, motherboard, hard drive, etc and installed on that hard drive
+  was the original operating system (say Windows).  When you start it, the computer was executed with the Windows flag.
+
+  Now, you remove the original hard drive and insert another hard drive that has a different OS installed
+  (say Fedora).  Then you boot your computer, only this time you ended up passing the Fedora flag.
+
+  Nothing about the other components of the computer changed (it's just a bunch of electricity being routed around),
+  but the behavior changed because of the flag you passed.
+\end{frame}
+
+\begin{frame}[fragile]{Flags and Options: Formats}
+  A flag that is
+  \begin{itemize}
+    \item One letter is specified with a single dash (\texttt{-a})
+    \item More than one letter is specified with two dashes (\texttt{--all})
+  \end{itemize}
+  The reason is because of how switches can be combined (next page).
+\end{frame}
+
+\begin{frame}[fragile]{Flags and Options: Switches}
+  Switches take no arguments, and can be specified in a couple of different ways.  Switches are usually
+  one letter, and multiple letter switches usually have a one letter alias (\texttt{--all} has the \texttt{-a} alias).
+  \begin{itemize}
+    \item One option:
+    \begin{itemize}
+      \item \texttt{ls -a}
+      \item \texttt{ls --all}
+    \end{itemize}
+    \item Two options:
+    \begin{itemize}
+      \item \texttt{ls -l -Q}
+    \end{itemize}
+    \item Two options:
+    \begin{itemize}
+      \item \texttt{ls -lQ}
+    \end{itemize}
+    \item Applied from left to right:
+    \begin{itemize}
+      \item \texttt{rm -fi <file>} $\Rightarrow$ prompts
+      \item \texttt{rm -if <file>} $\Rightarrow$ does \emph{not} prompt
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Flags and Options: Argument Specifiers}
+  These flags expect an input, and you will encounter two general kinds.
+  \begin{itemize}
+    \item The \texttt{--argument="value"} format, where the \texttt{=} and quotes are needed if \texttt{value} is
+          more than one word.
+    \begin{itemize}
+      \item Yes: \texttt{ls --hide="Desktop" \textasciitilde/}
+      \item Yes: \texttt{ls --hide=Desktop \textasciitilde/}
+      \begin{itemize}
+        \item one word, no quotes necessary
+      \end{itemize}
+      \item No: \texttt{ls --hide = "Desktop" \textasciitilde/}
+      \begin{itemize}
+        \item spaces by the \texttt{=} will be misinterpreted (it used \texttt{=} as the \texttt{hide} value...)
+      \end{itemize}
+    \end{itemize}
+    \item The \texttt{--argument value} format, with a space after the \texttt{argument}. Quote rules same as above.
+    \begin{itemize}
+      \item \texttt{ls --hide "Desktop" \textasciitilde/}
+      \item \texttt{ls --hide Desktop \textasciitilde/}
+    \end{itemize}
+  \end{itemize}
+  {\tiny Note: The example I gave you was using the same \texttt{--hide} in both formats, but not \emph{all} commands will
+    accept both.  Advise \texttt{--argument="value"} format for higher success rates.}
+\end{frame}
+
+\begin{frame}[fragile]{Flags and Options: Conventions, Warnings}
+  Generally, you should always specify the flags before the arguments.  In this example, the flag is \texttt{-l} and
+  \texttt{\textasciitilde/Desktop/} is the argument.
+  \begin{itemize}
+    \item \texttt{ls -l \textasciitilde/Desktop/} and \texttt{ls \textasciitilde/Desktop/ -l} both work
+    \item there exist scenarios in which flags after arguments do \textbf{not} get processed
+  \end{itemize}
+  There is a special sequence \texttt{--} that signals the end of the options.  I will use another flag to demonstrate:
+  \begin{itemize}
+    \item \texttt{ls -l -a \textasciitilde/Desktop/} $\Rightarrow$ executes as expected
+    \item \texttt{ls -l -- -a \textasciitilde/Desktop/} $\Rightarrow$ only used \texttt{-l}
+    \begin{itemize}
+      \item {\tiny "\texttt{ls: cannot access -a: No such file or directory}"}
+      \item \texttt{-a} was treated as an \emph{argument}, and there is no \texttt{-a} directory (for me)
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Flags and Options: Conventions, Warnings (cont)}
+  The special sequence \texttt{--} that signals the end of the options is often most useful if you need to do something
+  special.  Suppose I wanted to make the folder \texttt{-a} on my Desktop.
+
+  \begin{minted}[bgcolor=bg, gobble=4]{bash}
+    > cd ~/Desktop # for demonstration purpose
+    > mkdir -a     # fails: invalid option -- 'a'
+    > mkdir -- -a  # success! (ls to confirm)
+    > rmdir -a     # fails: invalid option -- 'a'
+    > rmdir -- -a  # success! (ls to confirm)
+  \end{minted}
+
+  This trick can be useful in \emph{many} scenarios, and generally arises when you need to work with special characters
+  of some sort.
+\end{frame}
+
+\begin{frame}[fragile]{Your new best friend}
+  How do I know what the flags / options for all of these commands are?
+
+  \begin{block}{The \colbf{man}ual command}
+    \texttt{man <command\_name>}
+    \begin{enumerate}[\--]
+      \item Loads the manual (manpage) for the specified command
+      \item Unlike ggogle, manpages are \textbf{system-specific}
+      \item Usually very comprehensive.  Sometimes \emph{too} comprehensive
+      \item Type \texttt{/<keyword>}
+      \item The \texttt{n} key jumps through the search results
+    \end{enumerate}
+  \end{block}
+  Search example on next page if that was confusing.  Intended for side-by-side follow-along.
+\end{frame}
+
+\begin{frame}[fragile]{Man oh man}
+  \begin{minted}[bgcolor=bg, gobble=4]{bash}
+    > man man  #  you now have the manual loaded
+    > /useful  #  type /useful, then hit enter
+    ############ [first result highlighted]
+    > n        #  followed by enter
+    ############ [next result highlighted]
+  \end{minted}
+  Note that there are subtle differences between options on different systems.  For example, \texttt{ls -B}:
+  \begin{itemize}
+    \item BSD/OSX: Force printing of non-printable characters in file names as \texttt{\textbackslash xxx},
+          where \texttt{xxx} is the numeric value of the character in \emph{octal}.
+    \item Fedora, Ubuntu: do not list implied entries ending with \texttt{\textasciitilde}
+    \begin{itemize}
+      \item In these OS's, files ending with \texttt{\textasciitilde} are \emph{temporary} backup files that
+            certain programs generate
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+%%%%% section flags_&_command_clarifaction
+%%%%
+%%%
+%%
+%
+
+\begin{frame}[allowframebreaks]{References}
+  \bibliography{lecture02/references}
+  \bibliographystyle{abbrv}
+\end{frame}
+
+\end{document}
