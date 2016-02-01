@@ -1,0 +1,413 @@
+% Cornell CS 2043: Unix Tools and Scripting
+% Spring 2016
+%
+% http://cs2043-sp16.github.io/
+%
+% These slides have been created using the metroplis theme demo found here:
+%
+%     https://github.com/matze/mtheme.git
+%
+% I am a huge fan of the metropolis theme...thanks @matze!
+
+\documentclass[11pt]{beamer}
+\usetheme{metropolis}
+\metroset{background=dark} % easier on the eyes, in my opinion
+\setbeamertemplate{bibliography item}{\insertbiblabel}
+
+% linking
+\usepackage{hyperref}
+
+% Nicer tables
+\usepackage{booktabs}
+\usepackage[scale=2]{ccicons}
+
+% finer control over enumerations
+% example:
+%   \begin{enumerate}[(1)]
+%     \item first
+%     \item second
+%     \item ...
+%   \end{enumerate}
+%
+%   and also
+%
+%   \begin{enumerate}[a)]
+%   \begin{enumerate}[i.]
+%   \begin{enumerate}[$\mathbb{R}$\textsuperscript{\arabic{enumi}}]
+%
+% and so on
+\usepackage{enumerate}
+
+% sultry code listings
+\usepackage{minted}
+\BeforeBeginEnvironment{minted}{\begin{block}{}} % These surround minted code with beamer blocks
+\AfterEndEnvironment{minted}{\end{block}}        % to accentuate them
+
+%
+% Colors thanks to various themes from Monokai: http://www.colourlovers.com/lover/Monokai
+%
+\definecolor{make-it-concrete}{rgb}{0.670588, 0.666667, 0.596078}      % (171, 170, 152) / 255
+\definecolor{cheap-carpet}{rgb}{0.145098, 0.196078, 0.200000}% (37,50,51) / 255
+\definecolor{hairball}{rgb}{0.403922, 0.411765, 0.380392}% (103,105,97) / 255
+
+%
+% General slide coloring
+%
+\setbeamercolor{frametitle}{% adjusts too-white colors from beamer-metropolis
+  bg=hairball!66,
+  fg=cheap-carpet
+}
+\setbeamercolor{normal text}{
+  bg=mDarkTeal,   % note: defined by beamer-metropolis
+  fg=hairball!44
+}
+%
+% beamer-block shaping and colors
+%
+\setbeamertemplate{blocks}[rounded]
+\setbeamercolor{block title}{
+  bg=make-it-concrete!66,
+  fg=cheap-carpet
+}
+\setbeamercolor{block body}{
+  bg=cheap-carpet,
+  fg=make-it-concrete!66
+}
+
+% Custom commands
+\newcommand{\colbf}[1]{\textcolor{mLightBrown!77!black}{#1}}% bold with color; mLightBrown defined by beamer-metropolis
+\newcommand{\tsub}{\textsubscript}                          % more compact
+\newcommand{\tsup}{\textsuperscript}                        % " " " " " "
+\def\wl{\par \vspace{\baselineskip}}                        % force newline; MANY thanks:
+                                                            %   https://groups.google.com/d/msg/comp.text.tex/abxw5nTALzg/puXHnyx6pM8J
+
+% Titles etc
+\title{03 \-- The Unix File System, First Glimpse at Git}
+\subtitle{CS 2043: Unix Tools and Scripting, Spring 2016 \cite{prevSemesters}}
+\date{February 1st, 2016}
+\author{Stephen McDowell}
+\institute{Cornell University}
+
+\begin{document}
+\maketitle
+
+% TOC
+\begin{frame}{Table of contents}
+  \setbeamertemplate{section in toc}[sections numbered]
+  \tableofcontents[hideallsubsections]
+\end{frame}
+
+\begin{frame}{Some Logistics}
+  \begin{itemize}[<+- | alert@+>]
+    \item Last day to add is Wednesday 2/3.
+    \item HW0: Due today at 5pm
+    \item My OH are Tuesdays 6:00pm - 7:00pm, Gates G13
+    \item On moving forward independently, and the usage of \texttt{sudo}
+    \begin{itemize}[<+- | alert@+>]
+      \item I strongly advise taking a \emph{snapshot} of your VM
+    \end{itemize}
+    \item A note about HW1...
+  \end{itemize}
+\end{frame}
+
+%
+%%
+%%%
+%%%%
+%%%%% section working_with_files
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+\section{Working with Files}
+\label{sec:working_with_files}
+
+\begin{frame}[fragile]{Users and Groups}
+  Like most OS's, Unix allows multiple people to use the same machine at once.  The question: who has access
+  to what?
+
+  \begin{itemize}[<+- | alert@+>]
+    \item Access to files depends on the users' account
+    \item All accounts are presided over by the \colbf{S}uper\colbf{u}ser, or \texttt{root} account
+    \item Each user has absolute control over any files they own, which can only be superseded by \texttt{root}
+    \item Files can also be owned by a \texttt{group}, allowing more users to have access
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{File Ownership}
+  You can discern who owns a file many ways, the most immediate being \texttt{ls -l}\wl
+
+  \begin{block}{Permissions with \texttt{ls}}
+    {\small
+    \texttt{> ls -l Makefile}\\
+    \texttt{-rw-rw-r--. 1 sven users 4.9K Jan 31 04:42 Makefile}\\
+    \texttt{\hphantom{-rw-rw-r--. 1 }\colbf{sven}\hphantom{ users }\# the user}\\
+    \texttt{\hphantom{-rw-rw-r--. 1 sven }\colbf{users }\# the group}\\
+    }
+  \end{block}
+
+  The third column is the \emph{user}, and the fourth column is the \emph{group}.
+\end{frame}
+
+\begin{frame}[fragile]{What is this RWX Nonsense?}
+  R = read, W = write, X = execute\wl
+  \begin{itemize}[<+- | alert@+>]
+    \item[] \hspace*{-4ex}-\alert<2>{rwx}\alert<3>{rwx}\alert<4>{rwx}
+    \item User permissions
+    \item Group permissions
+    \item Other permissions (a.k.a. neither the owner, nor a member of the group)
+    \item[] \hspace*{-4ex}Directory permissions begin with a \texttt{d} instead of a \texttt{-}.
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]{An example}
+  \begin{itemize}[<+- | alert@+>]
+    \item[] \hspace*{-4ex}What would the permissions \texttt{-rwxr-----} mean?\wl
+    \item It is a file.
+    \item User can read and write to the file, as well as execute it
+    \item Group members are allowed to read the file, but cannot write to or execute
+    \item Other cannot do \emph{anything} with it
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Changing Permissions}
+  \begin{block}{\colbf{Ch}ange \colbf{Mod}e}
+    \texttt{chmod <mode> <file>}
+    \begin{itemize}
+      \item Changes file / directory permissions to \texttt{<mode>}
+      \item The format of \texttt{<mode>} is a combination of three fields:
+      \begin{itemize}
+        \item Who is affected \-- a compination of \texttt{u}, \texttt{g}, \texttt{o}, or \texttt{a} (all)
+        \item Whether adding or removing permissions; add with \texttt{+}, remove with \texttt{-}
+        \item Which permissions are being modified \-- any combination of \texttt{r}, \texttt{w}, \texttt{x}
+      \end{itemize}
+      \item Or you can specify mode in octal: user, then group, then other
+      \begin{itemize}
+        \item e.g. \texttt{777} means user=7, group=7, other=7
+      \end{itemize}
+    \end{itemize}
+  \end{block}
+  The octal version can be confusing, but will save you time.  Excellent resource in \cite{chmod}.
+\end{frame}
+
+\begin{frame}[fragile]{Changing Ownership}
+  Changing the group
+  \begin{block}{\colbf{Ch}ange \colbf{Gr}ou\colbf{p}}
+    \texttt{chgrp group <file>}
+    \begin{itemize}
+      \item Changes the group ownership of \texttt{<file>}
+    \end{itemize}
+  \end{block}
+
+  As the super user, you can change who owns a file
+
+  \begin{block}{\colbf{Ch}ange \colbf{Own}nership}
+    \texttt{chown user:group <file>}
+    \begin{itemize}
+      \item Changes the ownership of \texttt{<file>}
+      \item \texttt{group} is optional
+      \item the \texttt{-R} flag is useful for recursively modifying everything in a directory
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{File Ownership, Alternate}
+  If you are like me, you often forget which column is which in \texttt{ls -l}...\wl
+
+  \begin{block}{\colbf{Stat}us of a file or filesystem}
+    \texttt{stat [opts] <filename>}
+    \begin{itemize}
+      \item Gives you a wealth of information, generally more than you will need
+      \item \texttt{Uid} is the user, \texttt{Gid} is the group
+      \item Can be useful if you want to mimic file permissions you don't know
+      \begin{itemize}
+        \item \texttt{--format=\%A}: human readable, e.g. \texttt{-rw-rw-r--}
+        \item \texttt{--format=\%a}: octal (great for \texttt{chmod}), e.g. \texttt{664}
+      \end{itemize}
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Platform Notes}
+  Convenience flag for \texttt{chown} and \texttt{chmod} on non-BSD Unix
+
+  \begin{minted}[bgcolor=bg, gobble=4]{bash}
+    > chmod --reference=<src> <dest>
+  \end{minted}
+
+  It will set the permissions of \texttt{dest} to the permissions of \texttt{src}!
+  Mac users: sorry :/
+
+  The \texttt{stat} on BSD: the \texttt{--format} does not exist, it is just \texttt{-f}.  The options seem
+  to be the same, but read the man page.
+\end{frame}
+
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+%%%%% section working_with_files
+%%%%
+%%%
+%%
+%
+
+%
+%%
+%%%
+%%%%
+%%%%% section types_of_files
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+\section{Types of Files and Usages}
+\label{sec:types_of_files}
+
+\begin{frame}[fragile]{Plain Files}
+  Plain text files are human-readable, and are usually used for things like
+  \begin{itemize}[<+- | alert@+>]
+    \item Documentation
+    \item Application settings
+    \item Source code
+    \item Logs
+    \item Anything you may want to read via the terminal (e.g. README.txt)
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Binary Files}
+  Binary files are not human-readable.  They are written in the language your computer prefers.
+  \begin{itemize}[<+- | alert@+>]
+    \item Executables
+    \item Libraries
+    \item Media files
+    \item Archives (.zip, etc)
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Reading Files Without Opening}
+  \begin{block}{Print a file to the screen}
+    \texttt{cat <filename>}
+    \begin{itemize}
+      \item Prints the contents of the file to the terminal window
+    \end{itemize}
+    \texttt{cat <file1> <file2>}
+    \begin{itemize}
+      \item Prints \texttt{file1} first, then \texttt{file2}.
+    \end{itemize}
+  \end{block}
+  \begin{block}{\colbf{more}}
+    \texttt{more <filename>}
+    \begin{itemize}
+      \item Scroll through one page at a time
+    \end{itemize}
+  \end{block}
+  \begin{block}{\colbf{less}}
+    \texttt{less <filename>}
+    \begin{itemize}
+      \item Scroll by pages or lines (mouse wheel, space bar, and arrows)
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Beginning and End}
+  Long files can be a pain with the previous tools.
+
+  \begin{block}{\colbf{Head} and \colbf{Tail}}
+    \texttt{head -[numlines] <filename>}\\
+    \texttt{tail -[numlines] <filename>}
+    \begin{itemize}
+      \item Prints the first / last numlines of the file
+      \item Default is 10 liness
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Not Really a File...YET}
+  You can talk to yourself in the terminal too!
+
+  \begin{block}{\colbf{Echo}}
+    \texttt{echo <text>}
+    \begin{itemize}
+      \item Prints the input string to the standard output (the terminal)
+      \item We will soon learn how to use \texttt{echo} to put things into files, append to files, etc
+    \end{itemize}
+  \end{block}
+\end{frame}
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+%%%%% section types_of_files
+%%%%
+%%%
+%%
+%
+
+%
+%%
+%%%
+%%%%
+%%%%% section let_s_git_started
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+\section{Let's Git Started}
+\label{sec:let_s_git_started}
+
+\begin{frame}[fragile]{Another Brief Git Demo}
+  If you are not at lecture, don't worry about this slide not making any sense.\wl
+
+  \begin{minted}[bgcolor=bg, gobble=4]{bash}
+    > git clone <url>
+    > git status
+    > git add <file(s)>
+    > git commit
+    > git push
+  \end{minted}
+\end{frame}
+
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+%%%%% section let_s_git_started
+%%%%
+%%%
+%%
+%
+
+%
+%%
+%%%
+%%%%
+%%%%% section demo_time_
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+\section{Demo Time!}
+\label{sec:demo_time_}
+\begin{frame}[fragile]{Our first in class demo}
+  Instructions are here:\wl
+
+  \href{https://github.com/cs2043-sp16/lecture-demos}{https://github.com/cs2043-sp16/lecture-demos}
+\end{frame}
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+%%%%% section demo_time_
+%%%%
+%%%
+%%
+%
+
+\begin{frame}[allowframebreaks]{References}
+  \bibliography{lecture03/references}
+  \bibliographystyle{abbrv}
+\end{frame}
+
+\end{document}
