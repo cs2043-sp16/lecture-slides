@@ -229,7 +229,7 @@
   \end{block}
 \end{frame}
 
-\begin{frame}[fragile]{Platform Notes}
+\begin{frame}[fragile]{Platform Notes I}
   Convenience flag for \texttt{chown} and \texttt{chmod} on non-BSD Unix
 
   \begin{minted}[bgcolor=bg, gobble=4]{bash}
@@ -241,6 +241,22 @@
 
   The \texttt{stat} on BSD: the \texttt{--format} does not exist, it is just \texttt{-f}.  The options seem
   to be the same, but read the man page.
+\end{frame}
+
+\begin{frame}[fragile]{Platform Notes II}
+  The \texttt{stat} command performs a little differently on OSX by default.  For example, on the \texttt{Makefile}
+  it produces this giant wall (on one line, continued for presentation purposes):
+
+  \begin{minted}[bgcolor=bg, gobble=4, fontsize=\footnotesize]{bash}
+    > stat Makefile
+    > 16777218 6517959 -rw-r--r-- 1 sven staff 0 4945
+        "Feb  1 11:48:14 2016" "Jan 31 07:02:42 2016"
+        "Jan 31 08:28:22 2016" "Jan 31 07:02:42 2016"
+        4096 16 0 Makefile
+  \end{minted}
+
+  To get more useful output for the intended purpose of \texttt{stat} in how I am presenting it, you need to do
+  \texttt{stat -x Makefile}.  This will print out the \texttt{Uid} and \texttt{Gid} for you.
 \end{frame}
 
 %%%%%
@@ -319,7 +335,7 @@
     \texttt{tail -[numlines] <filename>}
     \begin{itemize}
       \item Prints the first / last numlines of the file
-      \item Default is 10 lines 
+      \item Default is 10 lines
     \end{itemize}
   \end{block}
 \end{frame}
@@ -393,7 +409,7 @@
 \begin{frame}[fragile]{Our first in class demo}
   Instructions are here:\wl
 
-  \href{https://github.com/cs2043-sp16/lecture-demos}{https://github.com/cs2043-sp16/lecture-demos}
+  {\small \href{https://github.com/cs2043-sp16/lecture-demos/tree/master/lec03}{https://github.com/cs2043-sp16/lecture-demos/tree/master/lec03}}
 \end{frame}
 %%%%%
 %%%%%
