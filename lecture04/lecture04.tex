@@ -38,7 +38,9 @@
 % and so on
 \usepackage{enumerate}
 
+%
 % sultry code listings
+%
 \usepackage{minted}
 \BeforeBeginEnvironment{minted}{\begin{block}{}} % These surround minted code with beamer blocks
 \AfterEndEnvironment{minted}{\end{block}}        % to accentuate them
@@ -74,17 +76,29 @@
   fg=make-it-concrete!66
 }
 
+%
 % Custom commands
+%
 \newcommand{\colbf}[1]{\textcolor{mLightBrown!77!black}{#1}}% bold with color; mLightBrown defined by beamer-metropolis
 \newcommand{\tsub}{\textsubscript}                          % more compact
 \newcommand{\tsup}{\textsuperscript}                        % " " " " " "
 \def\wl{\par \vspace{\baselineskip}}                        % force newline; MANY thanks:
                                                             %   https://groups.google.com/d/msg/comp.text.tex/abxw5nTALzg/puXHnyx6pM8J
 
-% Titles etc
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% \begin
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \title{04 \-- More Files, Chaining Commands, and your First(?) Git Repository}
 \subtitle{CS 2043: Unix Tools and Scripting, Spring 2016 \cite{prevSemesters}}
-\date{February 1st, 2016}
+\date{February 3rd, 2016}
 \author{Stephen McDowell}
 \institute{Cornell University}
 
@@ -398,7 +412,7 @@
 \begin{frame}[fragile]{Advanced Sorting}
   The \texttt{sort} command is quite powerful, for example you can do
   \begin{itemize}
-    \item \texttt{sort -n -k 2 -t : <filename>}
+    \item \texttt{sort -n -k 2 -t "," <filename>}
     \begin{itemize}
       \item sorts the file numerically by using the second column, separating by a comma as the separator instead
             of a space
@@ -573,9 +587,9 @@
     \begin{itemize}
       \item Displays the 10\tsup{th} \-- 19\tsup{th} previous commands from the previous session
     \end{itemize}
-    \texttt{echo * | tr '\textbackslash t' '\textbackslash n'}
+    \texttt{echo * | tr ' ' '\textbackslash n'}
     \begin{itemize}
-      \item Replaces all tab characters with new lines
+      \item Replaces all spaces characters with new lines
     \end{itemize}
   \end{block}
 \end{frame}
@@ -639,7 +653,7 @@
 \label{sec:more_git_forking_a_repository}
 
 \begin{frame}[fragile]{In class demo...}
-  ...I'll update the slides after
+  \href{https://github.com/cs2043-sp16/lecture-demos/tree/master/lec04}{https://github.com/cs2043-sp16/lecture-demos/tree/master/lec04}
 \end{frame}
 
 %%%%%
