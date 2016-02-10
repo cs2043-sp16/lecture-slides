@@ -8,82 +8,7 @@
 %     https://github.com/matze/mtheme.git
 %
 % I am a huge fan of the metropolis theme...thanks @matze!
-
-\documentclass[11pt]{beamer}
-\usetheme{metropolis}
-\metroset{background=dark} % easier on the eyes, in my opinion
-\setbeamertemplate{bibliography item}{\insertbiblabel}
-
-% linking
-\usepackage{hyperref}
-
-% Nicer tables
-\usepackage{booktabs}
-\usepackage[scale=2]{ccicons}
-
-% finer control over enumerations
-% example:
-%   \begin{enumerate}[(1)]
-%     \item first
-%     \item second
-%     \item ...
-%   \end{enumerate}
-%
-%   and also
-%
-%   \begin{enumerate}[a)]
-%   \begin{enumerate}[i.]
-%   \begin{enumerate}[$\mathbb{R}$\textsuperscript{\arabic{enumi}}]
-%
-% and so on
-\usepackage{enumerate}
-
-%
-% sultry code listings
-%
-\usepackage{minted}
-\BeforeBeginEnvironment{minted}{\begin{block}{}} % These surround minted code with beamer blocks
-\AfterEndEnvironment{minted}{\end{block}}        % to accentuate them
-
-%
-% Colors thanks to various themes from Monokai: http://www.colourlovers.com/lover/Monokai
-%
-\definecolor{make-it-concrete}{rgb}{0.670588, 0.666667, 0.596078}      % (171, 170, 152) / 255
-\definecolor{cheap-carpet}{rgb}{0.145098, 0.196078, 0.200000}% (37,50,51) / 255
-\definecolor{hairball}{rgb}{0.403922, 0.411765, 0.380392}% (103,105,97) / 255
-
-%
-% General slide coloring
-%
-\setbeamercolor{frametitle}{% adjusts too-white colors from beamer-metropolis
-  bg=hairball!66,
-  fg=cheap-carpet
-}
-\setbeamercolor{normal text}{
-  bg=mDarkTeal,   % note: defined by beamer-metropolis
-  fg=hairball!44
-}
-%
-% beamer-block shaping and colors
-%
-\setbeamertemplate{blocks}[rounded]
-\setbeamercolor{block title}{
-  bg=make-it-concrete!66,
-  fg=cheap-carpet
-}
-\setbeamercolor{block body}{
-  bg=cheap-carpet,
-  fg=make-it-concrete!66
-}
-
-%
-% Custom commands
-%
-\newcommand{\colbf}[1]{\textcolor{mLightBrown!77!black}{#1}}% bold with color; mLightBrown defined by beamer-metropolis
-\newcommand{\tsub}{\textsubscript}                          % more compact
-\newcommand{\tsup}{\textsuperscript}                        % " " " " " "
-\def\wl{\par \vspace{\baselineskip}}                        % force newline; MANY thanks:
-                                                            %   https://groups.google.com/d/msg/comp.text.tex/abxw5nTALzg/puXHnyx6pM8J
+\input{../common-header.input}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -624,7 +549,7 @@
 %
 
 \begin{frame}[allowframebreaks]{References}
-  \bibliography{lecture02/references}
+  \bibliography{references}
   \bibliographystyle{abbrv}
 \end{frame}
 

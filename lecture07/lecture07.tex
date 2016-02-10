@@ -1,0 +1,485 @@
+% Cornell CS 2043: Unix Tools and Scripting
+% Spring 2016
+%
+% http://cs2043-sp16.github.io/
+%
+% These slides have been created using the metroplis theme demo found here:
+%
+%     https://github.com/matze/mtheme.git
+%
+% I am a huge fan of the metropolis theme...thanks @matze!
+\input{../common-header.input}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% \begin
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\title{06 \-- Processes and Jobs}
+\subtitle{CS 2043: Unix Tools and Scripting, Spring 2016 \cite{prevSemesters}}
+\date{February 10th, 2016}
+\author{Stephen McDowell}
+\institute{Cornell University}
+
+\begin{document}
+\maketitle
+
+% TOC
+\begin{frame}{Table of contents}
+  \setbeamertemplate{section in toc}[sections numbered]
+  \tableofcontents[hideallsubsections]
+\end{frame}
+
+\begin{frame}{Some Logistics}
+  \begin{itemize}[<+- | alert@+>]
+    \item HW1 due Friday, 2/12/2016 at 5pm
+    \item Drop deadline is \colbf{today}.
+    \item Lecture-demo solutions...thanks Joe!
+    \item The nature of the material in this topic basically dictates not covering OSX.  They may exist, they
+          may not.
+    \begin{itemize}[<+- | alert@+>]
+      \item They may also give very different results.
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+%
+%%
+%%%
+%%%%
+%%%%% section processes_overview
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+\section{Processes Overview}
+\label{sec:processes_overview}
+
+\begin{frame}[fragile]{What is a Process?}
+  \begin{itemize}[<+- | alert@+>]
+    \item A process is just an instance of a running program.
+    \item Not just a "program" \-- it is being \emph{executed}.
+    \item Not just a "running program", as you can execute the same program multiple times.
+    \begin{itemize}[<+- | alert@+>]
+      \item These would be multiple processes running an instance of the same program.
+    \end{itemize}
+    \item Example: if you open more than one terminal (windows or tabs), you are running multiple processes
+          of your shell.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Identification}
+  \begin{itemize}[<+- | alert@+>]
+    \item Processes have a unique "Process ID" (PID) when created.
+    \item The PID allows you to distinguish between multiple instances of the same program.
+    \item There are countless ways to discover the PID, as well as what processes are running.
+    \item These methods often depend on how much information you want, as well as what your user priviliges are.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Identification: \texttt{ps}}
+  \begin{block}{\colbf{P}rocess \colbf{S}napshot}
+    \texttt{ps [options]}
+    \begin{itemize}
+      \item Reports a snapshot of the current running processes, including PIDs.
+      \item By default, only the processes started by the user.
+      \item \texttt{-e}: lists every process currently running on the system
+      \item \texttt{-ely}: Gives more information than you can handle.
+      \item \texttt{-u <username>}: lists all processes for user \texttt{username}.
+      \item \colbf{Note}: very different for BSD/OSX, read the man page...
+    \end{itemize}
+  \end{block}
+  \vspace*{-2ex}
+  \begin{itemize}[<+- | alert@+>]
+    \item To see more information about a process, pipe through \texttt{grep}.
+    \item For example: \texttt{ps -e | grep firefox} shows us the results about \texttt{firefox} processes.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Identification: \texttt{lsof}}
+  \begin{block}{\colbf{L}i\colbf{s}t of \colbf{O}pen \colbf{F}iles}
+    \texttt{lsof [options]}
+    \begin{itemize}
+      \item Very similar to \texttt{ps}, with more information by default.
+      \item Frequently used for monitoring port connections...
+      \item \texttt{-i}: lists IP sockets
+      \begin{itemize}
+        \item \texttt{lsof -i tcp:843} shows all tcp processes on port \texttt{843}
+      \end{itemize}
+      \item Many options...read the man page if you are intrigued.
+    \end{itemize}
+  \end{block}
+  \begin{itemize}[<+- | alert@+>]
+    \item As with \texttt{ps}, often best served with a side of \texttt{grep}.
+    \item More useful for administration, especially when managing a networked environment.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Resource Usage}
+  \begin{block}{Display and Update \colbf{top} CPU Processes}
+    \texttt{top [options]}
+    \begin{itemize}
+      \item Displays the amount of resources in percentages each process is using.
+      \item \texttt{-d <seconds>}: control update frequency
+      \begin{itemize}
+        \item The act of monitoring is an expensive process...
+      \end{itemize}
+      \item \texttt{-u <user>}: only show processes owned by \texttt{user}
+      \item \texttt{-p <PID>}: show statistics on process with id \texttt{PID} only.
+    \end{itemize}
+  \end{block}
+  \begin{itemize}[<+- | alert@+>]
+    \item When used in conjunction with \texttt{ps} or \texttt{lsof}, can be a very powerful analysis tool.
+    \item Example sequence on the next page.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Example: Resource Monitoring}
+  \begin{minted}[bgcolor=bg, gobble=4, fontsize=\fontsize{6.5}{0}]{bash}
+    > ps -e | grep firefox
+    12975 ?        00:01:45 firefox
+    > top -p 12795
+    top - 09:37:56 up 1 day, 13:52,  5 users,  load average: 0.19, 0.20, 0.19
+    Tasks:   1 total,   0 running,   1 sleeping,   0 stopped,   0 zombie
+    %Cpu(s):  1.1 us,  0.5 sy,  0.0 ni, 98.4 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+    KiB Mem : 16386660 total,  5990760 free,  3562320 used,  6833580 buff/cache
+    KiB Swap:  4194300 total,  4194300 free,        0 used. 12551476 avail Mem
+
+      PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+    12975 sven      20   0 1437888 396868 105116 S   1.7  2.4   1:46.39 firefox
+  \end{minted}
+  \begin{itemize}[<+- | alert@+>]
+    \item You'll be best off reading through the man page to understand everything going on here.
+    \item Some great examples in \cite{top}.
+    \begin{itemize}[<+- | alert@+>]
+      \item I've found myself on that website \emph{many} times, he has a lot of excellent examples about
+            a large quantity of topics.
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Example: Resource Monitoring}
+  \begin{itemize}[<+- | alert@+>]
+    \item Now I have opened about thirty tabs in firefox, and we get much different results:
+    \item Look at the cpu usage
+      \begin{minted}[bgcolor=bg, gobble=8, fontsize=\fontsize{6.5}{0}]{bash}
+        > top -p 12795
+        top - 09:43:09 up 1 day, 13:57,  5 users,  load average: 1.33, 0.75, 0.41
+        Tasks:   1 total,   1 running,   0 sleeping,   0 stopped,   0 zombie
+        %Cpu(s): 13.4 us,  3.3 sy,  0.0 ni, 83.2 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+        KiB Mem : 16386660 total,  3622768 free,  5679500 used,  7084392 buff/cache
+        KiB Swap:  4194300 total,  4194300 free,        0 used. 10300816 avail Mem
+
+          PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+        12975 sven      20   0 3451396 1.372g 133688 R  75.7  8.8   5:00.96 firefox
+      \end{minted}
+    \item 75.7\%?!!! Pretty common actually, this is why I always tell you to use your browser inside your
+          Virtual Machine...
+  \end{itemize}
+\end{frame}
+
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+%%%%% section processes_overview
+%%%%
+%%%
+%%
+%
+
+%
+%%
+%%%
+%%%%
+%%%%% section modifying_processes
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+\section{Modifying Processes}
+\label{sec:modifying_processes}
+
+\begin{frame}[fragile]{Priority}
+  \begin{itemize}[<+- | alert@+>]
+    \item Suppose you want to run some long calculation that might take days, but would consume 100\% of your
+          CPU.
+    \item Can we tell the server to give your process less priority in terms of CPU time?
+    \item Recall that although Unix seems to run tens or hundreds of processes at once, one CPE can only run
+          one process at a time\tsup{*}.
+    \item Quick switching back and forth between processes makes it seem as though they are all running simultaneously.
+    \item The Unix masters anticipated this need, and each process was given a \texttt{priority} when it starts.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Initial Priority}
+  Start a process with a non-default priority:
+  \begin{block}{The \colbf{nice} command}
+    \texttt{nice [options] command}
+    \begin{itemize}
+      \item Runs \texttt{command} with a specified \emph{"niceness"} value (default: 10)
+      \item \emph{Niceness} values range from \texttt{-20} (highest priority) to \texttt{19} (lowest priority)
+      \item Only \texttt{root} can give a process a \emph{negative niceness} value
+      \item Commands run without \texttt{nice} have priority \texttt{0}.
+    \end{itemize}
+  \end{block}
+  \begin{block}{Example}
+    \texttt{nice -n 10 deluge}
+    \begin{itemize}
+      \item Keeps torrents from hogging the CPU.
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Adjusting Priority}
+  \begin{block}{The \colbf{renice} command}
+    \texttt{renice <priority> -p <PID>}
+    \begin{itemize}
+      \item Changes the \emph{niceness} of the process with id \texttt{PID} to \texttt{<priority>}
+      \item Remember: only \texttt{root} can assign \emph{negative} values.
+      \item You can only \texttt{renice} a process you started.
+    \end{itemize}
+  \end{block}
+  \begin{block}{Some Examples}
+    \texttt{renice 5 -p 10275}
+    \begin{itemize}
+      \item Set the \emph{niceness} of the process with \texttt{PID 10275} to \texttt{5}
+      \begin{itemize}
+        \item Slightly lower than normal \emph{niceness}
+      \end{itemize}
+    \end{itemize}
+    \texttt{renice 19 -u sven}
+    \begin{itemize}
+      \item Set the \emph{niceness} of \colbf{all} my processes to 19
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Ending Processes: I}
+  Sometimes you need to end a process.
+  \begin{block}{\colbf{kill}}
+    \texttt{kill [-signal] <PID>}
+    \begin{itemize}
+      \item Sends the specified \texttt{signal} to the process with id \texttt{PID}
+      \item By default, it terminates execution
+    \end{itemize}
+  \end{block}
+  \begin{block}{\colbf{killall}}
+    \texttt{killall [-signal] <name>}
+    \begin{itemize}
+      \item Kills processes by name.
+      \item E.g. \texttt{killall firefox}
+    \end{itemize}
+  \end{block}
+  \colbf{Note}: These are dangerous commands, and should generally be last resorts.
+\end{frame}
+
+\begin{frame}[fragile]{Useful Kill Signals}
+  \begin{itemize}[<+- | alert@+>]
+    \item Kill signals can be used by number or name.
+    \item \texttt{TERM} or \texttt{15}: terminates execution (default).
+    \item \texttt{HUP} or \texttt{1}: hang-up (restarts the program)
+    \item \texttt{KILL} or \texttt{9}: like bleach, can kill anything.
+    \item Some examples:
+    \begin{block}{Killing 101}
+      \begin{itemize}
+        \item \texttt{kill 9009}: terminates process with \texttt{PID 9009}
+        \item \texttt{kill -9 3223}: \colbf{REALLY} kills the process with \texttt{PID 3223}
+        \item \texttt{kill -HUP 12221}: restarts the process with \texttt{PID 12221}
+        \begin{itemize}
+          \item very useful for servers and daemon processes
+        \end{itemize}
+      \end{itemize}
+    \end{block}
+    \item Remember \texttt{top}? You can both \emph{renice} and \emph{kill} processes from within it!
+  \end{itemize}
+\end{frame}
+
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+%%%%% section modifying_processes
+%%%%
+%%%
+%%
+%
+
+%
+%%
+%%%
+%%%%
+%%%%% section jobs
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+\section{Jobs}
+\label{sec:jobs}
+
+\begin{frame}[fragile]{What are Jobs?}
+  \begin{block}{Jobs}
+    A job is a process running \emph{under the influence} of a job control facility.
+    \begin{itemize}
+      \item Job control is a built-in feature of most shells, allowing the user to pause and resume tasks.
+      \item The user can also run them in the background.
+      \item Not covered here: \texttt{crontab}.  For the future sys admins, read the article in \cite{crontab}
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Why do you want this?}
+  Let's use \texttt{ping} as an example.
+  \begin{block}{\colbf{Ping}}
+    \texttt{ping <server>}
+    \begin{itemize}
+      \item Measures network response time (latency) to a remote server.
+      \item Sends short bursts to the server, then measures time until they return.
+    \end{itemize}
+  \end{block}
+  \begin{block}{Example:}
+    \texttt{ping google.com}
+    \begin{itemize}
+      \item Remember, \texttt{ctrl+c} kills the process.
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Why we Need Job Control}
+  As long as \texttt{ping} runs, we lose control of our shell.  This happens with many other applications.
+  \begin{itemize}[<+- | alert@+>]
+    \item Moving large quantities of files
+    \item Compiling source code
+    \item Playing multimedia
+    \item Scientific computing
+    \item etc
+    \begin{block}{Example:}
+      \texttt{vlc }
+    \end{block}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Starting a Job in the Background}
+  To run a job in the background, we will use a new operator:
+  \begin{block}{\colbf{\&}}
+    \texttt{<command> [arguments] \&}
+    \begin{itemize}
+      \item Runs the specified command as a background job.
+      \item Unless told otherwise, will send output to the terminal!
+      \item But at least we can type in our terminal again.
+    \end{itemize}
+  \end{block}
+  \begin{block}{Example:}
+    \texttt{vlc best\_song\_ever.flac \&}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Sending a Job to the Background}
+  If you already started the job, but don't want to wait any more:
+
+  \begin{block}{Pausing a Job}
+    Press \texttt{ctrl+z} to pause a running process!
+  \end{block}
+
+  \begin{itemize}[<+- | alert@+>]
+    \item Note this is still \texttt{ctrl} even on Mac...just like \texttt{ctrl+c}
+    \item The shell will pause the jobs \texttt{JOB ID} (similar to \texttt{PID})
+    \item We can bring it back.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Revivals}
+  \begin{block}{\colbf{B}ack\colbf{g}round}
+    \texttt{bg <JOB ID>}
+    \begin{itemize}
+      \item Resumes the job with id \texttt{JOB ID} in the \emph{background}
+      \item Without \texttt{JOB ID}, resumes last job placed in background.
+    \end{itemize}
+  \end{block}
+  \vspace*{-1ex}
+  \begin{block}{\colbf{F}ore\colbf{g}round}
+    \texttt{fg <JOB ID>}
+    \begin{itemize}
+      \item Resumes the job with id \texttt{JOB ID} in the \emph{foreground}.
+      \item Without \texttt{JOB ID}, resumes last job placed in background.
+    \end{itemize}
+  \end{block}
+  \vspace*{-1ex}
+  \begin{block}{Discovering your \colbf{jobs}}
+    \texttt{jobs}
+    \begin{itemize}
+      \item Prints the running, paused, or recently stopped jobs.
+      \item Prints jobs with their \texttt{JOB ID}s.
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Dealing with Excess Output}
+  \begin{itemize}[<+- | alert@+>]
+    \item Many programs output continuously as they run.  Try \texttt{vlc}.  Pretty, but also annoying.
+    \item Redirect the output!
+    \item Saving the output:
+    \begin{block}{Save \texttt{ping} results}
+      \texttt{ping google.com > testping.log \&}
+      \begin{itemize}
+        \item A \texttt{.log} file is common.
+        \item Note you need to eventually end this \texttt{ping}!
+      \end{itemize}
+    \end{block}
+    \item Ignoring the output:
+    \begin{block}{Ignoring it all}
+      \texttt{vlc best\_song\_ever.flac -- \&> /dev/null \&}
+    \end{block}
+  \end{itemize}
+\end{frame}
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+%%%%% section jobs
+%%%%
+%%%
+%%
+%
+
+%
+%%
+%%%
+%%%%
+%%%%% section more_on_git_forks
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+\section{More on Git}
+\label{sec:more_on_git_forks}
+
+\begin{frame}[fragile]{Recap on Forks, Diff}
+  \begin{itemize}[<+- | alert@+>]
+    \item Word explanation of forks.
+    \item The magic of \texttt{git difftool}.
+  \end{itemize}
+\end{frame}
+
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+%%%%% section more_on_git_forks
+%%%%
+%%%
+%%
+%
+
+\begin{frame}[allowframebreaks]{References}
+  \bibliography{references}
+  \bibliographystyle{abbrv}
+\end{frame}
+
+\end{document}

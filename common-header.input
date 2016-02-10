@@ -1,0 +1,98 @@
+% Cornell CS 2043: Unix Tools and Scripting
+% Spring 2016
+%
+% http://cs2043-sp16.github.io/
+%
+% This file is to be included for various packages and commands to be declared, without having to copy-paste
+% all of them.  This may eventually turn into a .sty, it may not.  Example usage:
+%
+%     In file lecture01/lecture01.tex:
+%         \include{../common.tex}
+%
+% This file is neither a style file, nor is a document class.  It's just me being lazy and not wanting to have
+% to write all of these every time, but still being able to modify them when I find a new package I want
+% to use.  Though arguably terrible form, this is TeX after all...it was never pretty.
+
+%
+% Initial theme setup
+%
+\documentclass[11pt]{beamer}
+\usetheme{metropolis}
+\metroset{background=dark} % easier on the eyes, in my opinion
+\setbeamertemplate{bibliography item}{\insertbiblabel}
+
+%
+% Linking
+%
+\usepackage{hyperref}
+
+%
+% Nicer tables
+%
+\usepackage{booktabs}
+\usepackage[scale=2]{ccicons}
+
+% Finer control over enumerations
+% example:
+%   \begin{enumerate}[(1)]
+%     \item first
+%     \item second
+%     \item ...
+%   \end{enumerate}
+%
+%   and also
+%
+%   \begin{enumerate}[a)]
+%   \begin{enumerate}[i.]
+%   \begin{enumerate}[$\mathbb{R}$\textsuperscript{\arabic{enumi}}]
+%
+% and so on
+\usepackage{enumerate}
+
+%
+% Sultry code listings
+%
+\usepackage{minted}
+\BeforeBeginEnvironment{minted}{\begin{block}{}} % These surround minted code with beamer blocks
+\AfterEndEnvironment{minted}{\end{block}}        % to accentuate them
+
+%
+% Colors thanks to various themes from Monokai: http://www.colourlovers.com/lover/Monokai
+%
+\definecolor{make-it-concrete}{rgb}{0.670588, 0.666667, 0.596078}      % (171, 170, 152) / 255
+\definecolor{cheap-carpet}{rgb}{0.145098, 0.196078, 0.200000}% (37,50,51) / 255
+\definecolor{hairball}{rgb}{0.403922, 0.411765, 0.380392}% (103,105,97) / 255
+
+%
+% General slide coloring
+%
+\setbeamercolor{frametitle}{% adjusts too-white colors from beamer-metropolis
+  bg=hairball!66,
+  fg=cheap-carpet
+}
+\setbeamercolor{normal text}{
+  bg=mDarkTeal,   % note: defined by beamer-metropolis
+  fg=hairball!44
+}
+
+%
+% Beamer-block shaping and colors
+%
+\setbeamertemplate{blocks}[rounded]
+\setbeamercolor{block title}{
+  bg=make-it-concrete!66,
+  fg=cheap-carpet
+}
+\setbeamercolor{block body}{
+  bg=cheap-carpet,
+  fg=make-it-concrete!66
+}
+
+%
+% Custom commands
+%
+\newcommand{\colbf}[1]{\textcolor{mLightBrown!77!black}{#1}}% bold with color; mLightBrown defined by beamer-metropolis
+\newcommand{\tsub}{\textsubscript}                          % more compact
+\newcommand{\tsup}{\textsuperscript}                        % " " " " " "
+\def\wl{\par \vspace{\baselineskip}}                        % force newline; MANY thanks:
+                                                            %   https://groups.google.com/d/msg/comp.text.tex/abxw5nTALzg/puXHnyx6pM8J
