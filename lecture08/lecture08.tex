@@ -1,0 +1,474 @@
+% Cornell CS 2043: Unix Tools and Scripting
+% Spring 2016
+%
+% http://cs2043-sp16.github.io/
+%
+% These slides have been created using the metroplis theme demo found here:
+%
+%     https://github.com/matze/mtheme.git
+%
+% I am a huge fan of the metropolis theme...thanks @matze!
+\input{../common-header.input}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% \begin
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\title{08 \-- Superlative Streams}
+\subtitle{CS 2043: Unix Tools and Scripting, Spring 2016 \cite{prevSemesters}}
+\date{February 12th, 2016}
+\author{Stephen McDowell}
+\institute{Cornell University}
+
+\begin{document}
+\maketitle
+
+% TOC
+\begin{frame}{Table of contents}
+  \setbeamertemplate{section in toc}[sections numbered]
+  \tableofcontents[hideallsubsections]
+\end{frame}
+
+\begin{frame}{Some Logistics}
+  \begin{itemize}[<+- | alert@+>]
+    \item HW1 due \colbf{today} at 5pm
+    \item OH Today: only 2pm - 3pm...thanks (again) Joe!
+    \item On my usage of \texttt{>}, which will now become \texttt{\textasciitilde>}
+    \item Repository confusion:
+    \begin{itemize}[<+- | alert@+>]
+      \item \emph{do \colbf{NOT} fork the \texttt{<usr>-assignments} repositories}!!!!!!
+      \item getting lectures easily: \texttt{clone} the \texttt{lecture-slides} repo, \texttt{pull} as needed
+      \item \emph{only} \texttt{fork} the \texttt{lecture-demos} repo
+      \begin{itemize}[<+- | alert@+>]
+        \item this allows you to put your demo work online, get more practice with \texttt{git}
+      \end{itemize}
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+%
+%%
+%%%
+%%%%
+%%%%% section cutting_and_pasting
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+\section{Cutting and Pasting}
+\label{sec:cutting_and_pasting}
+
+\begin{frame}[fragile]{Chopping up Input}
+  \begin{block}{\colbf{Cut}}
+    \texttt{cut <options> [file]}
+    \begin{itemize}
+      \item \emph{must} specify a list of bytes, characters, or fields
+      \begin{itemize}
+        \item \texttt{file} is optional this time, uses \texttt{STDIN} if unspecified
+      \end{itemize}
+      \item \texttt{-b}: extracts using range of \emph{bytes}
+      \item \texttt{-c}: extracts using a range of \emph{characters}
+      \item \texttt{-f}: extracts a range of \emph{fields} separated by a delimiter
+
+      \vspace*{1ex}
+      {\small
+        \begin{tabular}{|c|l|}
+          \hline
+          \texttt{N}  & \texttt{N}\tsup{th} byte, character or field, counted from 1\\ \hline
+          \texttt{N-}  & from \texttt{N}\tsup{th} byte, character or field, to end of line\\ \hline
+          \texttt{N-M} & from \texttt{N}\tsup{th} to \texttt{M}\tsup{th} (included) byte, character or field\\ \hline
+          \texttt{-M}  & from first to \texttt{M}\tsup{th} (included) byte, character or field\\ \hline
+        \end{tabular}
+      }
+      \vspace*{1ex}
+
+      \item \texttt{-d}: specify the delimiter (\texttt{TAB} by default)
+      \item \texttt{-s}: suppress line if \texttt{delimiter} not found
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Cut Examples}
+  \begin{block}{\texttt{employees.csv}}
+    {\footnotesize\ttfamily
+    Alice,female,607-123-4567,11 Sunny Place,Ithaca,NY,14850\\
+    Bob,male,607-765-4321,1892 Rim Trail,Ithaca,NY,14850\\
+    Andy,n/a,607-706-6007,1 To Rule Them All,Ithaca,NY,14850\\
+    Bad employee data without proper delimiter
+    }
+  \end{block}
+  \vspace*{-1ex}
+  \begin{block}{Examples}
+    \begin{itemize}
+      \item Get names, ignore improper lines
+      \begin{itemize}
+        \item[\textasciitilde>] \texttt{cut -d , -f 1 -s employees.csv}
+      \end{itemize}
+      \item Get names and phone numbers, ignore improper lines
+      \begin{itemize}
+        \item[\textasciitilde>] \texttt{cut -d , -f 1,3 -s employees.csv}
+      \end{itemize}
+      \item Get address (4th col and after), ignore improper lines
+      \begin{itemize}
+        \item[\textasciitilde>] \texttt{cut -d , -f 4- -s employees.csv}
+      \end{itemize}
+      \item Get 11\tsup{th} character of every line
+      \begin{itemize}
+        \item[\textasciitilde>] \texttt{cut -c 11 employees.csv}
+      \end{itemize}
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Splicing Input}
+  \begin{block}{\colbf{Paste}}
+    \texttt{paste [options] [file1] [file2] ...}
+    \begin{itemize}
+      \item No \texttt{options} or \texttt{files} necessary...
+      \begin{itemize}
+        \item[] ...but relatively useless program without them.
+      \end{itemize}
+      \item \texttt{-d}: specify the delimiter (\texttt{TAB} by default)
+      \item \texttt{-s}: concatenates serially instead of side-by-side
+      \item No options and one \texttt{file} specified: just like \texttt{cat}
+      \begin{itemize}
+        \item Use with \texttt{-s} to join all lines of file!
+      \end{itemize}
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Paste Examples I}
+  \begin{block}{names.txt}
+    {\footnotesize\ttfamily
+      Alice\\
+      Bob\\
+      Andy\\
+    }
+  \end{block}
+  \begin{block}{phones.txt}
+    {\footnotesize\ttfamily
+      607-123-4567\\
+      607-765-4321\\
+      607-706-6007\\
+    }
+  \end{block}
+  \begin{minted}[bgcolor=bg, gobble=4, fontsize=\fontsize{10}{0}]{bash}
+    ~> paste -d , names.txt phones.txt > result.txt
+  \end{minted}
+  \begin{block}{result.txt}
+    {\footnotesize\ttfamily
+      Alice,607-123-4567\\
+      Bob,607-765-4321\\
+      Andy,607-706-6007\\
+    }
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Paste Examples II}
+  \begin{block}{names.txt}
+    {\footnotesize\ttfamily
+      Alice\\
+      Bob\\
+      Andy\\
+    }
+  \end{block}
+  \begin{block}{phones.txt}
+    {\footnotesize\ttfamily
+      607-123-4567\\
+      607-765-4321\\
+      607-706-6007\\
+    }
+  \end{block}
+  \begin{minted}[bgcolor=bg, gobble=4, fontsize=\fontsize{10}{0}]{bash}
+    ~> paste -d , -s names.txt phones.txt > result.txt
+  \end{minted}
+  \begin{block}{result.txt}
+    {\footnotesize\ttfamily
+      Alice,Bob,Andy\\
+      607-123-4567,607-765-4321,607-706-6007\\
+    }
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Paste Examples III}
+  \begin{block}{\texttt{employees.csv}}
+    {\footnotesize\ttfamily
+    Alice,female,607-123-4567,11 Sunny Place,Ithaca,NY,14850\\
+    Bob,male,607-765-4321,1892 Rim Trail,Ithaca,NY,14850\\
+    Andy,n/a,607-706-6007,1 To Rule Them All,Ithaca,NY,14850\\
+    Bad employee data without proper delimiter
+    }
+  \end{block}
+  \begin{minted}[bgcolor=bg, gobble=4, fontsize=\fontsize{10}{0}]{bash}
+    ~> paste -d "" -s employees.csv | \
+         cut -d , -f 1- --output-delimiter="" | \
+         tr -d "[:space:]"
+  \end{minted}
+  \begin{block}{output (all on one line...)}
+    {\footnotesize\ttfamily
+      Alicefemale607-123-456711SunnyPlaceIthacaNY14850Bobmale6\\
+      07-765-43211892RimTrailIthacaNY14850Andyn/a607-706-60071\\
+      ToRuleThemAllIthacaNY14850Bademployeedatawithoutproperde\\
+      limiter
+    }
+  \end{block}
+\end{frame}
+
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+%%%%% section cutting_and_pasting
+%%%%
+%%%
+%%
+%
+
+%
+%%
+%%%
+%%%%
+%%%%% section splitting_and_joining
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+\section{Splitting and Joining}
+\label{sec:splitting_and_joining}
+
+\begin{frame}[fragile]{Splitting Files}
+  \begin{block}{\colbf{Split}}
+    \texttt{split [options] [input] [prefix]}
+    \begin{itemize}
+      \item \texttt{-l}: how many lines in each file
+      \begin{itemize}
+        \item default is 1000
+      \end{itemize}
+      \item \texttt{-b}: how many bytes in each file
+      \item \texttt{prefix}: name prefix of each file produced
+      \item \texttt{-d}: use numeric suffixes instead of lexographic
+      \begin{itemize}
+        \item not available on OSX
+      \end{itemize}
+    \end{itemize}
+  \end{block}
+  \begin{itemize}[<+- | alert@+>]
+    \item Extremely useful for managing large streams of data
+    \item Remember that annoying \emph{dungeon} folder?
+    \begin{itemize}[<+- | alert@+>]
+      \item \texttt{split -l 5} is what we did
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Joining Files}
+  Join lines that contain the same keys between two different files.
+
+  \begin{block}{\colbf{Join}}
+    \texttt{join [options] file1 file2}
+    \begin{itemize}
+      \item Join two files at a time, no more, no less.
+      \item Default: files are assumed to be delimited by \emph{whitespace}.
+      \item \texttt{-t <char>}: specify alternative \emph{single-character} delimiter.
+      \item \texttt{-1 field\_number}: join by the $n$\tsup{th} field of \texttt{file1}
+      \item \texttt{-2 field\_number}: join by the $n$\tsup{th} field of \texttt{file2}
+      \begin{itemize}
+        \item field numbers start at 1, like \texttt{cut} and \texttt{paste}
+      \end{itemize}
+      \item \texttt{-a f\_num}: displays unpaired lines of file \texttt{f\_num}.
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Join Examples I}
+  \begin{block}{ages.txt}
+    {\footnotesize\ttfamily
+      Alice 44\\
+      Bob 30\\
+      Candy 12\\
+    }
+  \end{block}
+  \begin{block}{salaries.txt}
+    {\footnotesize\ttfamily
+      Bob 300,000\\
+      Candy 120,000\\
+    }
+  \end{block}
+  \begin{minted}[bgcolor=bg, gobble=4, fontsize=\fontsize{10}{0}]{bash}
+    ~> join ages.txt salaries.txt > results.txt
+  \end{minted}
+  \begin{block}{results.txt}
+    {\footnotesize\ttfamily
+      Bob 30 300,000\\
+      Candy 12 120,000\\
+    }
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Join Examples II}
+  \begin{block}{ages.txt}
+    {\footnotesize\ttfamily
+      Alice 44\\
+      Bob 30\\
+      Candy 12\\
+    }
+  \end{block}
+  \begin{block}{salaries.txt}
+    {\footnotesize\ttfamily
+      Bob 300,000\\
+      Candy 120,000\\
+    }
+  \end{block}
+  \begin{minted}[bgcolor=bg, gobble=4, fontsize=\fontsize{10}{0}]{bash}
+    ~> join -a1 ages.txt salaries.txt > results.txt
+  \end{minted}
+  \begin{block}{results.txt}
+    {\footnotesize\ttfamily
+      Alice 44\\
+      Bob 30 300,000\\
+      Candy 12 120,000\\
+    }
+  \end{block}
+\end{frame}
+
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+%%%%% section splitting_and_joining
+%%%%
+%%%
+%%
+%
+
+%
+%%
+%%%
+%%%%
+%%%%% section the_stream_editor_-_sed
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+\section{The Stream Editor (\texttt{sed})}
+\label{sec:the_stream_editor_-_sed}
+
+\begin{frame}[fragile]{Introducing...}
+  \begin{block}{\colbf{S}tream \colbf{Ed}itor}
+    \texttt{sed} [options] [script] [file]
+    \begin{itemize}
+      \item Stream editor for filtering and transforming text.
+      \item We will focus on \texttt{sed}'s \texttt{'s/<regex>/<text>' [file]}.
+      \begin{itemize}
+        \item Replace anything that matches \texttt{<regex>} with \texttt{<text>}.
+      \end{itemize}
+      \item \texttt{sed} goes line by line searching for the regular expression.
+    \end{itemize}
+  \end{block}
+
+  \begin{itemize}[<+- | alert@+>]
+    \item We will only cover the \emph{basics}, as \texttt{sed} is an entire programming language.
+    \begin{itemize}[<+- | alert@+>]
+      \item As in there are entire books on it...
+    \end{itemize}
+    \item What is the difference between \texttt{sed} and \texttt{tr}?
+    \begin{itemize}
+      \item \texttt{sed} can match regular expressions!
+      \item \texttt{sed} also does a \emph{lot} more.
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{A Basic Example}
+  \begin{itemize}[<+- | alert@+>]
+    \item[] \hspace*{-3ex}\texttt{sed 's/not guilty/guilty/g' filename}
+    \item Replaces \emph{not guilty} with \emph{guilty} everywhere in the file.
+    \item CAUTION: You should be in the habit of using \emph{single-quotes} for strings with \texttt{sed}
+    \begin{itemize}[<+- | alert@+>]
+      \item don't have to escape every double-quote (\texttt{"})
+    \end{itemize}
+    \item What happens if we do not have the \texttt{g}?
+    \begin{itemize}[<+- | alert@+>]
+      \item Without the \texttt{g}, it will only do one substitution per line.
+      \begin{itemize}[<+- | alert@+>]
+        \item There are definitely cases where you would want that!
+      \end{itemize}
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Deletion}
+  \begin{itemize}[<+- | alert@+>]
+    \item Just like with \texttt{tr} we can do deletion with \texttt{sed}.
+    \item \texttt{sed '/regex/d'} \-- deletes all \colbf{lines} that contain \texttt{regex}.
+    \item Example:
+    \begin{itemize}[<+- | alert@+>]
+      \item \texttt{sed '/[Dd]avid/d' file1 > file2}
+      \begin{itemize}[<+- | alert@+>]
+        \item Deletes all \colbf{lines} in \texttt{file1} that contain either \emph{David} or \emph{david}, and
+              saves the result into \texttt{file2}.
+      \end{itemize}
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Regular Expressions}
+  \begin{itemize}[<+- | alert@+>]
+    \item The power of \texttt{sed} is that it treats everything between the first pair of \texttt{/}'s as a
+          regular expression.
+    \item What does this do?
+    \begin{minted}[bgcolor=bg, gobble=6, fontsize=\fontsize{7.5}{0}]{bash}
+      ~> sed 's/[[:alpha:]]\{1,3\}[[:digit:]]*@cornell\.edu/REMOVED/g' file
+    \end{minted}
+    \begin{itemize}[<+- | alert@+>]
+      \item Print a file with all \texttt{netID@cornell.edu} emails removed!
+    \end{itemize}
+    \item Use \texttt{-r} (\texttt{-E} on OSX) to use \emph{extended} regular expressions.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Saving Strings}
+  \begin{itemize}[<+- | alert@+>]
+    \item What does this do?
+    \begin{minted}[bgcolor=bg, gobble=6, fontsize=\fontsize{7.5}{0}]{bash}
+      ~> sed 's/^\([A-Z][A-Za-z]*\), \([A-Z][A-Za-z]*\)/\2 \1/' file
+    \end{minted}
+    \item Searches for an expression at the beginning of the line of the form \texttt{e1}, \texttt{e2} where
+          \texttt{e1} and \texttt{e2} are "words" starting with capital letters.
+    \item Placing an expression inside \texttt{()} tells the editor to \emph{save} whatever string matches
+          the expression.
+    \item Since \texttt{()} are special characters, we escape them e.g. with \texttt{\textbackslash(\textbackslash)}.
+    \item We access the saved strings as \texttt{\textbackslash1} and \texttt{\textbackslash2}.
+    \item This script for example could convert a database file from
+      \begin{center}
+        {\small
+          \texttt{Lastname, Firstname} \-- to \-- \texttt{Firstname, Lastname}\\
+        }
+      \end{center}
+  \end{itemize}
+\end{frame}
+
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+%%%%% section the_stream_editor_-_sed
+%%%%
+%%%
+%%
+%
+
+\begin{frame}[allowframebreaks]{References}
+  \bibliography{references}
+  \bibliographystyle{abbrv}
+\end{frame}
+
+\end{document}
