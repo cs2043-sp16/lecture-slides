@@ -2,7 +2,7 @@
 #
 # The beamertheme-metropolis package uses special fonts so we must use XeLaTeX instead
 # of pdflatex.  Compiling with xelatex also allows you use utf-8 characters directly in
-# your .tex file, allowing you to directly type things like chinese characters or
+# your source code, allowing you to directly type things like chinese characters or
 # accents.  Most of the time, though, you can get away with using pdflatex.
 #
 # This Makefile assumes there is a directory structure:
@@ -10,24 +10,24 @@
 # ./
 #     - Makefile (this one)
 #     <directory01>/
-#         - <single source>.tex
+#         - <single source>.xetex
 #     <directory02>/
-#         - <single source>.tex
+#         - <single source>.xetex
 #     ...
 #
-# In words, that there are some number of directories with exactly one .tex file n each
-# directory.  The goal is to compile each <directory>/<single source>.tex into
+# In words, that there are some number of directories with exactly one .xetex file n each
+# directory.  The goal is to compile each <directory>/<single source>.xetex into
 # <directory>/<single source>.pdf.
 #
-# This directory structure is not necesssary, and a single .tex file in the current directory
+# This directory structure is not necesssary, and a single .xetex file in the current directory
 # will also be compiled without issue.  Search for
 #
-#     $(COMPILED_PDFS): %.pdf: %.tex
+#     $(COMPILED_PDFS): %.pdf: %.xetex
 #
 # to see how to modify this file to use with your tex project, if you want.
-SINGLE_SOURCE := $(shell find . -name "*.tex") # find all .tex files
-NO_EXTENSIONS := $(basename $(SINGLE_SOURCE))  # make basename gives the path without the extension
-COMPILED_PDFS := $(SINGLE_SOURCE:.tex=.pdf)    # change <single source>.tex to <single source>.pdf
+SINGLE_SOURCE := $(shell find . -name "*.xetex") # find all .xetex files
+NO_EXTENSIONS := $(basename $(SINGLE_SOURCE))    # make basename gives the path without the extension
+COMPILED_PDFS := $(SINGLE_SOURCE:.xetex=.pdf)    # change <single source>.xetex to <single source>.pdf
 
 # Defining the `all` rule enables you to just type `make` in the same directory as the
 # Makefile.  If it is not defined, the first rule defined will be executed when you
@@ -43,8 +43,8 @@ all: $(COMPILED_PDFS)
 #
 # then this would create the targets
 #
-#     lecture01/lecture01.pdf: lecture01/lecture01.tex
-#     lecture02/lecture02.pdf: lecture02/lecture02.tex
+#     lecture01/lecture01.pdf: lecture01/lecture01.xetex
+#     lecture02/lecture02.pdf: lecture02/lecture02.xetex
 #
 # Since we want to compile the results in the respective folders (as opposed to the
 # folder where this Makefile is), the jobname needs to be specified as such.  Refer to
@@ -53,12 +53,15 @@ all: $(COMPILED_PDFS)
 #     https://www.gnu.org/software/make/manual/html_node/Automatic-Variables.html
 #
 # To enable relative portability of this Makefile, it has been written such that you
-# could easily place it in the same directory as your .tex source file and type make.
+# could easily place it in the same directory as your .xetex source file and type make.
+#
+# Note that you can easily invoke `latexmk` without the -xelatex flag to use `pdflatex`,
+# and if you do so you should have `.tex` extensions, rather than `.xetex`.
 #
 # Then just uncomment these two lines and comment out the following copy.
-# $(COMPILED_PDFS): %.pdf: %.tex
+# $(COMPILED_PDFS): %.pdf: %.xetex
 # 	latexmk -xelatex --shell-escape --jobname=$(basename $@) $<
-$(COMPILED_PDFS): %.pdf: %.tex
+$(COMPILED_PDFS): %.pdf: %.xetex
 	cd $(shell dirname $@) && \
 	latexmk -xelatex --shell-escape --jobname=$(basename $(shell basename $@)) $(shell basename $<)
 
@@ -76,9 +79,20 @@ CLEANABLES := $(foreach file, $(NO_EXTENSIONS), \
                   $(foreach ext, $(EXTENSIONS), \
                       $(file)$(ext)))
 
+# Some extra items need to be cleaned for minted on OSX.
+MINTED := $(foreach partial, $(NO_EXTENSIONS), \
+              $(shell dirname $(partial))/_minted-$(shell basename $(partial)))
+TYPE   := $(shell uname -s)
+
 .PHONY: clean realclean
 clean:
 	rm -f $(CLEANABLES)
+	@# For some reason, OSX generates this _minted-<document-name> folder.
+	@# We will remove all of those as well with a clean request.
+	if [[ "$(TYPE)" -eq "Darwin" ]]; then \
+		rm -rf $(MINTED); \
+	fi
+
 
 realclean: clean
 	rm -f $(COMPILED_PDFS)

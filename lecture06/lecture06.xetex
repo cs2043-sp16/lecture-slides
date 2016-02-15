@@ -103,7 +103,7 @@
           \end{itemize}
           \item Use variables
           \begin{itemize}[<+- | alert@+>]
-            \item dereference with \$
+            \item dereference with \texttt{\$}
           \end{itemize}
           \item Store/use commands executed
           \begin{itemize}[<+- | alert@+>]
@@ -318,7 +318,7 @@
     \item List of all options here: {\tiny \href{http://www.gnu.org/software/bash/manual/bashref.html#Controlling-the-Prompt}{http://www.gnu.org/software/bash/manual/bashref.html\#Controlling-the-Prompt}}
     \item Common: \texttt{export PS1="\textbackslash u@\textbackslash h:\textbackslash w> "}
     \begin{itemize}[<+- | alert@+>]
-      \item "usr@hostname:current/working/directory>"
+      \item \texttt{usr@hostname:current/working/directory>}
     \end{itemize}
     \item Try changing your \texttt{\$PS1} using \texttt{export} right now to see how you can modify it.
     \item Play with colors after, since they are tedious to type in the format needed.
@@ -359,7 +359,7 @@
 
 \begin{frame}[fragile]{Rapid Prototyping}
   \begin{itemize}[<+- | alert@+>]
-    \item You may want to quickly change your \$PS1 or something and see what it looks like immediately.
+    \item You may want to quickly change your \texttt{\$PS1} or something and see what it looks like immediately.
     \item Open your text editor and make the changes you want to see.  Flip back to your terminal.
     \item To reload changes immediately, use the \texttt{source} command (e.g. \texttt{source \textasciitilde/.bashrc}).
     \begin{itemize}[<+- | alert@+>]
@@ -373,6 +373,8 @@
 
 \begin{frame}[fragile]{Customize!!!}
   Follow the instructions in today's lecture demo: \href{https://github.com/cs2043-sp16/lecture-demos/tree/master/lec06}{https://github.com/cs2043-sp16/lecture-demos/tree/master/lec06}
+
+  A simple \& test for \texttt{\& \& \&}
 \end{frame}
 
 %%%%%

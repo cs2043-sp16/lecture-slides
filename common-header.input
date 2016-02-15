@@ -22,6 +22,26 @@
 \setbeamertemplate{bibliography item}{\insertbiblabel}
 
 %
+% The Fira Sans mono font is a little too fancy...the ampersands and various other mono-spaced fonts of \ttfamily
+% inputs are borderline insulting.
+%
+% The desire here is to have absolutely no fancy anything with \ttfamily environments such as \texttt{} and
+% \begin{minted} ... \end{minted} so that the text will copy-paste directly from the pdf to the terminal.
+%
+%     Getting DejaVu Mono:     http://tex.stackexchange.com/a/84818
+%     No modifications at all: http://tex.stackexchange.com/a/103242
+%
+\usepackage{fontspec}
+\setmonofont[
+  Extension      = .ttf ,
+  Ligatures      = {NoCommon, NoRequired, NoContextual, NoHistoric, NoDiscretionary},
+  UprightFont    = * ,
+  ItalicFont     = *-Oblique ,
+  BoldFont       = *-Bold ,
+  BoldItalicFont = *-BoldOblique
+]{DejaVuSansMono}
+
+%
 % Linking
 %
 \usepackage{hyperref}
@@ -55,6 +75,7 @@
 \usepackage{minted}
 \BeforeBeginEnvironment{minted}{\begin{block}{}} % These surround minted code with beamer blocks
 \AfterEndEnvironment{minted}{\end{block}}        % to accentuate them
+\usemintedstyle{monokai}
 
 %
 % Colors thanks to various themes from Monokai: http://www.colourlovers.com/lover/Monokai
