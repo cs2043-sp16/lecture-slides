@@ -69,6 +69,27 @@
 % and so on
 \usepackage{enumerate}
 
+% Many people online prefer the enumitem package, but it causes a lot of issues with
+% beamer.  I do not want to change where bullets show up (margin-wise) for the *entire*
+% document, but I do want the ability to "de-indent" bullets on a slide selectively.
+%
+% Grab the appropriate length: http://tex.stackexchange.com/a/103257
+\newlength\origLeftMarginI
+\setlength\origLeftMarginI\leftmargini
+\def\gobbledItems{\setlength{\leftmargini}{0em}}
+\def\restoreItems{\setlength{\leftmargini}{\origLeftMarginI}}
+%
+% Define a new itemize. I called it leftemize because I am lazy and want to be able to
+% keep my item+tab sublime glory, and changing itemize to leftemize is just a short
+% ctrl+d and arrow away. The 1 as input allows for [<+- | alert@+>] on a leftemize.
+\newenvironment{leftemize}[1][]{
+  \gobbledItems
+  \begin{itemize}[#1]
+}{
+  \end{itemize}
+  \restoreItems
+}
+
 %
 % Sultry code listings
 %

@@ -39,7 +39,7 @@
 \begin{frame}{Some Logistics}
   \begin{itemize}[<+- | alert@+>]
     \item Last day to add is today.
-    \item (Poll) The demo last time
+    \item (Poll) The demo last time.
   \end{itemize}
 \end{frame}
 
@@ -78,58 +78,66 @@
 \begin{frame}[fragile]{Super Confused...}
   \begin{block}{\colbf{S}uper\colbf{u}ser \colbf{Do}}
     \texttt{sudo <command>}
-    \begin{itemize}
-      \item Execute \texttt{<command>} as the super user
-      \item The regular user (e.g. \texttt{student}) is executing the \texttt{sudo} command, \emph{not} the root
-      \item You enter your user password
-      \item You can only execute \texttt{sudo} if you are an "administrator"\tsup{*}
-    \end{itemize}
+    \begin{enumerate}[\--]
+      \item Execute \texttt{<command>} as the super user.
+      \item The regular user (e.g. \texttt{student}) is executing the \texttt{sudo} command, \emph{not} the
+            \texttt{root}.
+      \item You enter \emph{your} user password.
+      \item You can only execute \texttt{sudo} if you are an "administrator"\tsup{*}.
+    \end{enumerate}
   \end{block}
 
   So on the course VMs the \texttt{student} user originally had the password \texttt{student}, so that is what
   you would type if you were executing \texttt{sudo}.  On your personal Mac (or native Linux install), you would
   be typing whatever your password is to login to the computer.
 
-  {\tiny \tsup{*}Note that where you look to see who can execute \texttt{sudo} varies greatly between distributions.  It may be
-    easier to just try it...you'll know whether you have access very quickly.}
+  {\tiny \tsup{*}Note that where you look to see who can execute \texttt{sudo} varies greatly between distributions.}
 \end{frame}
 
 \begin{frame}[fragile]{Super Confused...}
-  If you know the root password, then you can become root using \texttt{su} directly.
+  If you know the \texttt{root} password, then you can become \texttt{root} using \texttt{su} directly.
   \begin{block}{\colbf{S}witch \colbf{U}ser}
     \texttt{su <user\_name>}
-    \begin{itemize}
-      \item Switches to user \texttt{user\_name}
-      \item The password you enter is the password for \texttt{user\_name}
-      \item If no username is specified, \texttt{root} is implied
-    \end{itemize}
+    \begin{enumerate}[\--]
+      \item Switches to user \texttt{user\_name}.
+      \item The password you enter is the password for \texttt{user\_name}.
+      \item If no username is specified, \texttt{root} is implied.
+    \end{enumerate}
   \end{block}
-
-  So the commands \texttt{sudo su root} and \texttt{sudo su} are equivalent, but since you typed \texttt{sudo}
-  first that is why you type the user password.  If you just execute \texttt{su} directly, then you have to type
-  the \texttt{root} password.
+  \pause
+  \begin{itemize}[<+- | alert@+>]
+    \item The commands \texttt{sudo su root} and \texttt{sudo su} are equivalent:
+    \begin{itemize}
+      \item Since you typed \texttt{sudo} first, that is why you type the user password.
+    \end{itemize}
+    \item If you just execute \texttt{su} directly, then you have to type the \texttt{root} password.
+  \end{itemize}
 \end{frame}
 
 \begin{frame}[fragile]{Default Permissions}
-  When you create files during a particular session, the mode you are running in determines what the permissions
-  will be.  Changing the \texttt{umask} only applies for the remainder of the session (e.g. until you close
-  the terminal window you were writing this in).  If you understand what this means, it is just a bit mask with
-  \texttt{0o777}.
+  When you create files during a particular session, the mode you are running in determines what the
+  permissions will be.
 
   \begin{block}{\colbf{U}ser \colbf{mask}}
     \texttt{umask <mode>}
-    \begin{itemize}
-      \item Remove \texttt{mode} from the file's permissions
-      \item Similar syntax to \texttt{chmod}
-      \begin{itemize}
-        \item \texttt{umask 077}: full access to the user, no access to anybody else
-        \item \texttt{umask g+w}: enables group write permissions
-      \end{itemize}
-      \item \texttt{umask -S}: display the current mask
-    \end{itemize}
+    \begin{enumerate}[\--]
+      \item Remove \texttt{mode} from the file's permissions.
+      \item Similar syntax to \texttt{chmod}:
+      \begin{enumerate}[\--]
+        \item \texttt{umask 077}: full access to the user, no access to anybody else.
+        \item \texttt{umask g+w}: enables group write permissions.
+      \end{enumerate}
+      \item \texttt{umask -S}: display the current mask.
+    \end{enumerate}
   \end{block}
+  \vspace*{-1ex}
+  \pause
+  \begin{itemize}[<+- | alert@+>]
+    \item Changing the \texttt{umask} only applies for the remainder of the session (e.g. until you close the
+          terminal window you were writing this in).
+    \item If this has meaning, it is just a bit mask with \texttt{0o777}.
+  \end{itemize}
 \end{frame}
-
 %%%%%
 %%%%%
 %%%%%
@@ -155,38 +163,38 @@
 \begin{frame}[fragile]{Making Archives: Zip}
   \begin{block}{\colbf{Zip}}
     \texttt{zip <name\_of\_archive> <files\_to\_include>}
-    \begin{itemize}
+    \begin{enumerate}[\--]
       \item Note I said \emph{files}.
-      \begin{itemize}
+      \begin{enumerate}[\--]
         \item E.g. \texttt{zip files.zip a.txt b.txt c.txt}
-        \item These will extract to \texttt{a.txt}, \texttt{b.txt}, and \texttt{c.txt} in the current directory
-      \end{itemize}
-        \item To do folders, you need recursion
-      \begin{itemize}
+        \item These will extract to \texttt{a.txt}, \texttt{b.txt}, and \texttt{c.txt} in the current directory.
+      \end{enumerate}
+        \item To do folders, you need recursion.
+      \begin{enumerate}[\--]
         \item \texttt{zip -r folder.zip my\_files/}
-        \item This will extract to a folder named \texttt{my\_files}, with whatever was inside of it in tact
-      \end{itemize}
-    \end{itemize}
+        \item This will extract to a folder named \texttt{my\_files}, with whatever was inside of it in tact.
+      \end{enumerate}
+    \end{enumerate}
   \end{block}
   \begin{block}{\colbf{Unzip}}
     \texttt{unzip <archive\_name>}
   \end{block}
-  \colbf{Note}: The original files DO stay in tact.
+  \colbf{Note:} The original files DO stay in tact.
 \end{frame}
 
 \begin{frame}{Making Archives: Gzip}
   \begin{block}{\colbf{Gzip}}
     \texttt{gzip <files\_to\_compress>}
-    \begin{itemize}
-      \item \texttt{--fast}: less time to compress, larger file
-      \item \texttt{--best}: more time to compress, smaller file
-      \item Read the \texttt{man} page, lots of options
-    \end{itemize}
+    \begin{enumerate}[\--]
+      \item Less time to compress, larger file: \texttt{--fast}
+      \item More time to compress, smaller file: \texttt{--best}
+      \item Read the \texttt{man} page, lots of options.
+    \end{enumerate}
   \end{block}
   \begin{block}{\colbf{Gunzip}}
     \texttt{gunzip <archive\_name>}
   \end{block}
-  \colbf{Notes}:
+  \colbf{Notes:}
   \begin{itemize}
     \item By default, \emph{replaces} the original files!
     \begin{itemize}
@@ -200,15 +208,15 @@
 \begin{frame}[fragile]{Making Archives: Tar}
   \begin{block}{\colbf{T}ape \colbf{Ar}chive}
     \texttt{tar -cf <tar\_archive\_name> <files\_to\_compress>}
-    \begin{itemize}
-      \item \colbf{C}reate a tar archive
-    \end{itemize}
+    \begin{enumerate}[\--]
+      \item \colbf{C}reate a tar archive.
+    \end{enumerate}
     \texttt{tar -xf <tar\_archive\_name>}
-    \begin{itemize}
-      \item E\colbf{x}tract all files from archive
-    \end{itemize}
+    \begin{enumerate}[\--]
+      \item E\colbf{x}tract all files from archive.
+    \end{enumerate}
   \end{block}
-  \colbf{Notes}:
+  \colbf{Notes:}
   \begin{itemize}
     \item \texttt{tar} is just a bundling suite, creating a single file.
     \item By default, it does \emph{not} compress.
@@ -221,20 +229,24 @@
   \begin{block}{Making tarballs}
     \texttt{tar -c(z/j)f <archive\_name> <source\_files>}\\
     \texttt{tar -x(z/j)f <archive\_name>}
-    \begin{itemize}
-      \item The \texttt{-z} flag specifies \texttt{gzip} as the compression method
-      \begin{itemize}
+    \begin{enumerate}[\--]
+      \item \texttt{(z/j)} here means \emph{either} \texttt{z} \emph{or} \texttt{j}, \colbf{not} both.
+      \item The \texttt{-z} flag specifies \texttt{gzip} as the compression method.
+      \item YOU have to specify the file extension.
+      \begin{enumerate}[\--]
         \item Extension convention: \texttt{.tar.gz}
-        \item YOU have to specify this, e.g. \texttt{tar -cjf files.tar.gz files/}
-      \end{itemize}
-      \item The \texttt{-j} flag specifies \texttt{bzip2} as the compression method
-      \begin{itemize}
+        \item Example: \texttt{tar -cjf files.tar.gz files/}
+      \end{enumerate}
+      \item The \texttt{-j} flag specifies \texttt{bzip2} as the compression method.
+      \begin{enumerate}[\--]
         \item Extension convention: \texttt{.tar.bz2}
-        \item YOU have to specify this, e.g. \texttt{tar -cjf files.tar.bz2 files/}
-      \end{itemize}
-    \end{itemize}
+        \item Example: \texttt{tar -cjf files.tar.bz2 files/}
+      \end{enumerate}
+    \end{enumerate}
   \end{block}
-  \colbf{Note}:
+  \vspace*{-2ex}
+  \colbf{Note:}
+  \vspace*{-1ex}
   \begin{itemize}
     \item Extraction can \emph{usually} happen automatically:
     \begin{itemize}
@@ -242,7 +254,6 @@
     \end{itemize}
   \end{itemize}
 \end{frame}
-
 %%%%%
 %%%%%
 %%%%%
@@ -272,36 +283,38 @@
 \begin{frame}[fragile]{Counting}
   \begin{block}{\colbf{W}ord \colbf{C}ount}
     \texttt{wc [options] <file>}
-    \begin{itemize}
-      \item \texttt{-l}: count the number of lines
-      \item \texttt{-w}: count the number of words
-      \item \texttt{-m}: count the number of characters
-      \item \texttt{-c}: count the number of bytes
-    \end{itemize}
+    \begin{enumerate}[\--]
+      \item[] \texttt{-l}: count the number of lines.
+      \item[] \texttt{-w}: count the number of words.
+      \item[] \texttt{-m}: count the number of characters.
+      \item[] \texttt{-c}: count the number of bytes.
+    \end{enumerate}
   \end{block}
-  Great for things like
+  \pause
+  \alert<2>{Great for things like:}
+  \pause
   \begin{itemize}[<+- | alert@+>]
-    \item revelling in the number of lines you have programmed
-    \item analyzing the verbosity of your personal statement
-    \item showing people how cool you are
+    \item revelling in the number of lines you have programmed.
+    \item analyzing the verbosity of your personal statement.
+    \item showing people how cool you are.
   \end{itemize}
 \end{frame}
 
 \begin{frame}[fragile]{Sorting}
   \begin{block}{\colbf{Sort}}
     \texttt{sort [options] <file>}
-    \begin{itemize}
-      \item Default: by \texttt{ASCII} code (roughly alphabetical) for the whole line
-      \item \texttt{-r}: reverse order
-      \item \texttt{-n}: numerical order
-      \item \texttt{-u}: remove duplicates
-    \end{itemize}
+    \begin{enumerate}[\--]
+      \item Default: sort by the \texttt{ASCII} code (roughly alphabetical) for the whole line.
+      \item Use \texttt{-r} to reverse the order.
+      \item Use \texttt{-n} to sort by numerical order.
+      \item Use \texttt{-u} to remove duplicates.
+    \end{enumerate}
   \end{block}
   \vspace*{-2ex}
   \begin{minipage}[t]{\textwidth}
     \begin{minipage}[t]{.3\textwidth}
-      \begin{minted}[bgcolor=bg, gobble=8, fontsize=\fontsize{7.5}{0}]{bash}
-        > cat peeps.txt
+      \begin{minted}[bgcolor=bg, gobble=8, fontsize=\fontsize{7.05}{0}]{bash}
+        >>> cat peeps.txt
         Manson, Charles
         Bundy, Ted
         Bundy, Jed
@@ -311,8 +324,8 @@
     \end{minipage}
     \hfill
     \begin{minipage}[t]{.3\textwidth}
-      \begin{minted}[bgcolor=bg, gobble=8, fontsize=\fontsize{7.5}{0}]{bash}
-        > sort -r peeps.txt
+      \begin{minted}[bgcolor=bg, gobble=8, fontsize=\fontsize{7.05}{0}]{bash}
+        >>> sort -r peeps.txt
         Nevs, Sven
         Nevs, Sven
         Manson, Charles
@@ -322,8 +335,8 @@
     \end{minipage}
     \hfill
     \begin{minipage}[t]{.3\textwidth}
-      \begin{minted}[bgcolor=bg, gobble=8, fontsize=\fontsize{7.5}{0}]{bash}
-        > sort -ru peeps.txt
+      \begin{minted}[bgcolor=bg, gobble=8, fontsize=\fontsize{7.05}{0}]{bash}
+        >>> sort -ru peeps.txt
         Nevs, Sven
         Manson, Charles
         Bundy, Ted
@@ -347,8 +360,8 @@
   \vspace*{-2ex}
   \begin{minipage}[t]{\textwidth}
     \begin{minipage}[t]{.48\textwidth}
-      \begin{minted}[bgcolor=bg, gobble=8, fontsize=\fontsize{7.5}{0}]{bash}
-        > cat numbers.txt
+      \begin{minted}[bgcolor=bg, gobble=8, fontsize=\fontsize{7.05}{0}]{bash}
+        >>> cat numbers.txt
         02,there
         04,how
         01,hi
@@ -359,8 +372,8 @@
     \end{minipage}
     \hfill
     \begin{minipage}[t]{.48\textwidth}
-      \begin{minted}[bgcolor=bg, gobble=8, fontsize=\fontsize{7.5}{0}]{bash}
-        > sort -n -k 2 -t "," numbers.txt
+      \begin{minted}[bgcolor=bg, gobble=8, fontsize=\fontsize{7.05}{0}]{bash}
+        >>> sort -n -k 2 -t "," numbers.txt
         01,hi
         02,there
         03,bob
@@ -373,30 +386,31 @@
 \end{frame}
 
 \begin{frame}[fragile]{Special Snowflakes}
-  \begin{block}{\colbf{uniq}}
+  \begin{block}{\colbf{Uniq}ue}
     \texttt{uniq [options] <file>}
-    \begin{itemize}
-      \item No flags: discards all but one of successive identical lines
-      \item \texttt{-c}: prints the number of successive identical lines next to each line
-    \end{itemize}
+    \begin{enumerate}[\--]
+      \item No flags: discards all but one of successive identical lines.
+      \item Use \texttt{-c} to prints the number of successive identical lines next to each line.
+    \end{enumerate}
   \end{block}
 \end{frame}
 
 \begin{frame}[fragile]{Search and Replace}
   \begin{block}{\colbf{Tr}anslate}
     \texttt{tr [options] <set1> [set2]}
-    \begin{itemize}
-      \item Translate or delete characters
-      \item Sets are strings of characters
-      \item By default, searches for strings matching \texttt{set1} and replaces them with \texttt{set2}
-      \item You can use regular expressions (we'll get there soon!)
-    \end{itemize}
+    \begin{enumerate}[\--]
+      \item Translate or delete characters.
+      \item Sets are strings of characters.
+      \item By default, searches for strings matching \texttt{set1} and replaces them with \texttt{set2}.
+      \item You can use POSIX and custom-defined \emph{sets} (we'll get there soon!).
+    \end{enumerate}
   \end{block}
-
-  The \texttt{tr} command only works with streams.  There will be some examples of these after we learn about
-  chaining commands in the next section.
+  \pause
+  \begin{itemize}[<+- | alert@+>]
+    \item The \texttt{tr} command only works with streams.
+    \item Examples to come after we learn about chaining commands in the next section.
+  \end{itemize}
 \end{frame}
-
 %%%%%
 %%%%%
 %%%%%
@@ -420,44 +434,47 @@
 \label{sec:chaining_commands}
 
 \begin{frame}[fragile]{Your Environment and Variables}
-  There are various environment variables defined in your environment.  The are almost always all capital letters,
-  and you obtain their value by dereferencing them with a \texttt{\$}.  Some examples
+  \begin{leftemize}[<+- | alert@+>]
+    \item There are various environment variables defined in your environment.  They are almost always all
+          capital letters.
+    \item You obtain their value by dereferencing them with a \texttt{\$}.
 
-  \begin{minted}[bgcolor=bg, gobble=4, fontsize=\footnotesize]{bash}
-    > echo $PWD    # present working directory
-    > echo $OLDPWD # print previous working directory
-    > printenv     # print all defined environment variables
-  \end{minted}
+    \begin{minted}[bgcolor=bg, gobble=6, fontsize=\footnotesize]{bash}
+      >>> echo $PWD    # present working directory
+      >>> echo $OLDPWD # print previous working directory
+      >>> printenv     # print all environment variables
+    \end{minted}
 
-  It turns out, when you execute commands they have something called an "exit code".  The exit code of the last
-  command executed is stored in the \texttt{\$?} environment variable.
+    \item When you execute commands, they have something called an "exit code".
+    \item The exit code of the last command executed is stored in the \texttt{\$?} environment variable.
+  \end{leftemize}
 \end{frame}
 
 \begin{frame}[fragile]{What is Defined?}
-  \begin{itemize}[<+- | alert@+>]
-      \item The environment
-      \begin{itemize}[<+- | alert@+>]
-        \item \texttt{env}: displays all environment variables
-        \item \texttt{unsetenv <name>}: remove an environment variable
-      \end{itemize}
-      \item The local variables
-      \begin{itemize}[<+- | alert@+>]
-        \item \texttt{set}: displays all shell / local variables
-        \item \texttt{unset <name>}: remove a shell variable
-      \end{itemize}
-      \item We'll cover these a little more when we talk about customizing your terminal shell
-  \end{itemize}
+  \begin{leftemize}[<+- | alert@+>]
+      \item The environment:
+      \begin{leftemize}
+        \item \texttt{env}: displays all environment variables.
+        \item \texttt{unsetenv <name>}: remove an environment variable.
+      \end{leftemize}
+      \item The local variables:
+      \begin{leftemize}
+        \item \texttt{set}: displays all shell / local variables.
+        \item \texttt{unset <name>}: remove a shell variable.
+      \end{leftemize}
+      \item We'll cover these a little more when we talk about customizing your terminal shell.
+  \end{leftemize}
 \end{frame}
 
 \begin{frame}[fragile]{Exit Codes}
   There are various exit codes, here are a few examples:
   \begin{minted}[bgcolor=bg, gobble=4, fontsize=\footnotesize]{bash}
-    > super_awesome_command
+    >>> super_awesome_command
     bash: super_awesome_command: command not found...
-    > echo $?
+    >>> echo $?
     127
-    > echo "What is the exit code we want?"
-    > echo $?
+    >>> echo "What is the exit code we want?"
+    >>> echo $?
     0
   \end{minted}
   \begin{itemize}[<+- | alert@+>]
@@ -474,14 +491,14 @@
     \item Always execute:
 
     \begin{minted}[bgcolor=bg, gobble=6, fontsize=\footnotesize]{bash}
-      > cmd1; cmd2   # exec cmd1 first, then cmd2
+      >>> cmd1; cmd2   # exec cmd1 first, then cmd2
     \end{minted}
 
     \item Execute conditioned upon exit code:
 
     \begin{minted}[bgcolor=bg, gobble=6, fontsize=\footnotesize]{bash}
-      > cmd1 && cmd2 # exec cmd2 only if cmd1 returned 0
-      > cmd1 || cmd2 # exec cmd2 only if cmd1 returned NOT 0
+      >>> cmd1 && cmd2 # exec cmd2 only if cmd1 returned 0
+      >>> cmd1 || cmd2 # exec cmd2 only if cmd1 returned NOT 0
     \end{minted}
 
     \item Kind of backwards, in terms of what means continue for \emph{and}, but that was likely easier to implement
@@ -495,65 +512,74 @@
 
   \begin{block}{Piping}
     \texttt{<command1> | <command2>}
-    \begin{itemize}
-      \item Passes the output from \texttt{command1} to be the input of \texttt{command2}
+    \begin{enumerate}[\--]
+      \item Passes the output from \texttt{command1} to be the input of \texttt{command2}.
       \item Works for \emph{heaps} of programs that take input and provide output to the terminal.
-    \end{itemize}
+    \end{enumerate}
   \end{block}
 \end{frame}
 
 \begin{frame}[fragile]{Some Piping Examples}
   \begin{block}{Piping along...}
-    \texttt{ls -al /bin | less}
-    \begin{itemize}
+    \texttt{>>> ls -al /bin | less}
+    \begin{enumerate}[\--]
       \item Allows you to scroll through the long list of programs in \texttt{/bin}
-    \end{itemize}
-    \texttt{history | tail -20 | head -10}
-    \begin{itemize}
-      \item Displays the 10\tsup{th} \-- 19\tsup{th} previous commands from the previous session
-    \end{itemize}
-    \texttt{echo * | tr ' ' '\textbackslash n'}
-    \begin{itemize}
-      \item Replaces all spaces characters with new lines
-    \end{itemize}
+    \end{enumerate}
+    \texttt{>>> history | tail -20 | head -10}
+    \begin{enumerate}[\--]
+      \item Displays the 10\tsup{th} \-- 19\tsup{th} previous commands from the previous session.
+    \end{enumerate}
+    \texttt{>>> echo * | tr ' ' '\textbackslash n'}
+    \begin{enumerate}[\--]
+      \item Replaces all spaces characters with new lines.
+      \item Execute just \texttt{echo *} to see the difference.
+    \end{enumerate}
   \end{block}
 \end{frame}
 
 \begin{frame}[fragile]{Redirection}
   To redirect input / output streams, you can use one of \texttt{>}, \texttt{>>}, \texttt{<}, or \texttt{<<}.
+  \pause
   \begin{itemize}[<+- | alert@+>]
-    \item to redirect standard output, use the \texttt{>} operator
-    \begin{itemize}[<+- | alert@+>]
+    \item To redirect standard output, use the \texttt{>} operator.
+    \begin{itemize}
       \item \texttt{command > file}
     \end{itemize}
-    \item to redirect standard input, use the \texttt{<} operator
-    \begin{itemize}[<+- | alert@+>]
+    \item To redirect standard input, use the \texttt{<} operator.
+    \begin{itemize}
       \item \texttt{command < file}
     \end{itemize}
-    \item to redirect standard error, use the \texttt{>} operator and specify the stream number \texttt{2}
-    \begin{itemize}[<+- | alert@+>]
+    \item To redirect standard error, use the \texttt{>} operator and specify the stream number \texttt{2}.
+    \begin{itemize}
       \item \texttt{command 2> file}
     \end{itemize}
-    \item combine streams together by using \texttt{2>\&1}
+    \item Combine streams together by using \texttt{2>\&1} syntax.
     \begin{itemize}
       \item This says: send standard error to where standard output is going.
       \item Useful for debugging / catching error messages...
-      \item ...or ignoring them (you will often see that sent to \texttt{/dev/null})
+      \item ...or ignoring them (you will often see that sent to \texttt{/dev/null}).
     \end{itemize}
   \end{itemize}
 \end{frame}
 
 \begin{frame}[fragile]{Redirection Example}
-  Bash processes I/O redirection from left to right, allowing us to do fun things like this:
+  \begin{leftemize}[<+- | alert@+>]
+    \item Bash processes I/O redirection from left to right, allowing us to do fun things like this:
 
-  \begin{block}{Magic}
-    \texttt{tr -cd '0-9' < test1.txt > test2.txt}
-    \begin{itemize}
-      \item deletes everything but the numbers from \texttt{test1.txt}, then store them in \texttt{test2.txt}
-    \end{itemize}
-  \end{block}
+    \begin{block}{Magic}
+      \texttt{tr -cd '0-9' < test1.txt > test2.txt}
+      \begin{enumerate}[\--]
+        \item Deletes everything but the numbers from \texttt{test1.txt}, then store them in \texttt{test2.txt}.
+        \item CAUTION: do not \emph{ever} use the same file as output that was input.
+        \begin{enumerate}[\--]
+          \item Example: \texttt{tr -cd '0-9' < original.txt > original.txt}
+          \item You will \emph{lose} all your data, you cannot read and write this way.
+        \end{enumerate}
+      \end{enumerate}
+    \end{block}
 
-  Piping and Redirection are quite sophisticated, please refer to the Wikipedia page in \cite{wiki}.
+    \item Piping and Redirection are quite sophisticated, please refer to the Wikipedia page in \cite{wiki}.
+  \end{leftemize}
 \end{frame}
 %%%%%
 %%%%%
@@ -580,7 +606,6 @@
 \begin{frame}[fragile]{In class demo...}
   \href{https://github.com/cs2043-sp16/lecture-demos/tree/master/lec04}{https://github.com/cs2043-sp16/lecture-demos/tree/master/lec04}
 \end{frame}
-
 %%%%%
 %%%%%
 %%%%%
