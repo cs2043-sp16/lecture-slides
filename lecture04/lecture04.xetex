@@ -37,10 +37,10 @@
 \end{frame}
 
 \begin{frame}{Some Logistics}
-  \begin{itemize}[<+- | alert@+>]
+  \begin{leftemize}[<+- | alert@+>]
     \item Last day to add is today.
     \item (Poll) The demo last time.
-  \end{itemize}
+  \end{leftemize}
 \end{frame}
 
 %
@@ -56,14 +56,14 @@
 \label{sec:recap_on_permissions}
 
 \begin{frame}[fragile]{The Octal Version of \texttt{chmod}}
-  Last time I linked you to this\cite{chmod} website for a good explanation.  For the formula hungry, you can
-  represent \texttt{r}, \texttt{w}, and \texttt{x} as binary variables (where 0 is off, and 1 is on).  Then
-  the formula for the modes is
-
+  \alert<1>{Last time I linked you to this\cite{chmod} website for a good explanation.  For the formula hungry, you can
+    represent \texttt{r}, \texttt{w}, and \texttt{x} as binary variables (where 0 is off, and 1 is on).  Then
+    the formula for the modes is}
+  \pause
   $$
-    r\cdot2^2 + w\cdot2^1 + x\cdot2^0
+    \alert<2>{r\cdot2^2 + w\cdot2^1 + x\cdot2^0}
   $$
-
+  \pause
   \begin{block}{Examples}
     \begin{itemize}
       \item \texttt{chmod 755}: \texttt{rwxr-xr-x}
@@ -71,8 +71,8 @@
       \item \texttt{chmod 600}: \texttt{rw-------}
     \end{itemize}
   \end{block}
-
-  If that makes less sense to you, feel free to ignore it.
+  \pause
+  \alert<4>{If that makes less sense to you, feel free to ignore it.}
 \end{frame}
 
 \begin{frame}[fragile]{Super Confused...}
@@ -86,16 +86,19 @@
       \item You can only execute \texttt{sudo} if you are an "administrator"\tsup{*}.
     \end{enumerate}
   \end{block}
-
-  So on the course VMs the \texttt{student} user originally had the password \texttt{student}, so that is what
-  you would type if you were executing \texttt{sudo}.  On your personal Mac (or native Linux install), you would
-  be typing whatever your password is to login to the computer.
-
-  {\tiny \tsup{*}Note that where you look to see who can execute \texttt{sudo} varies greatly between distributions.}
+  \pause
+  \begin{leftemize}[<+- | alert@+>]
+    \item On the course VMs the \texttt{student} user originally had the password \texttt{student}, so that is what
+    you would type if you were executing \texttt{sudo}.
+    \item On your personal Mac (or native Linux install), you would be typing whatever your password is to login
+    to the computer.
+    \item[] {\tiny \tsup{*}Note that where you look to see who can execute \texttt{sudo} varies greatly between distributions.}
+  \end{leftemize}
 \end{frame}
 
 \begin{frame}[fragile]{Super Confused...}
-  If you know the \texttt{root} password, then you can become \texttt{root} using \texttt{su} directly.
+  \alert<1>{If you know the \texttt{root} password, then you can become \texttt{root} using \texttt{su} directly.}
+  \pause
   \begin{block}{\colbf{S}witch \colbf{U}ser}
     \texttt{su <user\_name>}
     \begin{enumerate}[\--]
@@ -115,9 +118,9 @@
 \end{frame}
 
 \begin{frame}[fragile]{Default Permissions}
-  When you create files during a particular session, the mode you are running in determines what the
-  permissions will be.
-
+  \alert<1>{When you create files during a particular session, the mode you are running in determines what the
+    permissions will be.}
+  \pause
   \begin{block}{\colbf{U}ser \colbf{mask}}
     \texttt{umask <mode>}
     \begin{enumerate}[\--]
@@ -311,6 +314,7 @@
     \end{enumerate}
   \end{block}
   \vspace*{-2ex}
+  \pause
   \begin{minipage}[t]{\textwidth}
     \begin{minipage}[t]{.3\textwidth}
       \begin{minted}[bgcolor=bg, gobble=8, fontsize=\fontsize{7.05}{0}]{bash}
@@ -348,15 +352,16 @@
 \end{frame}
 
 \begin{frame}[fragile]{Advanced Sorting}
-  The \texttt{sort} command is quite powerful, for example you can do
-  \begin{itemize}
-    \item \texttt{sort -n -k 2 -t "," <filename>}
-    \begin{itemize}
-      \item sorts the file numerically by using the second column, separating by a comma as the separator instead
-            of a space
-    \end{itemize}
-    \item read the \texttt{man} page!
-  \end{itemize}
+  \begin{leftemize}[<+- | alert@+>]
+    \item The \texttt{sort} command is quite powerful, for example you can do:
+
+      \begin{minted}[bgcolor=bg, gobble=8]{bash}
+        >>> sort -n -k 2 -t "," <filename>
+      \end{minted}
+
+    \item Sorts the file numerically by using the second column, separating by a comma as the delimiter instead
+            of a space.
+    \item Read the \texttt{man} page!
   \vspace*{-2ex}
   \begin{minipage}[t]{\textwidth}
     \begin{minipage}[t]{.48\textwidth}
@@ -383,6 +388,7 @@
       \end{minted}
     \end{minipage}
   \end{minipage}
+  \end{leftemize}
 \end{frame}
 
 \begin{frame}[fragile]{Special Snowflakes}
@@ -467,26 +473,29 @@
 \end{frame}
 
 \begin{frame}[fragile]{Exit Codes}
-  There are various exit codes, here are a few examples:
-  \begin{minted}[bgcolor=bg, gobble=4, fontsize=\footnotesize]{bash}
-    >>> super_awesome_command
-    bash: super_awesome_command: command not found...
-    >>> echo $?
-    127
-    >>> echo "What is the exit code we want?"
-    >>> echo $?
-    0
-  \end{minted}
-  \begin{itemize}[<+- | alert@+>]
-    \item The success code we want is actually \texttt{0}.  Refer to \cite{exit} for some more examples.
-    \item Remember that \texttt{cat /dev/urandom} trickery?  You will have to \texttt{ctrl+c} to kill it, what
-          would the exit code be?
-  \end{itemize}
+  \begin{leftemize}[<+- | alert@+>]
+    \item There are various exit codes, here are a few examples:
+
+    \begin{minted}[bgcolor=bg, gobble=6, fontsize=\footnotesize]{bash}
+      >>> super_awesome_command
+      bash: super_awesome_command: command not found...
+      >>> echo $?
+      127
+      >>> echo "What is the exit code we want?"
+      >>> echo $?
+      0
+    \end{minted}
+    \begin{leftemize}
+      \item The success code we want is actually \texttt{0}.  Refer to \cite{exit} for some more examples.
+      \item Remember that \texttt{cat /dev/urandom} trickery?  You will have to \texttt{ctrl+c} to kill it, what
+            would the exit code be?
+    \end{leftemize}
+  \end{leftemize}
 \end{frame}
 
 \begin{frame}[fragile]{Executing Multiple Commands in a Row}
-  With exit codes, we can define some simple rules to chain commands together:
-
+  \alert<1>{With exit codes, we can define some simple rules to chain commands together:}
+  \pause
   \begin{itemize}[<+- | alert@+>]
     \item Always execute:
 
@@ -507,9 +516,9 @@
 \end{frame}
 
 \begin{frame}[fragile]{Piping Commands}
-  Bash scripting is all about combining simple commands together to do more powerful things.  This is accomplished
-  using the "pipe" character.
-
+  \alert<1>{Bash scripting is all about combining simple commands together to do more powerful things.  This is accomplished
+    using the "pipe" character.}
+  \pause
   \begin{block}{Piping}
     \texttt{<command1> | <command2>}
     \begin{enumerate}[\--]
@@ -538,7 +547,7 @@
 \end{frame}
 
 \begin{frame}[fragile]{Redirection}
-  To redirect input / output streams, you can use one of \texttt{>}, \texttt{>>}, \texttt{<}, or \texttt{<<}.
+  \alert<1>{To redirect input / output streams, you can use one of \texttt{>}, \texttt{>>}, \texttt{<}, or \texttt{<<}.}
   \pause
   \begin{itemize}[<+- | alert@+>]
     \item To redirect standard output, use the \texttt{>} operator.

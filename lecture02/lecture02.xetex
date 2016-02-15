@@ -37,11 +37,11 @@
 \end{frame}
 
 \begin{frame}{Some Logistics}
-  \begin{itemize}[<+- | alert@+>]
+  \begin{leftemize}[<+- | alert@+>]
     \item \alert<4>{HW0: You need GitHub.  And \only<4>{\textsc{\textbf{must have }}}a Unix environment.}
     \item Getting Started page updated with some videos, 32bit option available.
     \item (Poll) OH scheduling.  Thanks Jerome!
-  \end{itemize}
+  \end{leftemize}
 \end{frame}
 
 \begin{frame}[fragile]{Notation}
@@ -77,45 +77,45 @@
 \label{sec:unix_filesystem_overview}
 
 \begin{frame}{The Unix Filesystem}
-  \begin{itemize}[<+- | alert@+>]
-    \item Unlike Windows, UNIX has a single global "root" directory (instead of a root directory for each disk or volume)
-    \begin{itemize}[<+- | alert@+>]
+  \begin{leftemize}[<+- | alert@+>]
+    \item Unlike Windows, UNIX has a single global "root" directory (instead of a root directory for each disk or volume).
+    \begin{leftemize}
       \item The root directory is just \texttt{/}
-    \end{itemize}
-    \item All files and directories are case sensitive
-    \begin{itemize}[<+- | alert@+>]
+    \end{leftemize}
+    \item All files and directories are case sensitive.
+    \begin{leftemize}
       \item \texttt{hello.txt != hElLo.TxT}
-    \end{itemize}
-    \item Directories are separated by \texttt{/} instead of \texttt{\textbackslash}
-    \begin{itemize}[<+- | alert@+>]
+    \end{leftemize}
+    \item Directories are separated by \texttt{/} instead of \texttt{\textbackslash} in Unix.
+    \begin{leftemize}
       \item UNIX: \texttt{/home/sven/lemurs}
       \item Windows: \texttt{E:\textbackslash Documents\textbackslash lemurs}
-    \end{itemize}
+    \end{leftemize}
     \item Hidden files and folders begin with a "\texttt{.}"
-    \begin{itemize}[<+- | alert@+>]
-      \item e.g. \texttt{.git/} (a hidden directory)
-    \end{itemize}
-    \item Example: my home directory
-  \end{itemize}
+    \begin{leftemize}
+      \item e.g. \texttt{.git/} (a hidden directory).
+    \end{leftemize}
+    \item Example: my home directory.
+  \end{leftemize}
 \end{frame}
 
 \begin{frame}{What's Where?}
-  \begin{itemize}[<+- | alert@+>]
-    \item \texttt{/dev}: Hardware devices, like your hard drive, USB devices
+  \begin{leftemize}[<+- | alert@+>]
+    \item \texttt{/dev}: Hardware devices, like your hard drive, USB devices.
     \item \texttt{/lib}: Stores libraries, along with \texttt{/usr/lib}, \texttt{/usr/local/lib}, etc.
-    \item \texttt{/mnt}: Frequently used to mount disk drives
-    \item \texttt{/usr}: Mostly user-installed programs and amenities
-    \item \texttt{/etc}: System-wide settings
-  \end{itemize}
+    \item \texttt{/mnt}: Frequently used to mount disk drives.
+    \item \texttt{/usr}: Mostly user-installed programs and amenities.
+    \item \texttt{/etc}: System-wide settings.
+  \end{leftemize}
 \end{frame}
 
 \begin{frame}{What's Where: Programs Edition}
   Programs are usually installed in one of the "binaries" directories:
-  \begin{itemize}[<+- | alert@+>]
-    \item \texttt{/bin}: System programs
-    \item \texttt{/usr/bin}: Most user programs
-    \item \texttt{/usr/local/bin}: A few other user programs
-  \end{itemize}
+  \begin{leftemize}[<+- | alert@+>]
+    \item \texttt{/bin}: System programs.
+    \item \texttt{/usr/bin}: Most user programs.
+    \item \texttt{/usr/local/bin}: A few other user programs.
+  \end{leftemize}
 \end{frame}
 
 \begin{frame}[fragile]{Personal Files}
@@ -207,13 +207,13 @@
             is assumed.
     \end{enumerate}
   \end{block}
-
-  \begin{itemize}
-    \item Absolute paths start at \texttt{/}
+  \pause
+  \begin{itemize}[<+- | alert@+>]
+    \item Absolute paths start at \texttt{/} (the global root).
     \begin{itemize}
       \item e.g. \texttt{cd /home/sven/Desktop}
     \end{itemize}
-    \item Relative paths start at the current directory
+    \item Relative paths start at the current directory.
     \begin{itemize}
       \item e.g. \texttt{cd Desktop}, if you were already at \texttt{/home/sven}
     \end{itemize}
@@ -396,24 +396,24 @@
 \label{sec:flags_&_command_clarifaction}
 
 \begin{frame}[fragile]{Flags and Options}
-  \begin{itemize}[<+- | alert@+>]
+  \begin{leftemize}[<+- | alert@+>]
     \item Most commands take flags and optional arguments.
     \item These come in two general forms:
-    \begin{itemize}[<+- | alert@+>]
+    \begin{leftemize}
       \item Switches (no argument required), and
       \item Argument specifiers (for lack of a better name).
-    \end{itemize}
-    \item When specifying flags for a given command, keep in mind that:
-    \begin{itemize}[<+- | alert@+>]
+    \end{leftemize}
+    \item When specifying flags for a given command, keep in mind:
+    \begin{leftemize}
       \item Flags modify the behavior of the command / how it executes.
       \item Some flags take precedence over others, and some flags you specify can implicitly pass additional
             flags to the command.
-    \end{itemize}
-  \end{itemize}
+    \end{leftemize}
+  \end{leftemize}
 \end{frame}
 
 \begin{frame}[fragile]{Flags and Options: A bad Analogy}
-  \begin{itemize}[<+- | alert@+>]
+  \begin{leftemize}[<+- | alert@+>]
     \item If you think of a command as a computer, you could think of the flags as the different hardware
           components installed.  Let's say that in this case a hard drive is a flag.
     \item The computer shipped to you with a CPU, motherboard, hard drive, etc and installed on that hard drive
@@ -423,7 +423,7 @@
           (say Fedora).  Then you boot your computer, only this time you ended up passing the Fedora flag.
     \item Nothing about the other components of the computer changed (it's just a bunch of electricity being
           routed around), but the behavior changed because of the flag you passed.
-  \end{itemize}
+  \end{leftemize}
 \end{frame}
 
 \begin{frame}[fragile]{Flags and Options: Formats}
@@ -436,9 +436,10 @@
 \end{frame}
 
 \begin{frame}[fragile]{Flags and Options: Switches}
-  Switches take no arguments, and can be specified in a couple of different ways.  Switches are usually
-  one letter, and multiple letter switches usually have a one letter alias (the \texttt{ls} command has
-  \texttt{--all} aliased to \texttt{-a}).
+  \alert<1>{Switches take no arguments, and can be specified in a couple of different ways.  Switches are usually
+    one letter, and multiple letter switches usually have a one letter alias (the \texttt{ls} command has
+    \texttt{--all} aliased to \texttt{-a}).}
+  \pause
   \begin{itemize}[<+- | alert@+>]
     \item One option:
     \begin{itemize}
@@ -462,7 +463,8 @@
 \end{frame}
 
 \begin{frame}[fragile]{Flags and Options: Argument Specifiers}
-  These flags expect an input, and you will encounter two general kinds.
+  \alert<1>{These flags expect an input, and you will encounter two general kinds.}
+  \pause
   \begin{itemize}[<+- | alert@+>]
     \item The \texttt{--argument="value"} format, where the \texttt{=} and quotes are needed if \texttt{value} is
           more than one word.
@@ -507,9 +509,9 @@
 \end{frame}
 
 \begin{frame}[fragile]{Flags and Options: Conventions, Warnings (cont)}
-  The special sequence \texttt{--} that signals the end of the options is often most useful if you need to do something
-  special.  Suppose I wanted to make the folder \texttt{-a} on my Desktop.
-
+  \alert<1>{The special sequence \texttt{--} that signals the end of the options is often most useful if you need to do something
+    special.  Suppose I wanted to make the folder \texttt{-a} on my Desktop.}
+  \pause
   \begin{minted}[bgcolor=bg, gobble=4]{bash}
     >>> cd ~/Desktop # for demonstration purpose
     >>> mkdir -a     # fails: invalid option -- 'a'
@@ -517,9 +519,9 @@
     >>> rmdir -a     # fails: invalid option -- 'a'
     >>> rmdir -- -a  # success! (ls to confirm)
   \end{minted}
-
-  This trick can be useful in \emph{many} scenarios, and generally arises when you need to work with special characters
-  of some sort.
+  \pause
+  \alert<3>{This trick can be useful in \emph{many} scenarios, and generally arises when you need to work with special characters
+    of some sort.}
 \end{frame}
 
 \begin{frame}[fragile]{Your new best friend}
@@ -546,14 +548,16 @@
     >>> n       #  followed by enter
     ############# [next result highlighted]
   \end{minted}
-  Note that there are subtle differences between options on different systems.  For example, \texttt{ls -B}:
-  \begin{itemize}
+  \pause
+  \alert<2>{Note that there are subtle differences between options on different systems.  For example, \texttt{ls -B}:}
+  \pause
+  \begin{itemize}[<+- | alert@+>]
     \item BSD/OSX: Force printing of non-printable characters in file names as \texttt{\textbackslash xxx},
           where \texttt{xxx} is the numeric value of the character in \emph{octal}.
     \item Fedora, Ubuntu: do not list implied entries ending with \texttt{\textasciitilde}
     \begin{itemize}
       \item In these OS's, files ending with \texttt{\textasciitilde} are \emph{temporary} backup files that
-            certain programs generate
+            certain programs (e.g. some text-editors) generate.
     \end{itemize}
   \end{itemize}
 \end{frame}

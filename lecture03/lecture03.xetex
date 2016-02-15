@@ -37,16 +37,16 @@
 \end{frame}
 
 \begin{frame}{Some Logistics}
-  \begin{itemize}[<+- | alert@+>]
+  \begin{leftemize}[<+- | alert@+>]
     \item Last day to add is Wednesday 2/3.
     \item HW0: Due today at 5pm.
     \item My OH are Tuesdays 6:00pm - 7:00pm, Gates G19.
     \item On moving forward independently, and using \texttt{sudo}.
-    \begin{itemize}
+    \begin{leftemize}
       \item I strongly advise taking a \emph{snapshot} of your VM.
-    \end{itemize}
+    \end{leftemize}
     \item A note about HW1...
-  \end{itemize}
+  \end{leftemize}
 \end{frame}
 
 %
@@ -62,9 +62,9 @@
 \label{sec:working_with_files}
 
 \begin{frame}[fragile]{Users and Groups}
-  Like most OS's, Unix allows multiple people to use the same machine at once.  The question: who has access
-  to what?
-
+  \alert<1>{Like most OS's, Unix allows multiple people to use the same machine at once.  The question: who has access
+    to what?}
+  \pause
   \begin{itemize}[<+- | alert@+>]
     \item Access to files depends on the users' account.
     \item All accounts are presided over by the \colbf{S}uper\colbf{u}ser, or \texttt{root} account.
@@ -74,8 +74,8 @@
 \end{frame}
 
 \begin{frame}[fragile]{File Ownership}
-  You can discern who owns a file many ways, the most immediate being \texttt{ls -l}\wl
-
+  \alert<1>{You can discern who owns a file many ways, the most immediate being \texttt{ls -l}}\wl
+  \pause
   \begin{block}{Permissions with \texttt{ls}}
     {\small
     \texttt{>>> ls -l Makefile}\\
@@ -84,30 +84,35 @@
     \texttt{\hphantom{-rw-rw-r--. 1 sven }\colbf{users }\# the group}\\
     }
   \end{block}
+  \pause
 
-  The third column is the \emph{user}, and the fourth column is the \emph{group}.
+  \alert<3>{The third column is the \emph{user}, and the fourth column is the \emph{group}.}
 \end{frame}
 
 \begin{frame}[fragile]{What is this RWX Nonsense?}
-  R = read, W = write, X = execute\wl
-  \begin{itemize}[<+- | alert@+>]
-    \item[] \hspace*{-4ex}-\alert<2>{rwx}\alert<3>{rwx}\alert<4>{rwx}
-    \item User permissions.
-    \item Group permissions.
-    \item Other permissions (a.k.a. neither the owner, nor a member of the group).
-    \item[] \hspace*{-4ex}Directory permissions begin with a \texttt{d} instead of a \texttt{-}.
-  \end{itemize}
+  \begin{leftemize}[<+- | alert@+>]
+    \item R = read, W = write, X = execute.
+    \item \alert<3>{rwx}\alert<4>{rwx}\alert<5>{rwx}
+    \begin{leftemize}
+      \item User permissions.
+      \item Group permissions.
+      \item Other permissions (a.k.a. neither the owner, nor a member of the group).
+    \end{leftemize}
+    \item Directory permissions begin with a \texttt{d} instead of a \texttt{-}.
+  \end{leftemize}
 
 \end{frame}
 
 \begin{frame}[fragile]{An example}
-  \begin{itemize}[<+- | alert@+>]
-    \item[] \hspace*{-4ex}What would the permissions \texttt{-rwxr-----} mean?\wl
-    \item It is a file.
-    \item User can read and write to the file, as well as execute it.
-    \item Group members are allowed to read the file, but cannot write to or execute.
-    \item Other cannot do \emph{anything} with it.
-  \end{itemize}
+  \begin{leftemize}[<+- | alert@+>]
+    \item[] What would the permissions \texttt{-rwxr-----} mean?\wl
+    \begin{leftemize}
+      \item It is a file.
+      \item User can read and write to the file, as well as execute it.
+      \item Group members are allowed to read the file, but cannot write to or execute.
+      \item Other cannot do \emph{anything} with it.
+    \end{leftemize}
+  \end{leftemize}
 \end{frame}
 
 \begin{frame}[fragile]{Changing Permissions}
@@ -178,7 +183,7 @@
 \end{frame}
 
 \begin{frame}[fragile]{Platform Notes}
-  \begin{itemize}
+  \begin{leftemize}[<+- | alert@+>]
     \item Convenience flag for \texttt{chown} and \texttt{chmod} on non-BSD Unix:
 
     \begin{minted}[bgcolor=bg, gobble=6]{bash}
@@ -195,7 +200,7 @@
     \item The \texttt{stat} command inside of the \texttt{`backticks`} gets evaluated \emph{before} \texttt{chmod}
           does.
     \item The \texttt{stat} command performs a little differently on BSD/OSX by default.  Read the \texttt{man} page.
-  \end{itemize}
+  \end{leftemize}
 \end{frame}
 %%%%%
 %%%%%
@@ -220,7 +225,8 @@
 \label{sec:types_of_files}
 
 \begin{frame}[fragile]{Plain Files}
-  Plain text files are human-readable, and are usually used for things like:
+  \alert<1>{Plain text files are human-readable, and are usually used for things like:}
+  \pause
   \begin{itemize}[<+- | alert@+>]
     \item Documentation,
     \item Application settings,
@@ -231,7 +237,8 @@
 \end{frame}
 
 \begin{frame}[fragile]{Binary Files}
-  Binary files are not human-readable.  They are written in the language your computer prefers.
+  \alert<1>{Binary files are not human-readable.  They are written in the language your computer prefers.}
+  \pause
   \begin{itemize}[<+- | alert@+>]
     \item Executables,
     \item Libraries,
