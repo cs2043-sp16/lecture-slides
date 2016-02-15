@@ -37,20 +37,20 @@
 \end{frame}
 
 \begin{frame}{Some Logistics}
-  \begin{itemize}[<+- | alert@+>]
-    \item HW1 due \colbf{today} at 5pm
+  \begin{leftemize}[<+- | alert@+>]
+    \item HW1 due \colbf{today} at 5pm.
     \item OH Today: only 2pm - 3pm...thanks (again) Joe!
-    \item On my usage of \texttt{>}, which will now become \texttt{\textasciitilde>}
+    \item On my usage of \texttt{>}, which will now become \texttt{>>>} for safety.
     \item Repository confusion:
-    \begin{itemize}[<+- | alert@+>]
-      \item \emph{do \colbf{NOT} fork the \texttt{<usr>-assignments} repositories}!!!!!!
-      \item getting lectures easily: \texttt{clone} the \texttt{lecture-slides} repo, \texttt{pull} as needed
-      \item \emph{only} \texttt{fork} the \texttt{lecture-demos} repo
-      \begin{itemize}[<+- | alert@+>]
-        \item this allows you to put your demo work online, get more practice with \texttt{git}
-      \end{itemize}
-    \end{itemize}
-  \end{itemize}
+    \begin{leftemize}[<+- | alert@+>]
+      \item \emph{Do \colbf{NOT} fork the \texttt{<usr>-assignments} repositories}!!!!!!
+      \item Getting lectures easily: \texttt{clone} the \texttt{lecture-slides} repo, \texttt{pull} as needed.
+      \item \emph{Only} \texttt{fork} the \texttt{lecture-demos} repo.
+      \begin{leftemize}[<+- | alert@+>]
+        \item This allows you to put your demo work online, get more practice with \texttt{git}.
+      \end{leftemize}
+    \end{leftemize}
+  \end{leftemize}
 \end{frame}
 
 %
@@ -68,14 +68,14 @@
 \begin{frame}[fragile]{Chopping up Input}
   \begin{block}{\colbf{Cut}}
     \texttt{cut <options> [file]}
-    \begin{itemize}
-      \item \emph{must} specify a list of bytes, characters, or fields
-      \begin{itemize}
-        \item \texttt{file} is optional this time, uses \texttt{STDIN} if unspecified
-      \end{itemize}
-      \item \texttt{-b}: extracts using range of \emph{bytes}
-      \item \texttt{-c}: extracts using a range of \emph{characters}
-      \item \texttt{-f}: extracts a range of \emph{fields} separated by a delimiter
+    \begin{enumerate}[\--]
+      \item \emph{Must} specify a list of bytes, characters, or fields.
+      \begin{enumerate}
+        \item The \texttt{file} is optional this time, uses \texttt{STDIN} if unspecified.
+      \end{enumerate}
+      \item Use \texttt{-b} to extract using range of \emph{bytes}.
+      \item Use \texttt{-c} to extract using a range of \emph{characters}.
+      \item Use \texttt{-f} to extract a range of \emph{fields} separated by a delimiter.
 
       \vspace*{1ex}
       {\small
@@ -89,9 +89,9 @@
       }
       \vspace*{1ex}
 
-      \item \texttt{-d}: specify the delimiter (\texttt{TAB} by default)
-      \item \texttt{-s}: suppress line if \texttt{delimiter} not found
-    \end{itemize}
+      \item Use \texttt{-d} to specify a delimiter (\texttt{TAB} by default).
+      \item Use \texttt{-s} to suppress line if \texttt{delimiter} not found.
+    \end{enumerate}
   \end{block}
 \end{frame}
 
@@ -107,21 +107,21 @@
   \vspace*{-1ex}
   \begin{block}{Examples}
     \begin{itemize}
-      \item Get names, ignore improper lines
+      \item Get names, ignore improper lines:
       \begin{itemize}
-        \item[\textasciitilde>] \texttt{cut -d , -f 1 -s employees.csv}
+        \item[\texttt{>>>}] \texttt{cut -d , -f 1 -s employees.csv}
       \end{itemize}
-      \item Get names and phone numbers, ignore improper lines
+      \item Get names and phone numbers, ignore improper lines:
       \begin{itemize}
-        \item[\textasciitilde>] \texttt{cut -d , -f 1,3 -s employees.csv}
+        \item[\texttt{>>>}] \texttt{cut -d , -f 1,3 -s employees.csv}
       \end{itemize}
-      \item Get address (4th col and after), ignore improper lines
+      \item Get address (4th col and after), ignore improper lines:
       \begin{itemize}
-        \item[\textasciitilde>] \texttt{cut -d , -f 4- -s employees.csv}
+        \item[\texttt{>>>}] \texttt{cut -d , -f 4- -s employees.csv}
       \end{itemize}
-      \item Get 11\tsup{th} character of every line
+      \item Get 11\tsup{th} character of every line:
       \begin{itemize}
-        \item[\textasciitilde>] \texttt{cut -c 11 employees.csv}
+        \item[\texttt{>>>}] \texttt{cut -c 11 employees.csv}
       \end{itemize}
     \end{itemize}
   \end{block}
@@ -130,18 +130,18 @@
 \begin{frame}[fragile]{Splicing Input}
   \begin{block}{\colbf{Paste}}
     \texttt{paste [options] [file1] [file2] ...}
-    \begin{itemize}
+    \begin{enumerate}[\--]
       \item No \texttt{options} or \texttt{files} necessary...
-      \begin{itemize}
+      \begin{enumerate}[\--]
         \item[] ...but relatively useless program without them.
-      \end{itemize}
-      \item \texttt{-d}: specify the delimiter (\texttt{TAB} by default)
-      \item \texttt{-s}: concatenates serially instead of side-by-side
-      \item No options and one \texttt{file} specified: just like \texttt{cat}
-      \begin{itemize}
+      \end{enumerate}
+      \item Use \texttt{-d} to specify the delimiter (\texttt{TAB} by default).
+      \item Use \texttt{-s} to concatenates serially instead of side-by-side.
+      \item No options and one \texttt{file} specified: just like \texttt{cat}.
+      \begin{enumerate}[\--]
         \item Use with \texttt{-s} to join all lines of file!
-      \end{itemize}
-    \end{itemize}
+      \end{enumerate}
+    \end{enumerate}
   \end{block}
 \end{frame}
 
@@ -161,9 +161,9 @@
     }
   \end{block}
   \begin{minted}[bgcolor=bg, gobble=4, fontsize=\fontsize{10}{0}]{bash}
-    ~> paste -d , names.txt phones.txt > result.txt
+    >>> paste -d , names.txt phones.txt > result.csv
   \end{minted}
-  \begin{block}{result.txt}
+  \begin{block}{result.csv}
     {\footnotesize\ttfamily
       Alice,607-123-4567\\
       Bob,607-765-4321\\
@@ -188,9 +188,9 @@
     }
   \end{block}
   \begin{minted}[bgcolor=bg, gobble=4, fontsize=\fontsize{10}{0}]{bash}
-    ~> paste -d , -s names.txt phones.txt > result.txt
+    >>> paste -d , -s names.txt phones.txt > result.csv
   \end{minted}
-  \begin{block}{result.txt}
+  \begin{block}{result.csv}
     {\footnotesize\ttfamily
       Alice,Bob,Andy\\
       607-123-4567,607-765-4321,607-706-6007\\
@@ -208,9 +208,9 @@
     }
   \end{block}
   \begin{minted}[bgcolor=bg, gobble=4, fontsize=\fontsize{10}{0}]{bash}
-    ~> paste -d "" -s employees.csv | \
-         cut -d , -f 1- --output-delimiter="" | \
-         tr -d "[:space:]"
+    >>> paste -d "" -s employees.csv | \
+          cut -d , -f 1- --output-delimiter="" | \
+          tr -d "[:space:]"
   \end{minted}
   \begin{block}{output (all on one line...)}
     {\footnotesize\ttfamily
@@ -221,7 +221,6 @@
     }
   \end{block}
 \end{frame}
-
 %%%%%
 %%%%%
 %%%%%
@@ -247,44 +246,44 @@
 \begin{frame}[fragile]{Splitting Files}
   \begin{block}{\colbf{Split}}
     \texttt{split [options] [input] [prefix]}
-    \begin{itemize}
-      \item \texttt{-l}: how many lines in each file
-      \begin{itemize}
-        \item default is 1000
-      \end{itemize}
-      \item \texttt{-b}: how many bytes in each file
-      \item \texttt{prefix}: name prefix of each file produced
-      \item \texttt{-d}: use numeric suffixes instead of lexographic
-      \begin{itemize}
-        \item not available on OSX
-      \end{itemize}
-    \end{itemize}
+    \begin{enumerate}[\--]
+      \item Use \texttt{-l} to specify how many lines in each file.
+      \begin{enumerate}[\--]
+        \item Default is 1000.
+      \end{enumerate}
+      \item Use \texttt{-b} to specify how many bytes in each file.
+      \item The \texttt{prefix} is prepended to each file produced.
+      \item Use \texttt{-d} to produce numeric suffixes instead of lexographic.
+      \begin{enumerate}[\--]
+        \item Not available on OSX.
+      \end{enumerate}
+    \end{enumerate}
   \end{block}
+  \pause
   \begin{itemize}[<+- | alert@+>]
-    \item Extremely useful for managing large streams of data
+    \item Extremely useful for managing large streams of data.
     \item Remember that annoying \emph{dungeon} folder?
-    \begin{itemize}[<+- | alert@+>]
-      \item \texttt{split -l 5} is what we did
+    \begin{itemize}
+      \item \texttt{split -l 5} is what we did.
     \end{itemize}
   \end{itemize}
 \end{frame}
 
 \begin{frame}[fragile]{Joining Files}
-  Join lines that contain the same keys between two different files.
-
+  Join lines containing the same keys between two different files.
   \begin{block}{\colbf{Join}}
     \texttt{join [options] file1 file2}
-    \begin{itemize}
+    \begin{enumerate}[\--]
       \item Join two files at a time, no more, no less.
       \item Default: files are assumed to be delimited by \emph{whitespace}.
-      \item \texttt{-t <char>}: specify alternative \emph{single-character} delimiter.
-      \item \texttt{-1 field\_number}: join by the $n$\tsup{th} field of \texttt{file1}
-      \item \texttt{-2 field\_number}: join by the $n$\tsup{th} field of \texttt{file2}
-      \begin{itemize}
-        \item field numbers start at 1, like \texttt{cut} and \texttt{paste}
-      \end{itemize}
-      \item \texttt{-a f\_num}: displays unpaired lines of file \texttt{f\_num}.
-    \end{itemize}
+      \item Use \texttt{-t <char>} to specify an alternative \emph{single-character} delimiter.
+      \item Use \texttt{-1 field\_number} to join by the $n$\tsup{th} field of \texttt{file1}.
+      \item Use \texttt{-2 field\_number} to join by the $n$\tsup{th} field of \texttt{file2}.
+      \begin{enumerate}[\--]
+        \item Field numbers start at 1, like \texttt{cut} and \texttt{paste}.
+      \end{enumerate}
+      \item Use \texttt{-a f\_num} to display unpaired lines of file \texttt{f\_num}.
+    \end{enumerate}
   \end{block}
 \end{frame}
 
@@ -303,7 +302,7 @@
     }
   \end{block}
   \begin{minted}[bgcolor=bg, gobble=4, fontsize=\fontsize{10}{0}]{bash}
-    ~> join ages.txt salaries.txt > results.txt
+    >>> join ages.txt salaries.txt > results.txt
   \end{minted}
   \begin{block}{results.txt}
     {\footnotesize\ttfamily
@@ -328,7 +327,7 @@
     }
   \end{block}
   \begin{minted}[bgcolor=bg, gobble=4, fontsize=\fontsize{10}{0}]{bash}
-    ~> join -a1 ages.txt salaries.txt > results.txt
+    >>> join -a1 ages.txt salaries.txt > results.txt
   \end{minted}
   \begin{block}{results.txt}
     {\footnotesize\ttfamily
@@ -338,7 +337,6 @@
     }
   \end{block}
 \end{frame}
-
 %%%%%
 %%%%%
 %%%%%
@@ -364,19 +362,19 @@
 \begin{frame}[fragile]{Introducing...}
   \begin{block}{\colbf{S}tream \colbf{Ed}itor}
     \texttt{sed} [options] [script] [file]
-    \begin{itemize}
+    \begin{enumerate}[\--]
       \item Stream editor for filtering and transforming text.
       \item We will focus on \texttt{sed}'s \texttt{'s/<regex>/<text>' [file]}.
-      \begin{itemize}
+      \begin{enumerate}[\--]
         \item Replace anything that matches \texttt{<regex>} with \texttt{<text>}.
-      \end{itemize}
+      \end{enumerate}
       \item \texttt{sed} goes line by line searching for the regular expression.
-    \end{itemize}
+    \end{enumerate}
   \end{block}
-
+  \pause
   \begin{itemize}[<+- | alert@+>]
     \item We will only cover the \emph{basics}, as \texttt{sed} is an entire programming language.
-    \begin{itemize}[<+- | alert@+>]
+    \begin{itemize}
       \item As in there are entire books on it...
     \end{itemize}
     \item What is the difference between \texttt{sed} and \texttt{tr}?
@@ -388,17 +386,20 @@
 \end{frame}
 
 \begin{frame}[fragile]{A Basic Example}
+  \begin{minted}[bgcolor=bg, gobble=4]{bash}
+    >>> sed 's/not guilty/guilty/g' filename
+  \end{minted}
+  \pause
   \begin{itemize}[<+- | alert@+>]
-    \item[] \hspace*{-3ex}\texttt{sed 's/not guilty/guilty/g' filename}
     \item Replaces \emph{not guilty} with \emph{guilty} everywhere in the file.
-    \item CAUTION: You should be in the habit of using \emph{single-quotes} for strings with \texttt{sed}
-    \begin{itemize}[<+- | alert@+>]
-      \item don't have to escape every double-quote (\texttt{"})
+    \item CAUTION: You should be in the habit of using \emph{single-quotes} for strings with \texttt{sed}.
+    \begin{itemize}
+      \item don't have to escape every double-quote (\texttt{"}).
     \end{itemize}
     \item What happens if we do not have the \texttt{g}?
-    \begin{itemize}[<+- | alert@+>]
+    \begin{itemize}
       \item Without the \texttt{g}, it will only do one substitution per line.
-      \begin{itemize}[<+- | alert@+>]
+      \begin{itemize}
         \item There are definitely cases where you would want that!
       \end{itemize}
     \end{itemize}
@@ -406,40 +407,40 @@
 \end{frame}
 
 \begin{frame}[fragile]{Deletion}
-  \begin{itemize}[<+- | alert@+>]
+  \begin{leftemize}[<+- | alert@+>]
     \item Just like with \texttt{tr} we can do deletion with \texttt{sed}.
     \item \texttt{sed '/regex/d'} \-- deletes all \colbf{lines} that contain \texttt{regex}.
     \item Example:
-    \begin{itemize}[<+- | alert@+>]
-      \item \texttt{sed '/[Dd]avid/d' file1 > file2}
-      \begin{itemize}[<+- | alert@+>]
-        \item Deletes all \colbf{lines} in \texttt{file1} that contain either \emph{David} or \emph{david}, and
-              saves the result into \texttt{file2}.
-      \end{itemize}
-    \end{itemize}
-  \end{itemize}
+    \begin{minted}[bgcolor=bg, gobble=6]{bash}
+      >>> sed '/[Dd]avid/d' file1 > file2
+    \end{minted}
+    \begin{leftemize}
+      \item Deletes all \colbf{lines} in \texttt{file1} that contain either \emph{David} or \emph{david}, and
+            saves the result into \texttt{file2}.
+    \end{leftemize}
+  \end{leftemize}
 \end{frame}
 
 \begin{frame}[fragile]{Regular Expressions}
-  \begin{itemize}[<+- | alert@+>]
+  \begin{leftemize}[<+- | alert@+>]
     \item The power of \texttt{sed} is that it treats everything between the first pair of \texttt{/}'s as a
           regular expression.
     \item What does this do?
-    \begin{minted}[bgcolor=bg, gobble=6, fontsize=\fontsize{7.5}{0}]{bash}
-      ~> sed 's/[[:alpha:]]\{1,3\}[[:digit:]]*@cornell\.edu/REMOVED/g' file
+    \begin{minted}[bgcolor=bg, gobble=6, fontsize=\fontsize{7.3}{0}]{bash}
+      >>> sed 's/[[:alpha:]]\{1,3\}[[:digit:]]*@cornell\.edu/REMOVED/g' file
     \end{minted}
-    \begin{itemize}[<+- | alert@+>]
+    \begin{leftemize}
       \item Print a file with all \texttt{netID@cornell.edu} emails removed!
-    \end{itemize}
-    \item Use \texttt{-r} (\texttt{-E} on OSX) to use \emph{extended} regular expressions.
-  \end{itemize}
+    \end{leftemize}
+    \item Use \texttt{-r} (\texttt{-E} on BSD/OSX) to use \emph{extended} regular expressions.
+  \end{leftemize}
 \end{frame}
 
 \begin{frame}[fragile]{Saving Strings}
-  \begin{itemize}[<+- | alert@+>]
+  \begin{leftemize}[<+- | alert@+>]
     \item What does this do?
-    \begin{minted}[bgcolor=bg, gobble=6, fontsize=\fontsize{7.5}{0}]{bash}
-      ~> sed 's/^\([A-Z][A-Za-z]*\), \([A-Z][A-Za-z]*\)/\2 \1/' file
+    \begin{minted}[bgcolor=bg, gobble=6, fontsize=\fontsize{8}{0}]{bash}
+      >>> sed 's/^\([A-Z][A-Za-z]*\), \([A-Z][A-Za-z]*\)/\2 \1/' file
     \end{minted}
     \item Searches for an expression at the beginning of the line of the form \texttt{e1}, \texttt{e2} where
           \texttt{e1} and \texttt{e2} are "words" starting with capital letters.
@@ -450,17 +451,64 @@
     \item This script for example could convert a database file from
       \begin{center}
         {\small
-          \texttt{Lastname, Firstname} \-- to \-- \texttt{Firstname, Lastname}\\
+          \texttt{Lastname, Firstname} \-- to \-- \texttt{Firstname Lastname}\\
         }
       \end{center}
-  \end{itemize}
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{More \texttt{sed}}
+  \begin{leftemize}[<+- | alert@+>]
+    \item You can specify which lines to check by numbers or with regular expressions:
+
+    \begin{minted}[bgcolor=bg, gobble=6, fontsize=\fontsize{8}{0}]{bash}
+      # checks lines 1 to 20
+      >>> sed '1,20s/john/John/g' file
+      # checks lines beginning with "The"
+      >>> sed '/^The/s/john/John/g' file
+    \end{minted}
+
+    \item The \texttt{\&} corresponds to the pattern found:
+
+    \begin{minted}[bgcolor=bg, gobble=6, fontsize=\fontsize{8}{0}]{bash}
+      # replace words with words in quotes
+      >>> sed 's/[a-z]\+/"&"/g' file
+    \end{minted}
+
+    \item Many more resources here: \href{http://www.grymoire.com/Unix/Sed.html}{http://www.grymoire.com/Unix/Sed.html}
+  \end{leftemize}
+\end{frame}
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+%%%%% section the_stream_editor_-_sed
+%%%%
+%%%
+%%
+%
+
+%
+%%
+%%%
+%%%%
+%%%%% section sed_practice
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+\section{Sed Practice}
+\label{sec:sed_practice}
+
+\begin{frame}[fragile]{Extra Practice}
+  Can be found here: \href{https://github.com/cs2043-sp16/lecture-demos/tree/master/lec08}{https://github.com/cs2043-sp16/lecture-demos/tree/master/lec08}
 \end{frame}
 
 %%%%%
 %%%%%
 %%%%%
 %%%%%
-%%%%% section the_stream_editor_-_sed
+%%%%% section sed_practice
 %%%%
 %%%
 %%

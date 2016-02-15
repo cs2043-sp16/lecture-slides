@@ -37,10 +37,10 @@
 \end{frame}
 
 \begin{frame}{Some Logistics}
-  \begin{itemize}[<+- | alert@+>]
-    \item (poll) The \texttt{assignments} repository on GitHub
-    \item Drop deadline is Wednesday 2/10/2016
-  \end{itemize}
+  \begin{leftemize}[<+- | alert@+>]
+    \item (poll) The \texttt{assignments} repository on GitHub.
+    \item Drop deadline is Wednesday 2/10/2016.
+  \end{leftemize}
 \end{frame}
 
 %
@@ -56,39 +56,39 @@
 \label{sec:scripting}
 
 \begin{frame}[fragile]{What is a Script?}
-  \begin{itemize}[<+- | alert@+>]
+  \begin{leftemize}[<+- | alert@+>]
     \item The high-level story is: nothing special.
     \item Executable filetype.
     \item Shebang (later).
     \item Runs from top to bottom.
-  \end{itemize}
+  \end{leftemize}
 \end{frame}
 
 \begin{frame}[fragile]{Precursor: the Shebang}
-  \begin{itemize}[<+- | alert@+>]
+  \begin{leftemize}[<+- | alert@+>]
     \item The Shebang\cite{shebang} is used to tell the thing executing the script how (by what program) it should be executed.
     \item The only time that you technically do not need it is when these two are the same.
-    \begin{itemize}[<+- | alert@+>]
+    \begin{leftemize}
       \item E.g. you are using a \texttt{bash} shell, and could execute a \texttt{bash} script and be safe.
-    \end{itemize}
+    \end{leftemize}
     \item You should \emph{always} include the shebang.
-    \item If you are executing using a non-standard program, just include the executable name
-    \begin{itemize}[<+- | alert@+>]
-      \item Other users may have installed this elsewhere
-    \end{itemize}
+    \item If you are executing using a non-standard program, just include the executable name.
+    \begin{leftemize}
+      \item Other users may have installed this elsewhere.
+    \end{leftemize}
     \item With the shebang, I don't have to do \texttt{python script.py}, I can just do \texttt{./script.py}.
-  \end{itemize}
+  \end{leftemize}
 \end{frame}
 
 \begin{frame}[fragile]{Execution}
-  \begin{itemize}[<+- | alert@+>]
+  \begin{leftemize}[<+- | alert@+>]
     \item Scripts execute from top to bottom.
     \item This is just like Python, for those of you who know it already.
     \item Bad code inside an \texttt{if} statement?
-    \begin{itemize}[<+- | alert@+>]
+    \begin{leftemize}
       \item You may only realize it when that \texttt{if} statement executes.
-    \end{itemize}
-  \end{itemize}
+    \end{leftemize}
+  \end{leftemize}
 \end{frame}
 
 \begin{frame}[fragile]{Bash Scripting}
@@ -97,16 +97,16 @@
       \begin{minipage}[t]{.48\textwidth}
         \begin{itemize}[<+- | alert@+>]
           \item Use the shebang: \texttt{\#!/bin/bash}
-          \item Declare variables
-          \begin{itemize}[<+- | alert@+>]
-            \item no spaces!
+          \item Declare variables...
+          \begin{itemize}
+            \item[] ...no spaces!
           \end{itemize}
-          \item Use variables
-          \begin{itemize}[<+- | alert@+>]
-            \item dereference with \texttt{\$}
+          \item Use variables...
+          \begin{itemize}
+            \item[] ...dereference with \texttt{\$}
           \end{itemize}
-          \item Store/use commands executed
-          \begin{itemize}[<+- | alert@+>]
+          \item Store/use commands executed...
+          \begin{itemize}
             \item \texttt{\$(command ...)}
             \item \texttt{`command ...`}
           \end{itemize}
@@ -149,28 +149,27 @@
 \end{frame}
 
 \begin{frame}[fragile]{Caution}
-  \begin{itemize}[<+- | alert@+>]
+  \begin{leftemize}[<+- | alert@+>]
     \item The shebang must be the first line.  It must be a valid command.
-    \begin{itemize}[<+- | alert@+>]
-      \item If you expect a custom executable for some reason, then you should only provide the executable name
-      \begin{itemize}[<+- | alert@+>]
+    \begin{leftemize}
+      \item If you expect a custom executable for some reason, then you should only provide the executable name.
+      \begin{leftemize}
         \item e.g. \texttt{superAwesome} is the executable name, then don't specify the path to your own
               \texttt{superAwesome} executable as the user of the script likely did not install it there.
         \item Instead, use \texttt{\#! /usr/bin/env superAwesome}, making the assumption that your user has
               properly set the their \texttt{\$PATH} variable to include \texttt{superAwesome}.
         \item This is different than what I said in lecture, but a much better approach.  This is also suggested
               for how to do it for \texttt{python}.
-      \end{itemize}
-    \end{itemize}
+      \end{leftemize}
+    \end{leftemize}
     \item Not a \texttt{\#} commentable language?
-    \begin{itemize}[<+- | alert@+>]
+    \begin{leftemize}
       \item Official answer: just don't use a shebang.
       \item Unofficial answer: technically it doesn't matter, since the shebang is a hack on the first 8 bits,
             but this would render the file useless except for when it is executed by a shell.
-    \end{itemize}
-  \end{itemize}
+    \end{leftemize}
+  \end{leftemize}
 \end{frame}
-
 %%%%%
 %%%%%
 %%%%%
@@ -194,65 +193,65 @@
 \label{sec:text_editors}
 
 \begin{frame}[fragile]{VIM and Sublime}
-  \begin{itemize}[<+- | alert@+>]
+  \begin{leftemize}[<+- | alert@+>]
     \item If you have a GUI, I encourage Sublime.
     \item You do not always get one, so knowing VIM is essential.
-    \begin{itemize}[<+- | alert@+>]
+    \begin{leftemize}
       \item You are \emph{almost} guaranteed VIM will exist if you don't have a GUI.
-    \end{itemize}
+    \end{leftemize}
     \item VIM has a LARGE number of shortcuts, you will only learn them with practice.
-  \end{itemize}
+  \end{leftemize}
 \end{frame}
 
 \begin{frame}[fragile]{What is VIM?}
-  \begin{itemize}[<+- | alert@+>]
+  \begin{leftemize}[<+- | alert@+>]
     \item VIM is a powerful "lightweight" text editor.
     \item VIM actually stands for "Vi IMporoved", where \texttt{vi} is the predecessor.
     \item VIM can be installed on pretty much every OS these days.
     \item Allows you to edit things \emph{quickly}, after the initial learning curve.
-  \end{itemize}
+  \end{leftemize}
 \end{frame}
 
 \begin{frame}[fragile]{The 3 Main Modes of VIM}
-  \begin{itemize}[<+- | alert@+>]
-    \item Normal Mode
-    \begin{itemize}[<+- | alert@+>]
+  \begin{leftemize}[<+- | alert@+>]
+    \item Normal Mode:
+    \begin{leftemize}
       \item Launching pad to issue commands or go into other modes.
       \item Allows you to view the text, but not edit it directly (only through commands).
       \item You can jump to normal mode by pressing \texttt{ESCAPE}.
-    \end{itemize}
-    \item Visual Mode
-    \begin{itemize}[<+- | alert@+>]
+    \end{leftemize}
+    \item Visual Mode:
+    \begin{leftemize}
       \item Used to highlight text and perform block operations.
       \item Enter visual mode \emph{from normal mode} by pressing \texttt{v} on your keyboard.
-      \begin{itemize}[<+- | alert@+>]
+      \begin{leftemize}
         \item Visual Line: \texttt{shift+v}
         \item Visual Block: \texttt{ctl+v}
-        \item Explanation: try them all out and move your cursor around, you'll see it.
-      \end{itemize}
-    \end{itemize}
-    \item Insert Mode
-    \begin{itemize}[<+- | alert@+>]
+        \item Explanation: try them out, move your cursor around...you'll see it.
+      \end{leftemize}
+    \end{leftemize}
+    \item Insert Mode:
+    \begin{leftemize}
       \item Used to type text into the buffer (file).
       \item Like any regular text-editor you've seen before.
       \item Enter \emph{from normal mode} with the \texttt{i} key.
-    \end{itemize}
-  \end{itemize}
+    \end{leftemize}
+  \end{leftemize}
 \end{frame}
 
 \begin{frame}[fragile]{Moving Around VIM}
-  \begin{itemize}[<+- | alert@+>]
+  \begin{leftemize}[<+- | alert@+>]
     \item Most of the time (these days at least), you can scroll with your mouse / trackpad.
     \item You can also use your arrow keys.
     \item By design, VIM shortcuts exist to avoid moving your hands at all.  Use
-    \begin{itemize}[<+- | alert@+>]
-      \item \texttt{h} to go left
-      \item \texttt{j} to go down
-      \item \texttt{k} to go up
-      \item \texttt{l} to go right
-    \end{itemize}
+    \begin{leftemize}
+      \item \texttt{h} to go left.
+      \item \texttt{j} to go down.
+      \item \texttt{k} to go up.
+      \item \texttt{l} to go right.
+    \end{leftemize}
     \item With that in mind, the true VIM folk usually map left caps-lock to be \texttt{ESCAPE}.
-  \end{itemize}
+  \end{leftemize}
 \end{frame}
 
 \begin{frame}[fragile]{Useful Commands}
@@ -279,17 +278,16 @@
 \end{frame}
 
 \begin{frame}[fragile]{What?}
-  \begin{itemize}[<+- | alert@+>]
+  \begin{leftemize}[<+- | alert@+>]
     \item VIM is very complicated to start out, but when you memorize the shortcuts it will become crazy fast.
     \item I suggest you complete the OpenVIM tutorial at \cite{vimtutorial}.
     \item You can then begin learning the commands, keeping your cheat-sheet\cite{gvim-cheat} handy.
-    \begin{itemize}[<+- | alert@+>]
+    \begin{leftemize}
       \item The author of \cite{single-pdf} made a convenient pdf of that.
       \item Start with lesson 1.  When you are ready for more, continue forward.
-    \end{itemize}
-  \end{itemize}
+    \end{leftemize}
+  \end{leftemize}
 \end{frame}
-
 %%%%%
 %%%%%
 %%%%%
@@ -313,28 +311,29 @@
 \label{sec:customizing}
 
 \begin{frame}[fragile]{Modifying your Prompt: Prompt String 1}
-  \begin{itemize}[<+- | alert@+>]
+  \begin{leftemize}[<+- | alert@+>]
     \item The \texttt{\$PS1} variable controls what shows up when you type in your terminal.
     \item List of all options here: {\tiny \href{http://www.gnu.org/software/bash/manual/bashref.html#Controlling-the-Prompt}{http://www.gnu.org/software/bash/manual/bashref.html\#Controlling-the-Prompt}}
     \item Common: \texttt{export PS1="\textbackslash u@\textbackslash h:\textbackslash w> "}
-    \begin{itemize}[<+- | alert@+>]
+    \begin{leftemize}
       \item \texttt{usr@hostname:current/working/directory>}
-    \end{itemize}
+    \end{leftemize}
     \item Try changing your \texttt{\$PS1} using \texttt{export} right now to see how you can modify it.
     \item Play with colors after, since they are tedious to type in the format needed.
-  \end{itemize}
+  \end{leftemize}
 \end{frame}
 
 \begin{frame}[fragile]{Modifying your Prompt: Aliases}
   \begin{block}{Creating \colbf{Alias}es}
     \texttt{alias <new-name> <old-name>}
-    \begin{itemize}
-      \item Used to create alternative ways of entering things, usually commands
-      \item e.g. \texttt{alias ..="cd .."}
+    \begin{enumerate}[\--]
+      \item Used to create alternative ways of entering things, usually commands.
+      \item e.g. \texttt{alias ..="cd .."} means you can just type \texttt{..} to go up one directory.
       \item Think of it as copy-pasting.  You type \texttt{new-name} and your terminal pastes \texttt{old-name}.
       \item Should not ever be used in scripts.
-    \end{itemize}
+    \end{enumerate}
   \end{block}
+  \pause
   \begin{itemize}[<+- | alert@+>]
     \item Usually stored in the \texttt{\textasciitilde/.bashrc} file, though \texttt{\textasciitilde/.bash\_aliases}
           is slowly gaining traction.
@@ -343,40 +342,37 @@
 \end{frame}
 
 \begin{frame}[fragile]{Storing Customizations}
-  \begin{itemize}[<+- | alert@+>]
+  \begin{leftemize}[<+- | alert@+>]
     \item There are many such places that people put things, but generally speaking...
     \item Your \texttt{bashrc} should have things like aliases and functions.  Limit the \texttt{export} calls
           to just things related to coloring the terminal.
     \item Your \texttt{bash\_profile} should contain any special environment variables you need to define.
-    \begin{itemize}[<+- | alert@+>]
+    \begin{leftemize}
       \item Typically when you are exporting things like \texttt{\$PATH} or \texttt{\$LD\_LIBRARY\_PATH} for
             something you have installed on your own.
-    \end{itemize}
+    \end{leftemize}
     \item You should source your \texttt{bash\_profile} from your \texttt{profile}, and you should source your
           \texttt{bashrc} from your \texttt{bash\_profile}.
-  \end{itemize}
+  \end{leftemize}
 \end{frame}
 
 \begin{frame}[fragile]{Rapid Prototyping}
-  \begin{itemize}[<+- | alert@+>]
+  \begin{leftemize}[<+- | alert@+>]
     \item You may want to quickly change your \texttt{\$PS1} or something and see what it looks like immediately.
     \item Open your text editor and make the changes you want to see.  Flip back to your terminal.
     \item To reload changes immediately, use the \texttt{source} command (e.g. \texttt{source \textasciitilde/.bashrc}).
-    \begin{itemize}[<+- | alert@+>]
+    \begin{leftemize}
       \item The \texttt{bashrc} is reloaded when you open a new terminal.
       \item The \texttt{profile} (and therefore \texttt{bash\_profile}) is reloaded when you \emph{log in}.
-    \end{itemize}
+    \end{leftemize}
     \item You \emph{can} \texttt{source} the \texttt{bash\_profile}, but that will only affect the current terminal.
           In order for all new terminals to get it, you need to log out and log back in.
-  \end{itemize}
+  \end{leftemize}
 \end{frame}
 
 \begin{frame}[fragile]{Customize!!!}
   Follow the instructions in today's lecture demo: \href{https://github.com/cs2043-sp16/lecture-demos/tree/master/lec06}{https://github.com/cs2043-sp16/lecture-demos/tree/master/lec06}
-
-  A simple \& test for \texttt{\& \& \&}
 \end{frame}
-
 %%%%%
 %%%%%
 %%%%%
