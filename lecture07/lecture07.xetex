@@ -450,6 +450,33 @@
     \end{minted}
   \end{leftemize}
 \end{frame}
+
+\begin{frame}[fragile]{Detaching Jobs}
+  \vspace*{-0.5ex}
+  \alert<1>{When you launch jobs with an \texttt{\&} and then close your terminal, those jobs will \emph{end}.}
+  \vspace*{-0.5ex}
+  \begin{block}{\colbf{No H}ang\colbf{up}}
+    \texttt{nohup <command> [args]}
+    \begin{enumerate}[\--]
+      \item Launches \texttt{command} so it will not end with \texttt{SIGHUP} signals.
+      \item E.g. {\footnotesize\texttt{nohup vlc best\_song\_ever.flac > /dev/null 2>\&1 \&}}
+      \begin{enumerate}[\--]
+        \item Now we do not lose \texttt{vlc} when we close our terminal.
+      \end{enumerate}
+    \end{enumerate}
+  \end{block}
+  \vspace*{-1ex}
+  \pause
+  \alert<2>{If you have already launched the job, you can still save it.}
+  \begin{block}{\colbf{Disown} a Job}
+    \texttt{disown [flags] jobspec}
+    \begin{enumerate}[\--]
+      \item The \texttt{-h} flag prevents \texttt{jobspec} from \texttt{SIGHUP} killing it.
+      \item The \texttt{jobspec} is the job number (e.g. run \texttt{jobs}).
+      \item E.g. if \texttt{jobID} 1 is \texttt{vlc}, then \texttt{disown -h \%1} will work.
+    \end{enumerate}
+  \end{block}
+\end{frame}
 %%%%%
 %%%%%
 %%%%%
