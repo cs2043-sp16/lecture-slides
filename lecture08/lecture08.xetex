@@ -70,7 +70,7 @@
     \texttt{cut <options> [file]}
     \begin{enumerate}[\--]
       \item \emph{Must} specify a list of bytes, characters, or fields.
-      \begin{enumerate}
+      \begin{enumerate}[\--]
         \item The \texttt{file} is optional this time, uses \texttt{STDIN} if unspecified.
       \end{enumerate}
       \item Use \texttt{-b} to extract using range of \emph{bytes}.

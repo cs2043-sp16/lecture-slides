@@ -1,0 +1,471 @@
+% Cornell CS 2043: Unix Tools and Scripting
+% Spring 2016
+%
+% http://cs2043-sp16.github.io/
+%
+% These slides have been created using the metroplis theme demo found here:
+%
+%     https://github.com/matze/mtheme.git
+%
+% I am a huge fan of the metropolis theme...thanks @matze!
+\input{../common-header.input}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% \begin
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\title{09 \-- Bash Scripting II}
+\subtitle{CS 2043: Unix Tools and Scripting, Spring 2016 \cite{prevSemesters}}
+\date{February 17th, 2016}
+\author{Stephen McDowell}
+\institute{Cornell University}
+
+\begin{document}
+\maketitle
+
+% TOC
+\begin{frame}{Table of contents}
+  \setbeamertemplate{section in toc}[sections numbered]
+  \tableofcontents[hideallsubsections]
+\end{frame}
+
+\begin{frame}{Some Logistics}
+  \begin{leftemize}[<+- | alert@+>]
+    \item All materials have been updated: \texttt{>} became \texttt{>>>}.
+    \item Great job with HW1: only about 20 \texttt{git} mishaps I am aware of.  Out of 200, that's stellar!
+    \item Today is more scripting.  The first bit was in \href{http://cs2043-sp16.github.io/slides/lecture06/lecture06.pdf}{\colbf{\texttt{\underline{lec06}}}}.
+    \item \texttt{VIM} will be coming back soon when we hit \texttt{ssh}...review \texttt{lec06}.
+    \item Lecture demos 7 and 8 are up.
+    \begin{leftemize}
+      \item \texttt{lec07} is just a transcript of what we did at the end.
+      \item \texttt{lec08} is definitely worth taking a look at...\texttt{sed} is \emph{very} powerful.
+    \end{leftemize}
+  \end{leftemize}
+\end{frame}
+
+%
+%%
+%%%
+%%%%
+%%%%% section scripting_recap
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+\section{Scripting Recap}
+\label{sec:scripting_recap}
+
+\begin{frame}[fragile]{Review I}
+  \begin{leftemize}[<+- | alert@+>]
+    \item A script just executes from the top to the bottom.
+    \begin{leftemize}
+      \item Calling functions or using variables? They must be defined \emph{first}.
+    \end{leftemize}
+    \item We are doing \texttt{bash}.  Use the proper Shebang (\texttt{\#!/bin/bash}).
+    \item Declaring variables: cannot have spaces on side of equals signs!
+    \begin{leftemize}
+      \item \emph{Yes}: \texttt{FOO="value"}
+      \item \emph{No}: \texttt{FOO = "value"}
+    \end{leftemize}
+    \item Dereference the value with the \texttt{\$} symbol.
+    \begin{leftemize}
+      \item[\texttt{>>>}] \texttt{echo "\$FOO"}
+      \item Note: for safety, always expand variables \emph{inside} \underline{double} quotes.
+      \item[\texttt{>>>}] \texttt{echo 'Singles joining'"\$FOO"' in doubles...'}
+    \end{leftemize}
+    \item Single quotes are the one ring to rule them all.
+    \begin{leftemize}
+      \item Things are read \emph{literally}, including special symbols.
+      \item[\texttt{>>>}] \texttt{echo '\$USER'}
+      \item Refer to \cite{quotes} for more.
+    \end{leftemize}
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{Review II}
+  \begin{leftemize}[<+- | alert@+>]
+    \item When you need to execute a command and store it in a variable, you have two options:
+    \begin{leftemize}
+      \item Surround it with backticks (\texttt{`...cmd...`}):
+      \begin{leftemize}
+        \item[\texttt{>>>}] \texttt{VAR=`echo value`}
+      \end{leftemize}
+      \item Surround it with \texttt{\$(...cmd...)}:
+      \begin{leftemize}
+        \item[\texttt{>>>}] \texttt{VAR=\$(echo value)}
+      \end{leftemize}
+      \item Both still work, but you should prefer \texttt{\$(...)} to backticks, as backticks are \emph{deprecated}.
+      \item Not all commands work out as you expect. If you are not getting the results you expect, print out
+            the variable.  A bad example:
+      \begin{minted}[bgcolor=bg,gobble=8]{bash}
+        #!/bin/bash
+        STATUS=$(echo "error string" > /dev/null)
+        echo "$STATUS"
+      \end{minted}
+    \end{leftemize}
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{Remember the Exit Codes}
+  \alert<1>{Recall from \texttt{lec04} that commands have exit codes:}
+  \pause
+  \begin{itemize}[<+- | alert@+>]
+    \item Always execute:
+
+    \begin{minted}[bgcolor=bg, gobble=6, fontsize=\footnotesize]{bash}
+      >>> cmd1; cmd2   # exec cmd1 first, then cmd2
+    \end{minted}
+
+    \item Execute conditioned upon exit code:
+
+    \begin{minted}[bgcolor=bg, gobble=6, fontsize=\footnotesize]{bash}
+      >>> cmd1 && cmd2 # exec cmd2 only if cmd1 returned 0
+      >>> cmd1 || cmd2 # exec cmd2 only if cmd1 returned NOT 0
+    \end{minted}
+
+    \item Kind of backwards, in terms of what means continue for \emph{and}, but that was likely easier to implement
+          since there is only one \texttt{0} and many \colbf{not} \texttt{0}'s.
+    \item Reference the exit code of the previous command with \texttt{\$?}
+  \end{itemize}
+\end{frame}
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+%%%%% section scripting_recap
+%%%%
+%%%
+%%
+%
+
+%
+%%
+%%%
+%%%%
+%%%%% section bash_basics
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+\section{Bash Basics}
+\label{sec:bash_basics}
+
+\begin{frame}[fragile]{Arithmetic Expansion}
+  \begin{leftemize}[<+- | alert@+>]
+    \item The shell will expand arithmetic expressions that are encased in \texttt{\$(( expr ))}
+
+    \begin{minted}[bgcolor=bg,gobble=6,fontsize=\fontsize{8}{0}]{bash}
+      >>> echo $((2+3))  # standard addition
+      5
+      >>> echo $((2<3))  # less than: true is 1
+      1
+      >>> echo $((2>3))  # greater than: false is 0
+      0
+      >>> echo $((2/3))  # division: BASH IS ONLY INTEGERS!!!
+      0
+      >>> x=10           # set a variable
+      >>> echo $((x++))  # post increment: only for variables,
+      10                 # does it AFTER...
+      >>> echo "$x"      # ...but see it did increment
+      11
+      >>> echo $((++x))  # pre increment: only for variables,
+      12                 # does it BEFORE....
+      >>> echo "$x"      # ...only one increment took place
+      12
+      >>> sum=$(($x+10)) # use variables like normal,
+      >>> echo "$sum"    # note: no quotes "$x" (it is a number)
+      22
+    \end{minted}
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{Syntax Notes}
+  \begin{leftemize}[<+- | alert@+>]
+    \item The Shebang does not need a space, but can have it if you want.  The following all work:
+
+    \begin{minted}[bgcolor=bg,gobble=6,fontsize=\fontsize{8}{0}]{bash}
+      #!/bin/bash
+      #! /bin/bash
+      #!          /bin/bash
+      #!                   /bin/bash
+    \end{minted}
+
+    \item Just needs whitespace, the \texttt{\#!} is the \emph{magic}.  Just need:
+    \begin{leftemize}
+      \item The \texttt{\#!} to be the very first two characters, and
+      \item the executable separated by whitespace \emph{on the same line}.
+    \end{leftemize}
+    \item In bash, you use \texttt{\#} to start a comment (line / end of line that will not execute).
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{Passing Arguments to Scripts}
+  \begin{leftemize}[<+- | alert@+>]
+    \item When you pass arguments to a bash script, you can access them in a few different ways:
+    \begin{leftemize}
+      \item \texttt{\$1}, \texttt{\$2}, ..., \texttt{\$10}, \texttt{\$11}: values of the first, second, etc
+            arguments to the script.
+      \begin{leftemize}
+        \item If you do not have that many arguments, the variable value is just \emph{empty}.
+      \end{leftemize}
+      \item \texttt{\$0} is the name of the script.
+      \item \texttt{\$\#} is the number of arguments (\texttt{argc} in \texttt{C}).
+      \item \texttt{\$?} is the exit code of the last program executed.
+      \begin{leftemize}
+        \item You can have your script set this with \texttt{exit <number>}, read the \texttt{man} page.
+      \end{leftemize}
+      \item \texttt{\$\$} is the current process identification number (PID).
+      \item \texttt{\$*} expands \texttt{\$1} .. \texttt{\$n} into one string.
+      \begin{leftemize}
+        \item \texttt{\$*} $\Longrightarrow$ \texttt{"\$1 \$2 ... \$n"}
+      \end{leftemize}
+      \item \texttt{\$@} expands \texttt{\$1} .. \texttt{\$n} into individual strings.
+      \begin{leftemize}
+        \item \texttt{\$@} $\Longrightarrow$ \texttt{"\$1" "\$2" ... "\$n"}
+      \end{leftemize}
+    \end{leftemize}
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{Simple Examples}
+  \begin{minted}[bgcolor=bg,gobble=4,fontsize=\fontsize{8}{0}]{bash}
+    #!/bin/bash
+    # File: multiply.sh
+    echo $(( $1 * $2 )) # print out arg1 * arg2
+  \end{minted}
+  \pause
+  \vspace*{-2ex}
+  \alert<2>{\texttt{./multiply.sh 5 10}}
+  \pause
+  \vspace*{-1ex}
+  \begin{minted}[bgcolor=bg,gobble=4,fontsize=\fontsize{8}{0}]{bash}
+    #!/bin/bash
+    # File: toLower.sh
+    tr '[A-Z]' '[a-z]' < $1 > $2 # read in arg1 and tr into arg2
+  \end{minted}
+  \pause
+  \vspace*{-2ex}
+  \alert<4>{\texttt{./toLower.sh input\_file output\_file}}
+  \pause
+  \vspace*{-1ex}
+  \begin{minted}[bgcolor=bg,gobble=4,fontsize=\fontsize{8}{0}]{bash}
+    #!/bin/bash
+    # File: expansion.sh
+    # note the use of single quotes to get a literal *
+    echo 'This is the *:'
+    for var in "$*"; do
+        echo "Var: $var"
+    done
+
+    echo 'This is the @:'
+    for var in "$@"; do
+        echo "Var: $var"
+    done
+  \end{minted}
+  \pause
+  \vspace*{-1ex}
+  \alert<6>{\texttt{./expansion.sh hello there "billy bob"}}
+\end{frame}
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+%%%%% section bash_basics
+%%%%
+%%%
+%%
+%
+
+%
+%%
+%%%
+%%%%
+%%%%% section conditonal_statements
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+\section{Conditonal Statements}
+\label{sec:conditonal_statements}
+
+\begin{frame}[fragile]{If Conditionals}
+  \begin{leftemize}[<+- | alert@+>]
+    \item If statements are structured just as you would expect...
+  \begin{minipage}[t]{\textwidth}
+    \vspace*{-3ex}
+    \begin{minipage}[t]{.48\textwidth}
+      \begin{minted}[bgcolor=bg, gobble=8, fontsize=\fontsize{7.05}{0}]{bash}
+        if [ CONDITION_1 ]
+        then
+            # statements
+        elif [ CONDITION_2 ]
+        then
+            # statements
+        else
+            # statements
+        fi  # fi necessary
+      \end{minted}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{.48\textwidth}
+      \begin{minted}[bgcolor=bg, gobble=8, fontsize=\fontsize{7.05}{0}]{bash}
+        # The `then` is necessary...
+        # use a semicolon to shorten code
+        if [ CONDITION_1 ]; then
+            # statements
+        elif [ CONDITION_2 ]; then
+            # statements
+        else
+            # statements
+        fi  # fi necessary
+      \end{minted}
+    \end{minipage}
+  \end{minipage}
+  \item Double brackets \texttt{[[ expr ]]} allow for more features e.g. boolean operations.  You generally
+        should \emph{always} use double brackets.
+  \begin{minipage}[t]{\textwidth}
+    \vspace*{-3ex}
+    \begin{minted}[bgcolor=bg, gobble=6, fontsize=\fontsize{7.05}{0}]{bash}
+      if [[ CONDITION_1 ]] || [[ CONDITION_2 ]]; then
+          # statements
+      elif [[ CONDITION_3 ]] && [[ CONDITION_4 ]]; then
+          # statements
+      else
+          # statements
+      fi  # fi necessary
+    \end{minted}
+  \end{minipage}
+  \item Note that you need spaces before and after the brackets!!!
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{Test Expressions}
+  \begin{leftemize}[<+- | alert@+>]
+    \item Bash has a special set of commands that allow various checks.
+    \item Numerical comparisons (often used with variables):
+    \begin{itemize}[<+- | alert@+>]
+      \item \texttt{n1 -eq n2} tests if $n1 = n2$.
+      \item \texttt{n1 -ne n2} tests if $n1 \neq n2$.
+      \item \texttt{n1 -lt n2} tests if $n1 < n2$.
+      \item \texttt{n1 -le n2} tests if $n1 \leq n2$.
+      \item \texttt{n1 -gt n2} tests if $n1 > n2$.
+      \item \texttt{n1 -ge n2} tests if $n1 \geq n2$.
+      \item If either \texttt{n1} or \texttt{n2} are not a number, the test fails.
+    \end{itemize}
+    \item String comparisons:
+    \begin{itemize}[<+- | alert@+>]
+      \item \texttt{s1 == s2} tests if \texttt{s1} and \texttt{s2} are identical.
+      \item \texttt{s1 != s2} tests if \texttt{s1} and \texttt{s2} are different.
+      \item Make sure you have spaces!
+      \begin{itemize}
+        \item \texttt{s1==s2} will \emph{fail}...
+      \end{itemize}
+    \end{itemize}
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{Path Testing}
+  \begin{leftemize}[<+- | alert@+>]
+    \item If \texttt{path} is a string indicating a path, we can test its validity and attributes:
+    \begin{itemize}
+      \item \texttt{-e path} tests if \texttt{path} exists.
+      \item \texttt{-f path} tests if \texttt{path} is a file.
+      \item \texttt{-d path} tests if \texttt{path} is a directory.
+      \item \texttt{-r path} tests if you have permission to read the file.
+      \item \texttt{-w path} tests if you have write permission.
+      \item \texttt{-x path} tests if you have execute permission.
+      \item \texttt{-s path} tests if the file is empty.
+      \item There are many of these, refer to \cite{bash-if} for more.
+    \end{itemize}
+  \end{leftemize}
+\end{frame}
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+%%%%% section conditonal_statements
+%%%%
+%%%
+%%
+%
+%
+%%
+%%%
+%%%%
+%%%%% section loops
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+\section{Loops}
+\label{sec:loops}
+\begin{frame}[fragile]{For Loops}
+  \begin{minted}[bgcolor=bg,gobble=4]{bash}
+    for var in s1 s2 s3; do
+        cmd1
+        cmd2
+    done
+  \end{minted}
+  \pause
+  \begin{minted}[bgcolor=bg,gobble=4]{bash}
+    for var in {000..22}; do
+        cmd1
+        cmd2
+    done
+  \end{minted}
+  \pause
+  \begin{minted}[bgcolor=bg,gobble=4]{bash}
+    for (( i = 0; i < 10; i++ )); do
+        cmd1
+        cmd2
+    done
+  \end{minted}
+\end{frame}
+
+\begin{frame}[fragile]{While Loops}
+  \begin{minted}[bgcolor=bg,gobble=4,fontsize=\footnotesize]{bash}
+    while [[ condition ]]; do
+        cmd1
+        cmd2
+    done
+  \end{minted}
+  \pause
+  \begin{minted}[bgcolor=bg,gobble=4,fontsize=\footnotesize]{bash}
+    FILE="filename.txt"
+    while read line; do
+        cmd1
+        cmd2
+    done < "$FILE"
+  \end{minted}
+  \pause
+  \begin{minted}[bgcolor=bg,gobble=4,fontsize=\footnotesize]{bash}
+    FILE="filename.txt"
+    for line in $(cat "$FILE"); do # NEVER DO THIS
+        cmd1
+        cmd2
+    done
+  \end{minted}
+\end{frame}
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+%%%%% section loops
+%%%%
+%%%
+%%
+%
+
+\begin{frame}[allowframebreaks]{References}
+  \bibliography{references}
+  \bibliographystyle{abbrv}
+\end{frame}
+
+\end{document}
