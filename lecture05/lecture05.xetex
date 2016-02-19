@@ -37,11 +37,11 @@
 \end{frame}
 
 \begin{frame}{Some Logistics}
-  \begin{itemize}[<+- | alert@+>]
-    \item The \texttt{assignments} repository on GitHub
+  \begin{leftemize}[<+- | alert@+>]
+    \item The \texttt{assignments} repository on GitHub.
     \item Course pacing...
-    \item HW1 tonight
-  \end{itemize}
+    \item HW1 tonight.
+  \end{leftemize}
 \end{frame}
 
 %
@@ -57,20 +57,21 @@
 \label{sec:shell_expansion}
 
 \begin{frame}[fragile]{Wildcards}
-  There are various special characters you have access too in your shell to expand phrases to match patterns,
-  such as \texttt{*}, \texttt{?}, \texttt{\^{}}, \texttt{\{}, \texttt{\}}, \texttt{[}, \texttt{]}.
+  \alert<1>{There are various special characters you have access too in your shell to expand phrases to match patterns,
+    such as \texttt{*}, \texttt{?}, \texttt{\^{}}, \texttt{\{}, \texttt{\}}, \texttt{[}, \texttt{]}.}
+  \pause
   \begin{itemize}[<+- | alert@+>]
-    \item Any string
-    \item A single character
-    \item A phrase
-    \item A restricted set of characters
+    \item Any string.
+    \item A single character.
+    \item A phrase.
+    \item A restricted set of characters.
   \end{itemize}
 \end{frame}
 
 \begin{frame}[fragile]{Shell Expansion: Example}
-  \begin{itemize}
-    \item \texttt{*} matches any string, including the null string (e.g. 0 or more characters)
-  \end{itemize}
+  \begin{leftemize}
+    \item The \texttt{*} matches any string, including the null string (e.g. 0 or more characters).
+  \end{leftemize}
   \begin{center}
     {\small
     \begin{tabular}{|l|l|l|}
@@ -85,9 +86,9 @@
 \end{frame}
 
 \begin{frame}[fragile]{Shell Expansion: Example}
-  \begin{itemize}
-    \item \texttt{?} matches a single character
-  \end{itemize}
+  \begin{leftemize}
+    \item The \texttt{?} matches a single character.
+  \end{leftemize}
   \begin{center}
     {\small
     \begin{tabular}{|l|l|l|}
@@ -101,13 +102,13 @@
 \end{frame}
 
 \begin{frame}[fragile]{Shell Expansion: Example}
-  \begin{itemize}
-    \item \texttt{[...]} matches any character inside the square brackets
-    \begin{itemize}
-      \item Use a dash to indicate a range of characters
-      \item Can put commas between characters / ranges
-    \end{itemize}
-  \end{itemize}
+  \begin{leftemize}
+    \item Brace enumerations \texttt{[...]} match any character inside the square brackets.
+    \begin{leftemize}
+      \item Use a dash to indicate a range of characters.
+      \item Can put commas between characters / ranges.
+    \end{leftemize}
+  \end{leftemize}
   \begin{center}
     {\small
     \begin{tabular}{|l|l|l|}
@@ -122,9 +123,12 @@
 \end{frame}
 
 \begin{frame}[fragile]{Shell Expansion: Example}
-  \begin{itemize}
-    \item \texttt{[\^{}...]} matches any character \colbf{not} inside the square brackets
-  \end{itemize}
+  \begin{leftemize}
+    \item The \texttt{\^{}} character is represents \emph{not}.
+    \begin{leftemize}
+      \item E.g. \texttt{[\^{}...]} matches any character \colbf{not} inside the square brackets.
+    \end{leftemize}
+  \end{leftemize}
   \begin{center}
     {\small
     \begin{tabular}{|l|l|l|}
@@ -138,11 +142,11 @@
 \end{frame}
 
 \begin{frame}[fragile]{Shell Expansion: Example}
-  \begin{itemize}
-    \item \colbf{Brace Expansion}: \texttt{\{..., ...\}} matches any phrase inside the comma-separated braces.
+  \begin{leftemize}
+    \item \colbf{Brace Expansion}: \texttt{\{...,...\}} matches any phrase inside the comma-separated braces.
     \item Suports ranges as well!
     \item Brace expansion needs at least two options to choose from.
-  \end{itemize}\vspace*{-2ex}
+  \end{leftemize}\vspace*{-2ex}
   \begin{center}
     {\small
     \begin{tabular}{|l|l|}
@@ -178,20 +182,20 @@
 \end{frame}
 
 \begin{frame}[fragile]{Interpreting Special Characters}
-  The special characters are
+  \alert<1>{The special characters are}
   \begin{center}
-    \texttt{\$ * < > \& ? \{ \} [ ]}
+    \alert<1>{\texttt{\$ * < > \& ? \{ \} [ ]}}
   \end{center}
+  \pause
   \begin{itemize}[<+- | alert@+>]
-    \item The shell interprets them in a special way uness we escape them (\texttt{\textbackslash\$}), or place
-          them in quotes ("\$")
+    \item The shell interprets them in a special way unless we escape them (\texttt{\textbackslash\$}), or place
+          them in quotes ("\$").
     \item When we first invoke a command, the shell first translates it from a string of characters to a Unix
           command that it understands.
     \item A shell's ability to interpret and expand commands is one of the powers of shell scripting.
     \item These will become your friends, and we'll see them again...
   \end{itemize}
 \end{frame}
-
 %%%%%
 %%%%%
 %%%%%
@@ -215,78 +219,85 @@
 \label{sec:sets_regular_expressions_and_usage}
 
 \begin{frame}[fragile]{\texttt{tr} Revisited}
-  \texttt{tr} does not understand regular expressions per se (and really for the task it is designed for they
-  don't make sense), but it \colbf{does} understand ranges and \texttt{POSIX} character sets:\wl
+  \alert<1>{The \texttt{tr} does not understand regular expressions per se (and really for the task it is designed for they
+    don't make sense), but it \colbf{does} understand ranges and \texttt{POSIX} character sets:}
+  \pause
   \begin{block}{Useful Sets}
-    \begin{itemize}
-      \item \texttt{[:alnum:]} - alphanumeric characters
-      \item \texttt{[:alpha:]} - alphabetic characters
-      \item \texttt{[:digit:]} - digits
-      \item \texttt{[:punct:]} - punctuation characters
-      \item \texttt{[:lower:]} - lowercase letters
-      \item \texttt{[:upper:]} - uppercase letters
-      \item \texttt{[:space:]} - whitespace characters
-    \end{itemize}
+    \wl
+    \begin{center}
+      \begin{tabular}{|c|l|}
+        \hline
+        \texttt{[:alnum:]} & alphanumeric characters\\ \hline
+        \texttt{[:alpha:]} & alphabetic characters\\ \hline
+        \texttt{[:digit:]} & digits\\ \hline
+        \texttt{[:punct:]} & punctuation characters\\ \hline
+        \texttt{[:lower:]} & lowercase letters\\ \hline
+        \texttt{[:upper:]} & uppercase letters\\ \hline
+        \texttt{[:space:]} & whitespace characters\\ \hline
+      \end{tabular}
+    \end{center}
+    \wl
   \end{block}
 \end{frame}
 
 \begin{frame}[fragile]{If you Leave this Class with Anything...}
-  Quite possibly the two most common things anybody uses in a terminal:
+  \alert<1>{Quite possibly the two most common things anybody uses in a terminal:}
+  \pause
 
   \begin{itemize}[<+- | alert@+>]
-    \item \texttt{find}: searching for files / directories by name or attributes
-    \item \texttt{grep}: search contents of files
-    \item Used in conjunction with expansions, sets, and regular expressions
+    \item \texttt{find}: searching for files / directories by name or attributes.
+    \item \texttt{grep}: search contents of files.
+    \item Used in conjunction with expansions, sets, and regular expressions.
   \end{itemize}
 \end{frame}
 
 \begin{frame}[fragile]{Finding Yourself}
   \begin{block}{\colbf{find}}
     \texttt{find [where to look] criteria [what to do]}
-    \begin{itemize}
-      \item Used to locate files or directories
-      \item Search any set of directories for files that match a criteria
-      \item Search by name, owner, group, type, permissions, last modification date, and \emph{more}
-      \item Search is recursive (will search all subdirectories too)
-      \begin{itemize}
-        \item Sometimes you may need to limit the depth
-      \end{itemize}
-    \end{itemize}
+    \begin{enumerate}[\--]
+      \item Used to locate files or directories.
+      \item Search any set of directories for files that match a criteria.
+      \item Search by name, owner, group, type, permissions, last modification date, and \emph{more}.
+      \item Search is recursive (will search all subdirectories too).
+      \begin{enumerate}[\--]
+        \item Sometimes you may need to limit the depth.
+      \end{enumerate}
+    \end{enumerate}
   \end{block}
 \end{frame}
 
 \begin{frame}[fragile]{Some Find Options}
-  \begin{itemize}
-    \item \texttt{-name}: name of file or directory to look for
-    \item \texttt{-maxdepth num}: descend at most num levels of directories while searching
-    \item \texttt{-mindepth num}: descend at least num levels of directories while searching
-    \item \texttt{-amin n}: file last access was n minutes ago
-    \item \texttt{-atime n}: file last access was n days ago
-    \item \texttt{-group name}: file belongs to group name
-    \item \texttt{-path pattern}: file name matches shell pattern pattern
-    \item \texttt{-perm mode}: file permission bits are set to mode
-  \end{itemize}
+  \begin{leftemize}
+    \item[] \texttt{-name}: name of file or directory to look for.
+    \item[] \texttt{-maxdepth num}: search at most \texttt{num} levels of directories.
+    \item[] \texttt{-mindepth num}: search at least \texttt{num} levels of directories.
+    \item[] \texttt{-amin n}: file last access was \texttt{n} minutes ago.
+    \item[] \texttt{-atime n}: file last access was \texttt{n} days ago.
+    \item[] \texttt{-group name}: file belongs to group \texttt{name}.
+    \item[] \texttt{-path pattern}: file name matches shell pattern \texttt{pattern}.
+    \item[] \texttt{-perm mode}: file permission bits are set to \texttt{mode}.
+  \end{leftemize}
 
   Of course...a lot more in \colbf{man find}.
 \end{frame}
 
 \begin{frame}[fragile]{Some Details}
-  \begin{itemize}[<+- | alert@+>]
+  \begin{leftemize}[<+- | alert@+>]
     \item This command is extremely powerful...but can be a little verbose.  That's normal.
     \item Normally all modifiers for \texttt{find} are evalulated in conjunction (a.k.a AND).  You can condition
           your arguments with an OR by passing the \texttt{-o} flag \emph{for each} modifier you want to be an OR.
     \item You can execute a command on found files / directories by using the \texttt{-exec} modifier, and \texttt{find}
           will execute the command for you.
-    \begin{itemize}[<+- | alert@+>]
-      \item The variable name is \texttt{\{\}}
+    \begin{leftemize}
+      \item The variable name is \texttt{\{\}}.
       \item You have to end the command with either a
-      \begin{itemize}[<+- | alert@+>]
-        \item \texttt{;} to execute the command on each individual result
-        \item \texttt{+} to execute on all results
+      \begin{leftemize}
+        \item \texttt{;} to execute the command on each individual result as you \emph{find} them.
+        \item \texttt{+} to execute on all results once \emph{at the end}.
         \item \colbf{Note}: You have usually to escape them, e.g. \texttt{\textbackslash ;} and \texttt{\textbackslash +}
-      \end{itemize}
-    \end{itemize}
-  \end{itemize}
+      \end{leftemize}
+    \end{leftemize}
+  \end{leftemize}
 \end{frame}
 
 \begin{frame}[fragile]{Some Examples}
@@ -307,36 +318,39 @@
 \begin{frame}[fragile]{Time for the Magic}
   \begin{block}{\colbf{G}lobally Search a \colbf{R}egular \colbf{E}xpression and \colbf{P}rint}
     \texttt{grep <pattern> [input]}
-    \begin{itemize}
-      \item Searches \texttt{input} for all lines containing \texttt{pattern}
-      \item Can be as easy as specifying a \texttt{string} you need to find in a \texttt{file}
+    \begin{enumerate}[\--]
+      \item Searches \texttt{input} for all lines containing \texttt{pattern}.
+      \item As easy as specifying a \texttt{string} you need to find in a \texttt{file}.
       \item Or it can be much more.
-      \item Common: \texttt{<some\_command> | grep <thing you need to find>}
-    \end{itemize}
+      \item Common:
+      \begin{enumerate}[\--]
+        \item[] \texttt{<some\_command> | grep <thing you need to find>}
+      \end{enumerate}
+    \end{enumerate}
   \end{block}\wl
 
-  Understanding how to use grep is really going to save you a lot of time in the future!
+  Understanding how to use \texttt{grep} is really going to save you a lot of time in the future!
 \end{frame}
 
 \begin{frame}[fragile]{Grep Options}
-  \begin{itemize}
-    \item \texttt{-i}: ignores case
-    \item \texttt{-A 20 -B 10}: prints the 10 lines before and 20 lines after each match
-    \item \texttt{-v}: inverts the match
-    \item \texttt{-o}: shows only the matched substring
-    \item \texttt{-n}: displays the line number
-    \item \texttt{-H}: print the filename
-    \item \texttt{--exclude <glob>}: ignore \texttt{glob} e.g. \texttt{--exclude *.o}
-    \item \texttt{-r}: recursive, search subdirectories too.
-    \begin{itemize}
-      \item \colbf{Note}: you're Unix version may differentiate between \texttt{-r} and \texttt{-R}, check the
+  \begin{leftemize}
+    \item[] \texttt{-i}: ignores case.
+    \item[] \texttt{-A 20 -B 10}: print 10 lines before, and 20 lines after each match.
+    \item[] \texttt{-v}: inverts the match.
+    \item[] \texttt{-o}: shows only the matched substring.
+    \item[] \texttt{-n}: displays the line number.
+    \item[] \texttt{-H}: print the filename.
+    \item[] \texttt{--exclude <glob>}: ignore \texttt{glob} e.g. \texttt{--exclude *.o}
+    \item[] \texttt{-r}: recursive, search subdirectories too.
+    \begin{leftemize}
+      \item \colbf{Note:} you're Unix version may differentiate between \texttt{-r} and \texttt{-R}, check the
             \texttt{man} page.  We'll cover what that means soon.
-    \end{itemize}
-  \end{itemize}
+    \end{leftemize}
+  \end{leftemize}
 \end{frame}
 
 \begin{frame}[fragile]{Regular Expressions}
-  \begin{itemize}[<+- | alert@+>]
+  \begin{leftemize}[<+- | alert@+>]
     \item \texttt{grep}, like many programs, takes in a \colbf{regular expression} as its \texttt{input}.
           Pattern matching with regular expressions is more sophisticated than shell expansions, and also uses
           different syntax.
@@ -344,7 +358,7 @@
           expression.
     \item When we use regular expressions, it is (usually) best to enclose them in quotes to stop the shell from
           expanding it before passing it to \texttt{grep} / other tools.
-  \end{itemize}
+  \end{leftemize}
 \end{frame}
 
 \begin{frame}[fragile]{Regular Expression Notes}
@@ -356,41 +370,41 @@
     \end{itemize}
     Wild card: \texttt{[a-z]} \hspace*{2ex} Regex: \texttt{[a-z]}
     \begin{itemize}
-      \item Matches one of the indicated characters
+      \item Matches one of the indicated characters.
       \item Don't separate multiple characters with commas in the \texttt{regex} form (e.g. \texttt{[a,b,q-v]}
-            becomes \texttt{[abq-v]})
+            becomes \texttt{[abq-v]}).
     \end{itemize}
   \end{block}
   \begin{block}{A Simple Example}
-    \texttt{grep 't.a'} \-- prints lines with things like \texttt{tea}, \texttt{taa}, and \texttt{steap}
+    \texttt{grep 't.a'} \-- prints lines like \texttt{tea}, \texttt{taa}, and \texttt{steap}.
   \end{block}
 \end{frame}
 
 \begin{frame}[fragile]{A Note on Ranges}
-  \begin{itemize}[<+- | alert@+>]
+  \begin{leftemize}[<+- | alert@+>]
     \item Like shell wildcards, regexs are case-sensitive.  What if you want to match any letter, regardless of case?
-    \begin{itemize}[<+- | alert@+>]
+    \begin{leftemize}
       \item If you take a look at the ASCII codes I keep mentioning in \cite{ascii}, you will see that the lower case
             letters come after the upper case letters.
       \item You should be careful about trying to do something like \texttt{[a-Z]}.
       \item Instead, just do \texttt{[a-zA-Z]}.
-      \item \colbf{Note}: some programs very well could accept the range \texttt{[a-Z]} correctly.
-    \end{itemize}
-  \end{itemize}
+      \item \colbf{Note:} some programs very well could accept the range \texttt{[a-Z]} correctly.
+    \end{leftemize}
+  \end{leftemize}
 \end{frame}
 
 \begin{frame}[fragile]{Workarounds}
-  \begin{itemize}[<+- | alert@+>]
+  \begin{leftemize}[<+- | alert@+>]
     \item \texttt{grep} accepts the \texttt{POSIX} sets we learned earlier!
-    \begin{itemize}[<+- | alert@+>]
-      \item e.g. \texttt{ls | grep [[:digit:]]} gives all files with numbers in the filename
-    \end{itemize}
-    \item \texttt{*} \-- matches 0 or more occurences of the expression
-    \item \texttt{\textbackslash ?} \-- matches 0 or 1 occurences of the expression
-    \item \texttt{\textbackslash +} \-- matches 1 or more occurences of the expression
+    \begin{leftemize}
+      \item e.g. \texttt{ls | grep [[:digit:]]} gives all files with numbers in the filename.
+    \end{leftemize}
+    \item \texttt{*} matches 0 or more occurences of the expression.
+    \item \texttt{\textbackslash ?} matches 0 or 1 occurences of the expression.
+    \item \texttt{\textbackslash +} matches 1 or more occurences of the expression.
     \item Remember that you can flip the expressions with the not signal: \texttt{\^{}}
-    \item The \texttt{\$} can be used to match the end of the line
-  \end{itemize}
+    \item The \texttt{\$} can be used to match the end of the line.
+  \end{leftemize}
 \end{frame}
 
 \begin{frame}[fragile]{To be continued...}

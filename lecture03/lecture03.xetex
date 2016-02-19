@@ -1,0 +1,379 @@
+% Cornell CS 2043: Unix Tools and Scripting
+% Spring 2016
+%
+% http://cs2043-sp16.github.io/
+%
+% These slides have been created using the metroplis theme demo found here:
+%
+%     https://github.com/matze/mtheme.git
+%
+% I am a huge fan of the metropolis theme...thanks @matze!
+\input{../common-header.input}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% \begin
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\title{03 \-- Manipulating Files and Using Git}
+\subtitle{CS 2043: Unix Tools and Scripting, Spring 2016 \cite{prevSemesters}}
+\date{February 1st, 2016}
+\author{Stephen McDowell}
+\institute{Cornell University}
+
+\begin{document}
+\maketitle
+
+% TOC
+\begin{frame}{Table of contents}
+  \setbeamertemplate{section in toc}[sections numbered]
+  \tableofcontents[hideallsubsections]
+\end{frame}
+
+\begin{frame}{Some Logistics}
+  \begin{leftemize}[<+- | alert@+>]
+    \item Last day to add is Wednesday 2/3.
+    \item HW0: Due today at 5pm.
+    \item My OH are Tuesdays 6:00pm - 7:00pm, Gates G19.
+    \item On moving forward independently, and using \texttt{sudo}.
+    \begin{leftemize}
+      \item I strongly advise taking a \emph{snapshot} of your VM.
+    \end{leftemize}
+    \item A note about HW1...
+  \end{leftemize}
+\end{frame}
+
+%
+%%
+%%%
+%%%%
+%%%%% section working_with_files
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+\section{Working with Files}
+\label{sec:working_with_files}
+
+\begin{frame}[fragile]{Users and Groups}
+  \alert<1>{Like most OS's, Unix allows multiple people to use the same machine at once.  The question: who has access
+    to what?}
+  \pause
+  \begin{itemize}[<+- | alert@+>]
+    \item Access to files depends on the users' account.
+    \item All accounts are presided over by the \colbf{S}uper\colbf{u}ser, or \texttt{root} account.
+    \item Each user has absolute control over any files they own, which can only be superseded by \texttt{root}.
+    \item Files can also be owned by a \texttt{group}, allowing more users to have access.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{File Ownership}
+  \alert<1>{You can discern who owns a file many ways, the most immediate being \texttt{ls -l}}\wl
+  \pause
+  \begin{block}{Permissions with \texttt{ls}}
+    {\small
+    \texttt{>>> ls -l Makefile}\\
+    \texttt{-rw-rw-r--. 1 sven users 4.9K Jan 31 04:42 Makefile}\\
+    \texttt{\hphantom{-rw-rw-r--. 1 }\colbf{sven}\hphantom{ users }\# the user}\\
+    \texttt{\hphantom{-rw-rw-r--. 1 sven }\colbf{users }\# the group}\\
+    }
+  \end{block}
+  \pause
+
+  \alert<3>{The third column is the \emph{user}, and the fourth column is the \emph{group}.}
+\end{frame}
+
+\begin{frame}[fragile]{What is this RWX Nonsense?}
+  \begin{leftemize}[<+- | alert@+>]
+    \item R = read, W = write, X = execute.
+    \item \alert<3>{rwx}\alert<4>{rwx}\alert<5>{rwx}
+    \begin{leftemize}
+      \item User permissions.
+      \item Group permissions.
+      \item Other permissions (a.k.a. neither the owner, nor a member of the group).
+    \end{leftemize}
+    \item Directory permissions begin with a \texttt{d} instead of a \texttt{-}.
+  \end{leftemize}
+
+\end{frame}
+
+\begin{frame}[fragile]{An example}
+  \begin{leftemize}[<+- | alert@+>]
+    \item[] What would the permissions \texttt{-rwxr-----} mean?\wl
+    \begin{leftemize}
+      \item It is a file.
+      \item User can read and write to the file, as well as execute it.
+      \item Group members are allowed to read the file, but cannot write to or execute.
+      \item Other cannot do \emph{anything} with it.
+    \end{leftemize}
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{Changing Permissions}
+  \begin{block}{\colbf{Ch}ange \colbf{Mod}e}
+    \texttt{chmod <mode> <file>}
+    \begin{enumerate}[\--]
+      \item Changes file / directory permissions to \texttt{<mode>}.
+      \item The format of \texttt{<mode>} is a combination of three fields:
+      \begin{enumerate}[\--]
+        \item Who is affected: a combination of \texttt{u}, \texttt{g}, \texttt{o}, or \texttt{a} (all).
+        \item Use a \texttt{+} to add permissions, and a \texttt{-} to remove.
+        \item Specify type of permission: any combination of \texttt{r}, \texttt{w}, \texttt{x}.
+      \end{enumerate}
+      \item Or you can specify mode in octal: user, then group, then other.
+      \begin{enumerate}[\--]
+        \item e.g. \texttt{777} means user=7, group=7, other=7 permissions.
+      \end{enumerate}
+    \end{enumerate}
+  \end{block}
+  The octal version can be confusing, but will save you time.  Excellent resource in \cite{chmod}.
+\end{frame}
+
+\begin{frame}[fragile]{Changing Ownership}
+  Changing the group
+  \begin{block}{\colbf{Ch}ange \colbf{Gr}ou\colbf{p}}
+    \texttt{chgrp group <file>}
+    \begin{enumerate}[\--]
+      \item Changes the group ownership of \texttt{<file>} to \texttt{group}.
+    \end{enumerate}
+  \end{block}
+
+  As the super user, you can change who owns a file:
+
+  \begin{block}{\colbf{Ch}ange \colbf{Own}ership}
+    \texttt{chown user:group <file>}
+    \begin{enumerate}[\--]
+      \item Changes the ownership of \texttt{<file>}.
+      \item The \texttt{group} is optional.
+      \item The \texttt{-R} flag is useful for recursively modifying everything in a directory.
+    \end{enumerate}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{File Ownership, Alternate}
+  If you are like me, you often forget which column is which in \texttt{ls -l}...
+
+  \begin{block}{\colbf{Stat}us of a file or filesystem}
+    \texttt{stat [opts] <filename>}
+    \begin{enumerate}[\--]
+      \item Gives you a wealth of information, generally more than you will every actually need.
+      \item \texttt{Uid} is the user, \texttt{Gid} is the group.
+      \begin{enumerate}[\--]
+        \item BSD/OSX: use \texttt{stat -x} for standard display of this command.
+      \end{enumerate}
+      \item Can be useful if you want to mimic file permissions you don't know.
+      \begin{enumerate}[\--]
+        \item Human readable: \texttt{--format=\%A}, e.g. \texttt{-rw-rw-r--}
+        \begin{enumerate}[\--]
+          \item BSD/OSX: \texttt{-f \%Sp} is used instead.
+        \end{enumerate}
+        \item Octal: \texttt{--format=\%a} (great for \texttt{chmod}), e.g. \texttt{664}
+        \begin{enumerate}[\--]
+          \item BSD/OSX: \texttt{-f \%A} is used instead.
+        \end{enumerate}
+      \end{enumerate}
+    \end{enumerate}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Platform Notes}
+  \begin{leftemize}[<+- | alert@+>]
+    \item Convenience flag for \texttt{chown} and \texttt{chmod} on non-BSD Unix:
+
+    \begin{minted}[bgcolor=bg, gobble=6]{bash}
+      >>> chmod --reference=<src> <dest>
+    \end{minted}
+
+    \item Set the permissions of \texttt{dest} to the permissions of \texttt{src}!
+    \item BSD/OSX users: \texttt{--reference} does not exist, you will have to execute two commands.
+
+    \begin{minted}[bgcolor=bg, gobble=6]{bash}
+      >>> chmod `stat -f %A <src>` <dest>
+    \end{minted}
+
+    \item The \texttt{stat} command inside of the \texttt{`backticks`} gets evaluated \emph{before} \texttt{chmod}
+          does.
+    \item The \texttt{stat} command performs a little differently on BSD/OSX by default.  Read the \texttt{man} page.
+  \end{leftemize}
+\end{frame}
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+%%%%% section working_with_files
+%%%%
+%%%
+%%
+%
+
+%
+%%
+%%%
+%%%%
+%%%%% section types_of_files
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+\section{Types of Files and Usages}
+\label{sec:types_of_files}
+
+\begin{frame}[fragile]{Plain Files}
+  \alert<1>{Plain text files are human-readable, and are usually used for things like:}
+  \pause
+  \begin{itemize}[<+- | alert@+>]
+    \item Documentation,
+    \item Application settings,
+    \item Source code,
+    \item Logs, and
+    \item Anything you may want to read via the terminal (e.g. README.txt).
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Binary Files}
+  \alert<1>{Binary files are not human-readable.  They are written in the language your computer prefers.}
+  \pause
+  \begin{itemize}[<+- | alert@+>]
+    \item Executables,
+    \item Libraries,
+    \item Media files,
+    \item Archives (.zip, etc), and many more.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Reading Files Without Opening}
+  \vspace*{-0.5ex}
+  \begin{block}{Con\colbf{cat}enate}
+    \texttt{cat <filename>}
+    \begin{enumerate}[\--]
+      \item Prints the contents of the file to the terminal window
+    \end{enumerate}
+    \texttt{cat <file1> <file2>}
+    \begin{enumerate}[\--]
+      \item Prints \texttt{file1} first, then \texttt{file2}.
+    \end{enumerate}
+  \end{block}
+  \vspace*{-1ex}
+  \begin{block}{\colbf{more}}
+    \texttt{more <filename>}
+    \begin{enumerate}[\--]
+      \item Scroll through one page at a time.
+      \item Program exits when end is reached.
+    \end{enumerate}
+  \end{block}
+  \vspace*{-1ex}
+  \begin{block}{\colbf{less}}
+    \texttt{less <filename>}
+    \begin{enumerate}[\--]
+      \item Scroll pages or lines (mouse wheel, space bar, and arrows).
+      \item Program does not exit when end is reached.
+    \end{enumerate}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Beginning and End}
+  Long files can be a pain with the previous tools.
+
+  \begin{block}{\colbf{Head} and \colbf{Tail} of Input}
+    \texttt{head -[numlines] <filename>}\\
+    \texttt{tail -[numlines] <filename>}
+    \begin{enumerate}[\--]
+      \item Prints the first / last numlines of the file.
+      \item Default is 10 lines.
+    \end{enumerate}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Not Really a File...YET}
+  You can talk to yourself in the terminal too!
+
+  \begin{block}{\colbf{Echo}}
+    \texttt{echo <text>}
+    \begin{enumerate}[\--]
+      \item Prints the input string to the standard output (the terminal).
+      \item We will soon learn how to use \texttt{echo} to put things into files, append to files, etc.
+    \end{enumerate}
+  \end{block}
+\end{frame}
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+%%%%% section types_of_files
+%%%%
+%%%
+%%
+%
+
+%
+%%
+%%%
+%%%%
+%%%%% section let_s_git_started
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+\section{Let's Git Started}
+\label{sec:let_s_git_started}
+
+\begin{frame}[fragile]{Another Brief Git Demo}
+  If you are not at lecture, don't worry about this slide not making any sense.\wl
+
+  \begin{minted}[bgcolor=bg, gobble=4]{bash}
+    >>> git clone <url>   # get a local copy
+    >>> git status        # informs you of changes
+    >>> git add <file(s)> # if you need it online
+    >>> git commit        # saves this version
+    >>> git push          # puts the commit online
+  \end{minted}
+\end{frame}
+
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+%%%%% section let_s_git_started
+%%%%
+%%%
+%%
+%
+
+%
+%%
+%%%
+%%%%
+%%%%% section demo_time_
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+\section{Demo Time!}
+\label{sec:demo_time_}
+\begin{frame}[fragile]{Our first in class demo}
+  Instructions are here:\wl
+
+  {\small \href{https://github.com/cs2043-sp16/lecture-demos/tree/master/lec03}{https://github.com/cs2043-sp16/lecture-demos/tree/master/lec03}}
+\end{frame}
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+%%%%% section demo_time_
+%%%%
+%%%
+%%
+%
+
+\begin{frame}[allowframebreaks]{References}
+  \bibliography{references}
+  \bibliographystyle{abbrv}
+\end{frame}
+
+\end{document}

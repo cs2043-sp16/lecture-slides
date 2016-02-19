@@ -49,14 +49,14 @@
 \label{sec:welcome}
 
 \begin{frame}{Redacted...}
-  \begin{itemize}
+  \begin{leftemize}
     \item Due to technical complications on the first day, and reduced attendance due to Snowzilla,  I choose
           not to release the original slides.
     \item All we did was talk about course logistics, which you can find at
           \href{http://cs2043-sp16.github.io/}{\texttt{\colbf{http://cs2043-sp16.github.io/}}}.
     \item My original slides were greatly tailored to the words that would have been said.  Ultimately, all of
           the information presented can be obtained from the course website.
-  \end{itemize}
+  \end{leftemize}
 \end{frame}
 
 \begin{frame}{Redacted...}
