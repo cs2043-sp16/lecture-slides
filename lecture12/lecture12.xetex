@@ -1,0 +1,262 @@
+% Cornell CS 2043: Unix Tools and Scripting
+% Spring 2016
+%
+% http://cs2043-sp16.github.io/
+%
+% These slides have been created using the metroplis theme demo found here:
+%
+%     https://github.com/matze/mtheme.git
+%
+% I am a huge fan of the metropolis theme...thanks @matze!
+\input{../common-header.input}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% \begin
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\title{12 \-- Awk/Gawk, More Git Branching}
+\subtitle{CS 2043: Unix Tools and Scripting, Spring 2016 \cite{prevSemesters}}
+\date{February 24th, 2016}
+\author{Stephen McDowell}
+\institute{Cornell University}
+
+\begin{document}
+\maketitle
+
+% TOC
+\begin{frame}{Table of contents}
+  \setbeamertemplate{section in toc}[sections numbered]
+  \tableofcontents[hideallsubsections]
+\end{frame}
+
+\begin{frame}{Some Logistics}
+  \begin{leftemize}[<+- | alert@+>]
+    \item HW2 is online...officially!
+    \item Subtle changes to \texttt{README.md}, none that are important except:
+    \begin{leftemize}
+      \item (OH Yesterday): I am giving sample files.
+      \item Lecture 08 demo will be updated soon: using different separators in \texttt{sed}.
+      \item Excellent Piazza question: why is \texttt{read} behaving this way?
+      \item Directory structure sort of changed, but only in that you get more files.  No changes to instructions.
+      \item Challenge task at end.
+      \item You are FORBIDDEN from using today's lecture in \texttt{HW2}, except for the \texttt{gandalfify\_extreme.sh} challenge question.
+    \end{leftemize}
+    \item (Poll) should I even cover Python?
+  \end{leftemize}
+\end{frame}
+
+
+%
+%%
+%%%
+%%%%
+%%%%% section awk_gawk
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+\section{AWK / GAWK}
+\label{sec:awk_gawk}
+
+\begin{frame}[fragile]{\texttt{awk} Introduction}
+  \begin{leftemize}[<+- | alert@+>]
+    \item \texttt{awk} is a programming language designed for processing text-based data.
+    \begin{leftemize}
+      \item Allows easy operation on fields rather than full lines.
+      \item Works in a \emph{pattern-action} manner, like \texttt{sed}.
+      \item Supports numerical types (and operations).
+      \item Supports control-flow (e.g. \texttt{if-else} statements).
+    \end{leftemize}
+    \item Created at Bell Labs in the 1970s.
+    \begin{leftemize}
+      \item Alfred \colbf{A}ho, Peter \colbf{W}einberger, and Brian \colbf{K}enrighan.
+      \item An ancestor of \texttt{perl}, a \emph{cousin} of \texttt{sed}.
+    \end{leftemize}
+    \item Very powerful.
+    \begin{leftemize}
+      \item It's \emph{Turing Complete}!
+    \end{leftemize}
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{gawk}
+  \begin{leftemize}[<+- | alert@+>]
+    \item \texttt{gawk} is the GNU implementation of the \texttt{awk} programming language.
+    \item On BSD/OSX, it is just called \texttt{awk}.
+    \item On GNU, it is technically \texttt{gawk}.  But should reliably be "symlinked" as \texttt{awk}.
+    \item \texttt{awk} allows us to setup filters to handle text as easily as numbers.
+    \item The basic structure of an \texttt{awk} program is:
+    \begin{leftemize}
+      \item[] \texttt{pattern1 \{ commands \}}
+      \item[] \texttt{pattern2 \{ commands \}}
+      \item[] \texttt{...}
+    \end{leftemize}
+    \item Patterns can be regular expressions!
+    \begin{leftemize}
+      \item Proceeds line by line, checking each pattern one by one, executing \texttt{commands} if \texttt{pattern}
+            is found.
+    \end{leftemize}
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{Why use \texttt{awk} over \texttt{sed}?}
+  \begin{leftemize}[<+- | alert@+>]
+    \item Convenient numerical processing.
+    \item Variables and control flow in the actions.
+    \item Convenient way of accessing fields within lines.
+    \item Flexible printing.
+    \item Built-in arithmetic and string functions.
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{Simple Examples}
+  \begin{leftemize}[<+- | alert@+>]
+    \item[] \texttt{awk '/[Mm]onster/ \{print\}' frankenstein.txt}
+    \begin{leftemize}
+      \item Print all lines containing \texttt{Monster} or \texttt{monster}.
+    \end{leftemize}
+    \item[] \texttt{awk '/[Mm]onster/' frankenstein.txt}
+    \begin{leftemize}
+      \item If no action specified, default is to print the whole line.
+    \end{leftemize}
+    \item[] \texttt{awk '/[Mm]onster/ \{print \$0\}' frankenstein.txt}
+    \begin{leftemize}
+      \item The \texttt{\$0} variable in \texttt{awk} refers to the \emph{whole line}.
+    \end{leftemize}
+    \item[] \texttt{awk '/[Mm]onster/ \{print \$1\}' frankenstein.txt}
+    \begin{leftemize}
+      \item The first item.  Can be delimited by something other than whitespace, just like \texttt{sed}.
+    \end{leftemize}
+    \item \texttt{awk} understand \colbf{extended} regular expressions by default :)
+    \begin{leftemize}
+      \item We don't need to escape \texttt{+}, \texttt{?}, etc!
+    \end{leftemize}
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{\texttt{BEGIN} and \texttt{END}}
+  \begin{leftemize}[<+- | alert@+>]
+    \item \texttt{awk} allows blocks of code to be executed only once, at the beginning / end.
+    \item With the script \texttt{monstrosity.awk} and \texttt{frankenstein.txt} in current directory:
+    \begin{minted}[bgcolor=bg,gobble=6,fontsize=\footnotesize]{bash}
+      #!/usr/bin/awk -f
+      BEGIN { print "Starting search for monster..." }
+      /[Mm]onster/{ count++ }
+      END { print "Found " count " monsters in the book." }
+    \end{minted}
+    \item Use the \texttt{-f} in conjunction with shebang to cheat \texttt{awk} (it uses the script itself).
+    \begin{minted}[bgcolor=bg,gobble=6,fontsize=\footnotesize]{bash}
+      >>> ./monstrosity.awk                       # hangs...
+      >>> ./monstrosity.awk frankenstein.txt      # yay!
+      >>> awk -f monstrosity.awk frankenstein.txt # yay!
+    \end{minted}
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{Important Variables}
+  \begin{leftemize}[<+- | alert@+>]
+    \item \texttt{NF}: the number of fields in the current line.
+    \item \texttt{NR}: the number of lines read so far.
+    \begin{leftemize}
+      \item You cannot change \texttt{NF} or \texttt{NR}.
+    \end{leftemize}
+    \item \texttt{FILENAME}: the name of the input file.
+    \item \texttt{FS}: the \texttt{field separator}.
+    \begin{leftemize}
+      \item Change \texttt{FS=","} for a \texttt{csv}.
+      \item Can also specify the \texttt{-F} flag for the \texttt{FS}.
+    \end{leftemize}
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{Matching and \texttt{awk}}
+  \begin{leftemize}[<+- | alert@+>]
+    \item \texttt{awk} can match any of the following pattern types:
+    \begin{leftemize}
+      \item \texttt{/regular expression/}
+      \item \texttt{relational expression}
+      \item \texttt{pattern \&\& pattern}
+      \item \texttt{pattern || pattern}
+      \item \texttt{pattern1 ? pattern2: pattern3}
+      \begin{leftemize}
+        \item If \texttt{pattern1}, then match \texttt{pattern2}.  Otherwise, match \texttt{pattern3}.
+      \end{leftemize}
+      \item \texttt{(pattern)}: parenthesis to group / change order of operations.
+      \item \texttt{! pattern} to invert.
+      \item \texttt{pattern1, pattern2}: match \texttt{pattern1}, work on every line until it matches \texttt{pattern2}.
+      \begin{leftemize}
+        \item Cannot combine this...
+      \end{leftemize}
+    \end{leftemize}
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{Much Much More...}
+  \begin{leftemize}[<+- | alert@+>]
+    \item Regular expression usage / comparisons: {\tiny \href{https://www.gnu.org/software/gawk/manual/html_node/Regexp-Usage.html#index-_0021-_0028exclamation-point_0029_002c-_0021_007e-operator}{https://www.gnu.org/software/gawk/manual/html\_node/Regexp-Usage.html\#index-\_0021-\_0028exclamation-point\_0029\_002c-\_0021\_007e-operator}}
+    \item More comparison operations: {\tiny \href{https://www.gnu.org/software/gawk/manual/html_node/Comparison-Operators.html#Comparison-Operators}{https://www.gnu.org/software/gawk/manual/html\_node/Comparison-Operators.html\#Comparison-Operators}}
+    \item Powerful built-in functions:
+    \begin{leftemize}
+      \item \texttt{toupper()}
+      \item \texttt{tolower()}
+      \item \texttt{exp(x)}: exponential of \texttt{x}
+      \item \texttt{rand()}: random number between \texttt{0} and \texttt{1}
+      \item \texttt{length(x)}: length of \texttt{x}
+      \item \texttt{log(x)}: returns the log of \texttt{x}
+      \item \texttt{sin(x)}: returns the sin of \texttt{x}
+      \item \texttt{int(x)}: convert to integer
+      \item etc
+    \end{leftemize}
+    \item Wealth of information: {\tiny \href{http://www.grymoire.com/Unix/Awk.html}{http://www.grymoire.com/Unix/Awk.html}}
+  \end{leftemize}
+\end{frame}
+
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+%%%%% section awk_gawk
+%%%%
+%%%
+%%
+%
+
+%
+%%
+%%%
+%%%%
+%%%%% section more_branching
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+\section{More Branching}
+\label{sec:more_branching}
+
+\begin{frame}[fragile]{Branching Continued}
+  Lecture slides...PART II!
+\end{frame}
+
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+%%%%% section more_branching
+%%%%
+%%%
+%%
+%
+
+\begin{frame}[allowframebreaks]{References}
+  \bibliography{references}
+  \bibliographystyle{abbrv}
+\end{frame}
+
+\end{document}
