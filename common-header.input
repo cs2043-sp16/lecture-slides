@@ -16,7 +16,7 @@
 %
 % Initial theme setup
 %
-\documentclass[11pt]{beamer}
+\documentclass[11pt,handout]{beamer}
 \usetheme{metropolis}
 \metroset{background=dark} % easier on the eyes, in my opinion
 \setbeamertemplate{bibliography item}{\insertbiblabel}
