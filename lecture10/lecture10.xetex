@@ -1,0 +1,332 @@
+% Cornell CS 2043: Unix Tools and Scripting
+% Spring 2016
+%
+% http://cs2043-sp16.github.io/
+%
+% These slides have been created using the metroplis theme demo found here:
+%
+%     https://github.com/matze/mtheme.git
+%
+% I am a huge fan of the metropolis theme...thanks @matze!
+\input{../common-header.input}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% \begin
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\title{10 \-- Bash Scripting III, Git Merging and Diffs}
+\subtitle{CS 2043: Unix Tools and Scripting, Spring 2016 \cite{prevSemesters}}
+\date{February 19th, 2016}
+\author{Stephen McDowell}
+\institute{Cornell University}
+
+\begin{document}
+\maketitle
+
+% TOC
+\begin{frame}{Table of contents}
+  \setbeamertemplate{section in toc}[sections numbered]
+  \tableofcontents[hideallsubsections]
+\end{frame}
+
+\begin{frame}{Some Logistics}
+  \begin{leftemize}[<+- | alert@+>]
+    \item (poll) are you confused about how to access the various resources in the class?
+    \item Review of variables.
+    \item Sorry about today...
+    \item ...I wanted to get your HW to you. That will happen tonight.
+  \end{leftemize}
+\end{frame}
+
+%
+%%
+%%%
+%%%%
+%%%%% section more_on_conditions
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+\section{More on Conditions}
+\label{sec:more_on_conditions}
+
+\begin{frame}[fragile]{Case}
+  \begin{leftemize}[<+- | alert@+>]
+    \item Just like a switch statement in other languages, only better.
+    \item Does not carry on to all cases if you forget that \texttt{break} keyword.
+
+    \begin{minted}[bgcolor=bg, gobble=8, fontsize=\fontsize{7.05}{0}]{bash}
+        case "$var" in
+          "A" )
+              cmds to execute for case "A"
+              ;;
+          "B" )
+              cmds to execute for case "B"
+              ;;
+          * )
+              cmds for DEFAULT (not matched) case
+              ;;
+        esac
+      \end{minted}
+
+    \item Basically just shorthand for \texttt{if-elif-else}...
+    \item ...only not!
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{Simple If and Case Examples}
+  \begin{leftemize}[<+- | alert@+>]
+    \item Suppose we wanted to make a simple program to print between 0 and 2 \texttt{blargh}s.
+    \item Assume that the input to the script is \texttt{\$1}.
+    \item We don't need to check because it will just not match.
+    \begin{minipage}[t]{\textwidth}
+      \begin{minipage}[t]{.48\textwidth}
+        \vspace*{-2ex}
+        \begin{minted}[bgcolor=bg, gobble=10, fontsize=\fontsize{7}{0}]{bash}
+          #! /bin/bash
+          #
+          # (empty to fill space in minted)
+          # (empty to fill space in minted)
+          #
+          if [[ "$1" == "0" ]]; then
+            echo "0 blargh echoes..."
+          elif [[ "$1" == "1" ]]; then
+            echo "1 blargh echoes..."
+            echo "  [1] blargh"
+          # number or string
+          elif [[ "$1" -eq 2 ]]; then
+            echo "2 blargh echoes..."
+            echo "  [1] blargh"
+            echo "  [2] blargh"
+          else
+            echo "Blarghs come in [0-2]."
+            exit 1
+          fi
+        \end{minted}
+      \end{minipage}
+      \hfill
+      \begin{minipage}[t]{.48\textwidth}
+        \vspace*{-2ex}
+        \begin{minted}[bgcolor=bg, gobble=10, fontsize=\fontsize{7}{0}]{bash}
+          #! /bin/bash
+          case "$1" in
+            "0" )
+              echo "0 blargh echoes..."
+              ;;
+            "1" )
+              echo "1 blargh echoes..."
+              echo " [1] blargh"
+              ;;
+            # number or string
+            2 )
+              echo "2 blargh echoes..."
+              echo " [1] blargh"
+              echo " [2] blargh"
+              ;;
+            * )
+              echo "Blarghs come in [0-2]."
+              exit 1
+              ;;
+          esac
+        \end{minted}
+      \end{minipage}
+  \end{minipage}
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{Case and If Comparisons}
+  \begin{leftemize}[<+- | alert@+>]
+    \item The matching strategy is different for \texttt{case} than \texttt{if}.
+    \begin{leftemize}
+      \item By default, \texttt{case} statements are comparing \emph{patterns}.
+      \begin{leftemize}
+        \item Note that a single value e.g. \texttt{"A"} is just an explicit pattern.
+        \item Patterns are NOT regular expressions. Refer to~\cite{patterns}.
+      \end{leftemize}
+      \item By default, \texttt{if} statements are comparing values.
+      \begin{leftemize}
+        \item To use \emph{extended regular expressions} in \texttt{if} statements, you need to use the
+              \texttt{=\textasciitilde} operator.
+        \item In most \texttt{bash}, the expression on the \emph{right} is treated as an \emph{extended} regular
+              expression.
+        \item Not for all pre-\texttt{4.0}, pull up \texttt{man bash} and search for \texttt{=\textasciitilde}.
+        \item Remember to search in the man page type \texttt{/expr to search} and hit \texttt{enter}.
+        \item Cycle through the results with \texttt{n} for next search result.
+      \end{leftemize}
+    \end{leftemize}
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{Using Sets with \texttt{case}}
+  \begin{leftemize}[<+- | alert@+>]
+    \item \texttt{case} with the set \texttt{[0-9]}:
+
+    \begin{minted}[bgcolor=bg, gobble=6, fontsize=\fontsize{8}{0}]{bash}
+      #! /bin/bash
+      case "$1" in
+        [[:digit:]] )
+          echo "$1 blargh echoes..."
+          for (( i = 1; i <= $1; i++ )); do
+              echo "  [$i] blargh"
+          done
+          ;;
+        * )
+          echo "Blarghs only come in [0-9]."
+          exit 1
+          ;;
+      esac
+    \end{minted}
+
+    \item This will work on inputs \texttt{0-9}, as well as exit for everything else.
+    \item It will not match \texttt{11}, because that is not in the \texttt{set}.
+    \item Refer to~\cite{patterns} for the extent of what you can do with \texttt{case}.
+    \item It should now make more sense why \texttt{*} being last is equivalent to \texttt{default}.
+    \begin{leftemize}
+      \item Careful it actually is last!
+    \end{leftemize}
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{Using Sets with \texttt{if}}
+  \begin{leftemize}[<+- | alert@+>]
+    \item Lets use the same example:
+
+    \begin{minted}[bgcolor=bg, gobble=6, fontsize=\fontsize{8}{0}]{bash}
+      #! /bin/bash
+      if [[ "$1" =~ [[:digit:]] ]]; then
+        echo "$1 blargh echoes..."
+        for (( i = 1; i <= $1; i++ )); do
+            echo "  [$i] blargh"
+        done
+      else
+        echo "Blarghs only come in [0-9]."
+        exit 1
+      fi
+    \end{minted}
+
+    \item Works on \texttt{[0-9]}.
+    \item Cool! Works on \texttt{99}.
+    \item Whoops! Works on \texttt{208a} \-- the \texttt{for} loop crashes.
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{The \texttt{=\textasciitilde} Operator}
+  \begin{leftemize}[<+- | alert@+>]
+    \item Option 1 \-- negate a negation:
+
+    \begin{minted}[bgcolor=bg, gobble=6, fontsize=\fontsize{8}{0}]{bash}
+      #          +------------+
+      #          | invert set |
+      #          +------------+
+      #                |
+      if [[ ! "$1" =~ [^[:digit:]] ]]; then
+    \end{minted}
+
+    \item Option 2 \-- use extended regular expressions:
+
+    \begin{minted}[bgcolor=bg, gobble=6, fontsize=\fontsize{8}{0}]{bash}
+      #   +-------------------+
+      #   | beginning of line |
+      #   +-------------------+
+      #             |
+      if [[ "$1" =~ ^[[:digit:]]+$ ]]; then
+      #                         ||
+      # +-----------------+     ||
+      # | 1 or more digit |-----+|
+      # +-----------------+      |
+      #  +-----------------------+
+      #  | $ matches end of line |
+      #  +-----------------------+
+    \end{minted}
+  \end{leftemize}
+\end{frame}
+
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+%%%%% section more_on_conditions
+%%%%
+%%%
+%%
+%
+
+%
+%%
+%%%
+%%%%
+%%%%% section git_tools
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+\section{Git Tools}
+\label{sec:git_tools}
+
+\begin{frame}[fragile]{What is a Merge?}
+  \begin{leftemize}[<+- | alert@+>]
+    \item What is a merge?
+    \begin{leftemize}
+      \item When \texttt{git} combines code bases that are divergent.
+    \end{leftemize}
+    \item When does it happen?
+    \begin{leftemize}
+      \item When \texttt{git} is merging two separate \texttt{commit}s, either across branches \emph{or} across
+            forks.
+    \end{leftemize}
+    \item Why does this matter?
+    \begin{leftemize}
+      \item \texttt{git} may know how to automatically merge (fast-forward)...
+      \item ...or it won't (merge conflict).
+    \end{leftemize}
+    \item Lets go ahead and do one.
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{Status and Differences}
+
+  \begin{leftemize}[<+- | alert@+>]
+    \item What does \texttt{git status} do?
+    \begin{leftemize}
+      \item Informs us of changes in code, untracked files, etc.
+    \end{leftemize}
+    \item Can we get more information when there are differences?
+
+    \begin{minted}[bgcolor=bg, gobble=4]{bash}
+      >>> git diff
+    \end{minted}
+
+    \item Can we get some useful / readable information?
+
+    \begin{minted}[bgcolor=bg, gobble=4]{bash}
+      >>> git config --global diff.tool vimdiff
+      >>> git config --global alias.d difftool
+      # now 'git d' aliases to 'git difftool'
+    \end{minted}
+
+    \item Time for a forced merge conflict!
+  \end{leftemize}
+\end{frame}
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+%%%%% section git_tools
+%%%%
+%%%
+%%
+%
+
+\begin{frame}[allowframebreaks]{References}
+  \bibliography{references}
+  \bibliographystyle{abbrv}
+\end{frame}
+
+\end{document}
