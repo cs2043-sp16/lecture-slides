@@ -6,6 +6,19 @@ Lecture slides for [CS 2043][cs2043].  This repository has been designed to acco
 
 All you need to do is `git clone` this repository, the up to date pdf's are all being tracked.  When I add a new lecture or make changes to an existing one, you will receive these via a `git pull`, and you are done!
 
+## Slide Color / Animation Options
+
+There are four branches of this repository you can use.  After you `git clone` and `cd lecture-slides`, you can:
+
+1. Remain on the `master` branch (where you will be with `git clone`) to have the dark-background animated slides I present during class.
+2. Switch to the `dark_slides_handout` branch (`git checkout dark_slides_handout`) to have the dark-background un-animated slides, which
+   may be easier for you to take notes on / read through when working on assignments.
+3. Switch to the `light_slides` branch (`git checkout light_slides`) to have the light-background animated slides alternate.
+4. Switch to the `light_slides_handout` branch (`git checkout light_slides_handout`) to have the light-background un-animated slides, which
+   may be easier for you to take notes on / read through when working on assignments.
+
+Recall that you can identify which branch you are on with `git branch -a`.
+
 ## Building the Slides
 
 Is a bit more involved.  At a high level, the items you will need are

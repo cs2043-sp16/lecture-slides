@@ -1,0 +1,372 @@
+% Cornell CS 2043: Unix Tools and Scripting
+% Spring 2016
+%
+% http://cs2043-sp16.github.io/
+%
+% These slides have been created using the metroplis theme demo found here:
+%
+%     https://github.com/matze/mtheme.git
+%
+% I am a huge fan of the metropolis theme...thanks @matze!
+\input{../common-header.input}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% \begin
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\title{16 \-- Working Remotely \& Closing Git Branches}
+\subtitle{CS 2043: Unix Tools and Scripting, Spring 2016 \cite{prevSemesters}}
+\date{March 4th, 2016}
+\author{Stephen McDowell}
+\institute{Cornell University}
+
+\begin{document}
+\maketitle
+
+% TOC
+\begin{frame}{Table of contents}
+  \setbeamertemplate{section in toc}[sections numbered]
+  \tableofcontents[hideallsubsections]
+\end{frame}
+
+\begin{frame}{Some Logistics}
+  \begin{leftemize}[<+- | alert@+>]
+    \item Homework:
+    \begin{leftemize}
+      \item How long should it be taking me?
+      \item THEY ARE SO LONG MAN WHY?
+      \begin{leftemize}
+        \item Are they really?  3 vs 5...more time...lots of fluff.
+        \item (poll) It's supposed to be fun.  Want me to remove it?
+      \end{leftemize}
+    \end{leftemize}
+    \item Evaluations: please fill them out.
+    \begin{leftemize}
+      \item "Stephen has a stupid face and I don't like it."
+      \item Criticism is welcome; please provide input on how you think it could change to be better.
+      \item Please fill them out, \emph{especially} for the TAs.  Feedback helps us all develop, as well as gives you
+            the opportunity to have an impact on future students.
+    \end{leftemize}
+  \end{leftemize}
+\end{frame}
+
+%
+%%
+%%%
+%%%%
+%%%%% section working_remotely
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+\section{Working Remotely}
+\label{sec:working_remotely}
+
+\begin{frame}[fragile]{Some Terminology}
+  \begin{leftemize}[<+- | alert@+>]
+    \item The server you are logging into is called the \texttt{remote} (host).
+    \item The user (you) are referred to as the \texttt{client}.
+    \item If you obtain access to a \emph{cluster} (many individual nodes presented together), you may encounter
+          terms such as:
+    \begin{leftemize}
+      \item The \texttt{master} node (sometimes called \texttt{head}).
+      \item The \texttt{slave} nodes (the workers).
+      \item You often are only allowed to log into the \texttt{master} node.
+      \item There is usually a queuing system (e.g. \texttt{qsub}) that submits \texttt{jobs} that get farmed
+            out to the slaves.
+      \item In most scenarios, you get charged by the number of cores / resources you are using.
+    \end{leftemize}
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{Using \texttt{ssh}}
+  \begin{block}{\colbf{S}ecure \colbf{Sh}ell}
+    \texttt{ssh [opts] <username@remote.host}
+    \begin{enumerate}[\--]
+      \item \texttt{username} is the username on the \emph{remote} host.
+      \item \texttt{remote.host} is the url of the server you want to log into.
+      \begin{enumerate}[\--]
+        \item IP Address: \texttt{128.253.141.42}
+        \item Symbolic name: \texttt{csug11.csuglab.cornell.edu}
+      \end{enumerate}
+      \item Use \texttt{-l} to specify username (no need for \texttt{@} anymore).
+      \item \texttt{-p <port>}: connect to a specific port (may be necessary depending on the server).
+      \item Can forward graphical \emph{programs} (NOT the entire screen):
+      \begin{enumerate}[\--]
+        \item Enable \texttt{X11} forwarding with \texttt{-X}.
+        \item Enable "trusted" \texttt{X11} forwarding with \texttt{-Y} (actually less secure, only use if needed).
+      \end{enumerate}
+    \end{enumerate}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{\texttt{ssh} by Example}
+  \begin{leftemize}[<+- | alert@+>]
+    \item On \texttt{csug} (CS Undergraduate) I am \texttt{sjm324}:
+    \begin{leftemize}
+      \item \texttt{ssh sjm324@128.253.141.42}
+      \item \texttt{ssh sjm324@csug11.csuglab.cornell.edu}
+      \item \texttt{ssh -l sjm324 csug11.csuglab.cornell.edu}
+    \end{leftemize}
+    \item Sweet!  Hey \texttt{csug} has \textsc{Matlab}, can I use it?
+    \begin{minted}[bgcolor=bg, gobble=6, fontsize=\footnotesize]{bash}
+      >>> /usr/local/MATLAB/R2012a/bin/matlab
+      Warning: No display specified.  You will not be able to
+               display graphics on the screen.
+      exit()
+      # exit() left Matlab
+      >>> exit # close the ssh connection
+    \end{minted}
+    \item \texttt{ssh -X sjm324@csug11.csuglab.cornell.edu}
+    \begin{minted}[bgcolor=bg, gobble=6, fontsize=\footnotesize]{bash}
+      >>> /usr/local/MATLAB/R2012a/bin/matlab
+    \end{minted}
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{Connecting to Servers}
+  \begin{leftemize}[<+- | alert@+>]
+    \item Warning: you are being \emph{heavily} monitored. Always.
+    \begin{leftemize}
+      \item Think before you try to do something even \emph{remotely} dubious.
+    \end{leftemize}
+    \item Cornell \texttt{csug} has 15 redundant servers:
+    \begin{leftemize}
+      \item \texttt{\{csug01..csug15\}.csuglab.cornell.edu}
+      \item Files you make on \texttt{csug01} will appear on \texttt{csug10}!
+      \item If one is particularly slow, try another one.
+    \end{leftemize}
+    \item On campus, you do not need to log into the \texttt{vpn}.
+    \item Off campus, you do (\texttt{ssh} will just hang).
+    \begin{leftemize}
+      \item Install: {\footnotesize\href{http://www.it.cornell.edu/services/vpn/howto/index.cfm}{http://www.it.cornell.edu/services/vpn/howto/index.cfm}}
+      \item After installing, run \texttt{Cisco AnyConnect}, then \texttt{ssh} in.
+      \item The \texttt{vpn} can be pretty laggy sometimes, oddly usually between 2am and 4am.
+    \end{leftemize}
+    \item Your login: \texttt{NetID}. Password: same as \texttt{CMS} / \texttt{studentcenter}.
+    \item More info: {\footnotesize\href{http://www.it.cornell.edu/support/coecis/cis/linux.cfm}{http://www.it.cornell.edu/support/coecis/cis/linux.cfm}}
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{Lets Have Some Fun!}
+  \begin{leftemize}[<+- | alert@+>]
+    \item Remember those permissions I keep droning on about?
+    \item They actually \emph{do} mean something!
+    \begin{leftemize}
+      \item Now that we can \texttt{ssh}, you are in a system with \emph{many} users and groups, and don't have
+            access to everything like you do on your personal computer.
+    \end{leftemize}
+    \item Go ahead and \texttt{ssh} into \texttt{csug}.
+    \item Our course playground is \texttt{/courses/cs2043}.
+    \begin{leftemize}
+      \item Your personal folder: \texttt{/courses/cs2043/<your\_netID>}
+      \item The party: \texttt{/courses/cs2043/zzz\_COLOR\_PARTY}
+    \end{leftemize}
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{Transferring Files}
+  \begin{block}{\colbf{S}ecure \colbf{C}o\colbf{p}y}
+    \texttt{scp [flags] <from> <to>}
+    \begin{enumerate}[\--]
+      \item It's exactly like \texttt{cp}, only you are transferring over the web.
+      \item Transfer \emph{from} the \texttt{client} \emph{to} the \texttt{remote} host.
+      \item Transfer \emph{from} the \texttt{remote} host \emph{to} the \texttt{client}.
+      \item Copy directories just like before using the \texttt{-r} flag.
+      \item Must specify \texttt{user} on the \texttt{remote}.
+      \item \texttt{Remote} syntax: \texttt{user@host.name:/path/to/file/or/folder}
+      \begin{enumerate}[\--]
+        \item You need the \texttt{:} to start the \texttt{path}.
+      \end{enumerate}
+      \item If you don't have permission...you can't get it!
+      \item More modern systems let you \texttt{TAB} complete across the \texttt{remote} directories :)
+    \end{enumerate}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{\texttt{scp} by Example}
+  \begin{leftemize}[<+- | alert@+>]
+    \item Transfer from \texttt{remote} to local computer:
+    \vspace*{-1ex}
+    \begin{minted}[bgcolor=bg, gobble=6, fontsize=\fontsize{8}{0}]{bash}
+      >>> scp sjm324@blargh.ru:/absolute/path/colorize.sh ~/Desktop/
+      colorize.sh                      100% 3299     3.2KB/s   00:00
+    \end{minted}
+    \vspace*{-1ex}
+    \item Transfer from \texttt{remote} to local:
+    \vspace*{-1ex}
+    \begin{minted}[bgcolor=bg, gobble=6, fontsize=\fontsize{8.0}{0}]{bash}
+      >>> scp sjm324@blargh.ru:~/Desktop/colorize.sh /usr/share/
+      colorize.sh                      100% 3299     3.2KB/s   00:00
+    \end{minted}
+    \vspace*{-1ex}
+    \item Transfer from the \texttt{client} to the \texttt{remote}: just reverse it.
+    \vspace*{-1ex}
+    \begin{minted}[bgcolor=bg, gobble=6, fontsize=\fontsize{8.0}{0}]{bash}
+      >>> scp /usr/share/colorize.sh sjm324@blargh.ru:~/Desktop/
+      colorize.sh                      100% 3299     3.2KB/s   00:00
+    \end{minted}
+    \vspace*{-1ex}
+    \item As with regular \texttt{cp}, can give a new name at the same time:
+    \vspace*{-1ex}
+    \begin{minted}[bgcolor=bg, gobble=6, fontsize=\fontsize{8.0}{0}]{bash}
+      >>> scp /usr/share/colorize.sh sjm324@blargh.ru:~/new_name.sh
+      colorize.sh                      100% 3299     3.2KB/s   00:00
+    \end{minted}
+  \end{leftemize}
+\end{frame}
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+%%%%% section working_remotely
+%%%%
+%%%
+%%
+%
+
+%
+%%
+%%%
+%%%%
+%%%%% section multiplexing
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+\section{Multiplexing}
+\label{sec:multiplexing}
+
+\begin{frame}[fragile]{What is Multiplexing}
+  \begin{leftemize}[<+- | alert@+>]
+    \item Complex combinatorial logic meant to be studied with rigor and painful effort.
+    \item But not in this class!
+    \item Terminal multiplexing is just the ability to:
+    \begin{leftemize}
+      \item Split your terminal into multiple \emph{panes}.
+      \item The ability to \emph{detach} and re-\emph{attach} to a \texttt{shell} without having to close it.
+      \item Also a whole lot more, but we will focus on these.
+    \end{leftemize}
+    \item You can leave your multiplexed terminal running on the \texttt{remote}, and connect to it with any
+          \texttt{client} you want whenever you want.
+    \item Extremely convenient if you want to be able to work effectively with \texttt{ssh}.
+    \item Unfortunately, not available to you on \texttt{csug} (for good reason).
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{What does it Look Like?}
+  \begin{center}
+    \includegraphics[width=1.04\textwidth]{tmux.jpg}
+  \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Suggestion: \texttt{tmux}}
+  \begin{block}{\colbf{T}erminal \colbf{Mu}ltiple\colbf{x}er}
+    \texttt{tmux}
+    \begin{enumerate}[\--]
+      \item Vanilla (no options) starts a new multiplexed instance.
+      \item Can split into \emph{panes} horizontally and vertically.
+      \item Can \texttt{detach} (sort of put in background, but it is still running).
+      \item Can re-\texttt{attach}.
+      \item Can open new windows, sessions, panes, and more.
+      \item {\small\texttt{tmux list-\{buffers,clients,commands,keys,panes,sessions,windows\}}}
+      \item \texttt{ctrl+D} to close current \emph{in-focus} pane / window.
+    \end{enumerate}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Notes on Multiplexing}
+  \begin{leftemize}[<+- | alert@+>]
+    \item Learn the hotkeys: \href{http://tmuxcheatsheet.com/}{http://tmuxcheatsheet.com/}
+    \item After you \texttt{ssh} in, just \texttt{tmux attach} to open the top-level session.
+    \begin{leftemize}
+      \item You can even automate this further, and try to attach on login.
+    \end{leftemize}
+    \item Where is my mouse?!!!
+    \begin{leftemize}
+      \item Use \texttt{shift+click} to highlight with your mouse.
+      \item May want to bring the current \emph{pane} to full-screen temporarily with \texttt{<cmd-seq>+Z}.
+      \item \texttt{<cmd-seq>} is \texttt{ctrl+B} by default, but can change it.
+      \item Un-fullscreen with another \texttt{<cmd-seq>+Z}
+    \end{leftemize}
+    \item Others exist, such as \texttt{terminator} and \texttt{screen}.
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{Further \texttt{tmux} Customization}
+  \begin{leftemize}[<+- | alert@+>]
+    \item Configurations go in \texttt{\textasciitilde/.tmux.conf}.
+    \item Save your layouts with \texttt{teamocil}!
+    \begin{leftemize}
+      \item \texttt{gem install teamocil}
+      \item Visit their page for how to set things up: \href{http://www.teamocil.com/}{http://www.teamocil.com/}
+    \end{leftemize}
+    \item First run \texttt{tmux}, then launch \texttt{teamocil <name>}.
+  \end{leftemize}
+\end{frame}
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+%%%%% section multiplexing
+%%%%
+%%%
+%%
+%
+
+%
+%%
+%%%
+%%%%
+%%%%% section closing_a_git_branch
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+\section{Closing a Git Branch}
+\label{sec:closing_a_git_branch}
+
+\begin{frame}[fragile]{Closing a Branch}
+  \vspace*{-1ex}
+  \begin{leftemize}[<+- | alert@+>]
+    \item AFTER you have merged a branch in and are ready to get rid of it, it is a good idea to "archive" it
+          before deleting the branch entirely.
+    \item You still have the history if you don't do this, but it is easier to restore / recover if you need to.
+    \begin{minted}[bgcolor=bg, gobble=6, fontsize=\footnotesize]{bash}
+      # http://stackoverflow.com/a/10243236/3814202
+      # create a "tag"
+      >>> git tag archive/<branchname> <branchname>
+      #     e.g.: archive/lec13_csv lec13_csv
+      # by default, they do not get pushed online. but we can:
+      >>> git push origin archive/<branchname>
+      #             e.g.: archive/lec13_csv
+      # now delete the branch locally, and on the remote
+      >>> git branch -d <branchname> # note: is lower case!!!
+      >>> git checkout master
+      >>> git push origin --delete <branchname>
+    \end{minted}
+  \end{leftemize}
+\end{frame}
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+%%%%% section closing_a_git_branch
+%%%%
+%%%
+%%
+%
+
+\begin{frame}[allowframebreaks]{References}
+  \bibliography{references}
+  \bibliographystyle{abbrv}
+\end{frame}
+
+\end{document}
