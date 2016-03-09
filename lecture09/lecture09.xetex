@@ -453,6 +453,30 @@
     done
   \end{minted}
 \end{frame}
+
+\begin{frame}[fragile]{More on Loops}
+  \begin{leftemize}[<+- | alert@+>]
+    \item For whatever reason, \texttt{bash} is one of the few languages that has an \texttt{until} loop:
+
+    \begin{minted}[bgcolor=bg,gobble=6,fontsize=\footnotesize]{bash}
+      #!/bin/bash
+      x=0
+      until [[ "$x" -eq 11 ]]; do
+          echo "$x"
+          (( x++ ))
+      done
+    \end{minted}
+
+    \item The \texttt{until} loop is exactly how it sounds: execute the loop body \emph{until} the condition
+          evaluates to \texttt{true}.
+    \item So once \texttt{x} is \texttt{11}, the condition is false.
+    \item This means that only \texttt{0..10} actually get printed.
+    \item Lets get some practice!
+
+    {\footnotesize\href{https://github.com/cs2043-sp16/lecture-demos/tree/master/lec09}{https://github.com/cs2043-sp16/lecture-demos/tree/master/lec09}}
+
+  \end{leftemize}
+\end{frame}
 %%%%%
 %%%%%
 %%%%%

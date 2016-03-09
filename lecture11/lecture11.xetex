@@ -1,0 +1,280 @@
+% Cornell CS 2043: Unix Tools and Scripting
+% Spring 2016
+%
+% http://cs2043-sp16.github.io/
+%
+% These slides have been created using the metroplis theme demo found here:
+%
+%     https://github.com/matze/mtheme.git
+%
+% I am a huge fan of the metropolis theme...thanks @matze!
+\input{../common-header.input}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% \begin
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\title{11 \-- Advanced Bash, Git Branching}
+\subtitle{CS 2043: Unix Tools and Scripting, Spring 2016 \cite{prevSemesters}}
+\date{February 22nd, 2016}
+\author{Stephen McDowell}
+\institute{Cornell University}
+
+\begin{document}
+\maketitle
+
+% TOC
+\begin{frame}{Table of contents}
+  \setbeamertemplate{section in toc}[sections numbered]
+  \tableofcontents[hideallsubsections]
+\end{frame}
+
+\begin{frame}{Some Logistics}
+  \begin{leftemize}[<+- | alert@+>]
+    \item Homework 2...
+    \item Last time: "...I wanted to get your HW to you. That will happen tonight."
+    \begin{leftemize}
+      \item ...will send the fake release out via Piazza.
+      \item DO NOT UNDER ANY CIRCUMSTANCES ADD ANYTHING IN AN \texttt{a2} FOLDER IN YOUR REPO!!!!!!
+    \end{leftemize}
+  \end{leftemize}
+\end{frame}
+
+%
+%%
+%%%
+%%%%
+%%%%% section bash_arrays
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+\section{Bash Arrays}
+\label{sec:bash_arrays}
+
+\begin{frame}[fragile]{Bash Arrays}
+  \begin{leftemize}[<+- | alert@+>]
+    \item Arrays in \texttt{bash} are extraordinarily flexible in some senses...
+    \item ...and particularly finicky in other senses.
+    \item The short version:
+    \item[] \texttt{arr=( use parentheses and separate by spaces )}
+    \item Mixed types: \texttt{my\_arr=( "a string" 1 twelve "33" )}
+    \item Question: what are the types of \texttt{twelve} and \texttt{"33"}?
+    \begin{leftemize}
+      \item \texttt{twelve} would be interpreted as a \texttt{string}.
+      \item \texttt{"33"} can be either a \texttt{string} or a number!
+      \item Types are not exactly a thing in \texttt{bash}.
+      \item \texttt{echo \$(( \$\{my\_arr[3]\} + 99 ))}
+      \begin{leftemize}
+        \item Woah that syntax is crazy.
+        \item Remember that \texttt{(( double parens ))} are arithmetic expressions.
+        \item The \texttt{\$} in front of them evaluated the expression.
+        \item The last part is indexing the array, which we'll get to.
+      \end{leftemize}
+    \end{leftemize}
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{Citation Matters!}
+  \begin{leftemize}[<+- | alert@+>]
+    \item The majority of the remaining examples are either copied or modified from~\cite{arrays}.
+    \begin{leftemize}
+      \item This is an excellent resource, and you should explore it on your own.
+      \item I do not have time to cover all of the cool and obscure things you can do with arrays.
+    \end{leftemize}
+    \item You should follow along either in a bash script, or in your shell.
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{Alternative Initialization}
+  \begin{leftemize}[<+- | alert@+>]
+    \item Using \texttt{( parentheses enumerations )}, and other initializations, give you indices
+          between \texttt{0} up to but not including the \texttt{length} of the array.
+    \item You can create your own indices instead!
+
+    \begin{minted}[bgcolor=bg, gobble=6, fontsize=\fontsize{8}{0}]{bash}
+      arr[11]=11
+      arr[22]=22
+      arr[33]=33
+      arr[51]="a string value"
+      arr[52]="different string value"
+    \end{minted}
+
+    \item Of course, you can add on the indices to a \texttt{( parenthetical declaration )} after
+          the fact if you want.
+    \item You \emph{cannot} have an \texttt{array} of \texttt{array}s.
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{Array Functions}
+  \begin{leftemize}[<+- | alert@+>]
+    \item You perform an \texttt{array} operation with \texttt{\$\{expr\}}.
+    \item You use the name of the variable followed by the operation:
+
+    \begin{minted}[bgcolor=bg, gobble=6, fontsize=\fontsize{8}{0}]{bash}
+      echo "Index 11: ${arr[11]}" # prints: Index 11: 11
+      echo "Index 51: ${arr[51]}" # prints: Index 51: a string value
+      echo "Index 0:  ${arr[0]}"  # DOES NOT EXIST! (aka nothing)
+    \end{minted}
+    \item Recall that the \texttt{@} and \texttt{*} expand differently:
+
+    \begin{minted}[bgcolor=bg, gobble=6, fontsize=\fontsize{8}{0}]{bash}
+      echo "Individual: ${arr[@]}"
+      # Individual: 11 22 33 a string value different string value
+      echo "Joined::::: ${arr[*]}"
+      # Joined:     11 22 33 a string value different string value
+    \end{minted}
+
+    \item Differently how?
+
+    \begin{minted}[bgcolor=bg, gobble=6, fontsize=\fontsize{8}{0}]{bash}
+      echo "Length of Individual: ${#arr[@]}"
+      # Length of Individual: 5
+      echo "Length of Joined::::: ${#arr[*]}"
+      # Length of Joined::::: 5
+    \end{minted}
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{Different HOW?!!!}
+  \begin{leftemize}[<+- | alert@+>]
+    \item Easier to compare with loops, these will be in-line so you can copy-paste.
+    \begin{leftemize}
+      \item Remember that \texttt{;} allows you to continue on the same line.
+    \end{leftemize}
+    \item Individual expansion (\texttt{@}):
+    \begin{minted}[bgcolor=bg, gobble=6, fontsize=\fontsize{8}{0}]{bash}
+      for x in "${arr[@]}"; do echo "$x"; done
+      # 11
+      # 22
+      # 33
+      # a string value
+      # different string value
+    \end{minted}
+    \item Joined expansion (\texttt{*}):
+    \begin{minted}[bgcolor=bg, gobble=6, fontsize=\fontsize{8}{0}]{bash}
+      for x in "${arr[*]}"; do echo "$x"; done
+      # 11 22 33 a string value different string value
+    \end{minted}
+    \item The \texttt{*} loop only executes once.
+    \item General rule: if you want them all, use \texttt{@} to expand.
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{Even More Initialization Options}
+  \begin{leftemize}[<+- | alert@+>]
+    \item Evaluate expressions and initialize at once:
+
+    \begin{minted}[bgcolor=bg, gobble=6, fontsize=\fontsize{8}{0}]{bash}
+      arr[44]=$((arr[11] + arr[33]))
+      echo "Index 44: ${arr[44]}"     # Index 44: 44
+      arr[55]=$((arr[11] + arr[44]))
+      echo "Index 55: ${arr[55]}"     # Index 55: 55
+    \end{minted}
+
+    \item Alternative index specifications:
+
+    \begin{minted}[bgcolor=bg, gobble=6, fontsize=\fontsize{8}{0}]{bash}
+      new_arr=([17]="seventeen" [24]="twenty-four")
+      new_arr[99]="ninety nine" # may as well, not new
+      for x in "${new_arr[@]}"; do echo "$x"; done
+      # seventeen
+      # twenty-four
+      # ninety nine
+    \end{minted}
+
+    \item Get the list of indices:
+
+    \begin{minted}[bgcolor=bg, gobble=6, fontsize=\fontsize{8}{0}]{bash}
+      for idx in "${!new_arr[@]}"; do echo "$idx"; done
+      # 17
+      # 24
+      # 99
+    \end{minted}
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{Array Splicing}
+  \begin{leftemize}[<+- | alert@+>]
+    \item You can just as easily splice your arrays.
+    \item Use \texttt{@} to get the whole array, then specify the indices you wish to splice.
+    \begin{leftemize}
+      \item \texttt{\$\{var[@]:start:end\}}
+      \item Don't need to specify \texttt{end} (will take until last index).
+    \end{leftemize}
+    \begin{minted}[bgcolor=bg, gobble=6, fontsize=\fontsize{9}{0}]{bash}
+      zed=( zero one two three four )
+      echo "From start: ${zed[@]:0}"
+      # From start: zero one two three four
+      echo "From 2: ${zed[@]:2}"
+      # From 2: two three four
+      echo "Indices [1-3]: ${zed[@]:1:3}"
+      # Indices [1-3]: one two three
+      for x in "${zed[@]:1:3}"; do echo "$x"; done
+      # one
+      # two
+      # three
+      for x in "${zed[*]:1:3}"; do echo "$x"; done
+      # one two three
+    \end{minted}
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{More...}
+  \begin{leftemize}[<+- | alert@+>]
+    \item This is the core functionality of arrays that I believe you will profit from.
+    \item This is actually not even close to what you can do with arrays in \texttt{bash}.
+    \item I highly suggest you go through the examples listed in~\cite{arrays}.
+    \begin{leftemize}
+      \item Search for \texttt{Substring Removal} for some insanely cool tricks!
+    \end{leftemize}
+  \end{leftemize}
+\end{frame}
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+%%%%% section bash_arrays
+%%%%
+%%%
+%%
+%
+
+%
+%%
+%%%
+%%%%
+%%%%% section git_branching
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+\section{Git Branching}
+\label{sec:git_branching}
+
+\begin{frame}[fragile]{Branching with Git}
+  The Lecture Slides Repository!
+\end{frame}
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+%%%%% section git_branching
+%%%%
+%%%
+%%
+%
+
+\begin{frame}[allowframebreaks]{References}
+  \bibliography{references}
+  \bibliographystyle{abbrv}
+\end{frame}
+
+\end{document}

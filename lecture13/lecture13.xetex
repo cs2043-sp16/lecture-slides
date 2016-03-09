@@ -1,0 +1,397 @@
+% Cornell CS 2043: Unix Tools and Scripting
+% Spring 2016
+%
+% http://cs2043-sp16.github.io/
+%
+% These slides have been created using the metroplis theme demo found here:
+%
+%     https://github.com/matze/mtheme.git
+%
+% I am a huge fan of the metropolis theme...thanks @matze!
+\input{../common-header.input}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% \begin
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\title{13 \-- Python, Git Branching Wrap-up}
+\subtitle{CS 2043: Unix Tools and Scripting, Spring 2016 \cite{prevSemesters}}
+\date{February 24th, 2016}
+\author{Stephen McDowell}
+\institute{Cornell University}
+
+\begin{document}
+\maketitle
+
+% TOC
+\begin{frame}{Table of contents}
+  \setbeamertemplate{section in toc}[sections numbered]
+  \tableofcontents[hideallsubsections]
+\end{frame}
+
+\begin{frame}{Some Logistics}
+  \begin{leftemize}[<+- | alert@+>]
+    \item HW2 and \texttt{awk}: read Piazza post 144. No floating point arithmetic will be accepted.
+    \item Notes on notes, A2.
+    \item (poll) A2 and its due date, and what our options are.
+    \begin{leftemize}
+      \item Can push due date back.
+      \item Have 3 assignments instead of 4, but HW3 will be longer.
+    \end{leftemize}
+  \end{leftemize}
+\end{frame}
+
+%
+%%
+%%%
+%%%%
+%%%%% section python_overview
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+\section{Python Overview}
+\label{sec:python_overview}
+
+\begin{frame}[fragile]{What is Python?}
+  \begin{leftemize}[<+- | alert@+>]
+    \item Yet another programming language you can use in your daily hacking.
+    \item Extremely convenient, especially where String manipulation and lists are concerned.
+    \item This all comes at a cost: it is an "interpreted" language.
+    \begin{leftemize}
+      \item In terms of scripting and what you have seen in this class so far, that isn't all that important.
+      \item For the most part, everything we have seen works in a similar way: as a script, it runs top-down.
+      \item Raw Python code is "compiled-on-the-fly" as it executes, but you can make it run \emph{very} fast.
+      \begin{leftemize}
+        \item Use libraries such as \texttt{numpy}, \texttt{scipy}, \texttt{pandas}, and many more.
+        \item Write your own \texttt{C} code and use \texttt{Cython}.
+        \item Doing it on your own is much more challenging, and often has little payoff.
+      \end{leftemize}
+    \end{leftemize}
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{Why Python?}
+  \begin{leftemize}[<+- | alert@+>]
+    \item Easy to test concepts using the interpreter (interactive).
+    \begin{leftemize}
+      \item I often times will just bust out the interpreter if I need to check some math really quickly.
+    \end{leftemize}
+    \item You have the ability to write object-oriented code if you want, but you can also just write scripts.
+    \item Wide range of built-in functions to accomplish pretty much everything you want to do:
+    \begin{leftemize}
+      \item Create ranges of numbers easily.
+      \item Generate random numbers with ease.
+      \item Write to and read from files like no other language can.
+      \item Honestly, there are way too many examples. Python is great!
+    \end{leftemize}
+    \item Easy to play with: just type \texttt{python} and hit enter to bring up the interpreter.
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{The Quick and Dirty Basics}
+  \begin{leftemize}[<+- | alert@+>]
+    \item \texttt{bool}: boolean vales (\texttt{True} and \texttt{False} \-- capital first letter).
+    \item \texttt{int}: whole numbers.
+    \item \texttt{float}: decimal numbers.
+    \item \texttt{str}: strings.  Can use \texttt{'single quotes'} or \texttt{"double quotes"}.
+    \item \texttt{list}: uses brackets:
+    \begin{leftemize}
+      \item[] \texttt{[0,3,5]}
+      \item[] \texttt{["mixed",3.4,"data",False,"types"]}
+    \end{leftemize}
+    \item \texttt{tuple}: use parenthesis:
+    \begin{leftemize}
+      \item[] \texttt{(0,3,5)}
+      \item[] \texttt{("mixed",3.4,"data",False,"types")}
+    \end{leftemize}
+    \item \texttt{dict}: map keys and values
+    \begin{leftemize}
+      \item[] \texttt{\{"a" : 1, 3 : "three", 3.999 : "four"\}}
+    \end{leftemize}
+    \item CAUTION: strings and tuples cannot be changed. EVER.
+    \begin{leftemize}
+      \item Constantly "updating" the value of a string?
+      \item You are making new strings every single time.
+    \end{leftemize}
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{Indexing Items}
+  \begin{leftemize}[<+- | alert@+>]
+    \item Starts at \texttt{0}, goes up to but \emph{not including} \texttt{len(item)}.
+    \item Can use splicing to grab ranges of valid indices!
+
+    \begin{minipage}[t]{\textwidth}
+      \begin{minipage}[t]{.48\textwidth}
+        \begin{center}
+          \begin{minted}[bgcolor=bg, gobble=12, fontsize=\fontsize{6.75}{0}]{py}
+            >>> a_list = [1, 2, 3, 4, 5, 6]
+            >>> a_list[0]
+            1
+            >>> a_list[-1]
+            6
+            >>> len(a_list)
+            6
+            >>> a_list[6]
+            Traceback (most recent call last):
+              File "<stdin>", line 1, in <module>
+            IndexError: list index out of range
+            >>> a_list[1:4]
+            [2, 3, 4]
+          \end{minted}
+        \end{center}
+      \end{minipage}
+      \hfill
+      \begin{minipage}[t]{.48\textwidth}
+        \begin{center}
+          \begin{minted}[bgcolor=bg, gobble=12, fontsize=\fontsize{6.75}{0}]{py}
+            >>> a_string = "123456"
+            >>> a_string[0]
+            '1'
+            >>> a_string[-1]
+            '6'
+            >>> len(a_string)
+            6
+            >>> a_string[6]
+            Traceback (most recent call last):
+              File "<stdin>", line 1, in <module>
+            IndexError: string index out of range
+            >>> a_string[1:4]
+            '234'
+          \end{minted}
+        \end{center}
+      \end{minipage}
+  \end{minipage}
+
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{Working with Lists}
+  \begin{leftemize}[<+- | alert@+>]
+    \item Reverse a list with \texttt{list\_variable.reverse()}
+    \item Append to a list with \texttt{list\_variable.append(item)}
+    \item Sort a list with \texttt{list\_variable.sort()}
+    \item Get a separate sorted list without changing the original list:
+
+    \texttt{new\_list = sorted(orig\_list)}
+
+    \item Find the index of an item with \texttt{list\_variable.index(item)}
+    \item Retrieve the last element with \texttt{list\_variable.pop()}
+    \begin{leftemize}
+      \item You can emulate stacks and queues easily with python lists.
+    \end{leftemize}
+    \item Get the documentation with \texttt{help(list)}
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{Working with Dictionaries}
+  \begin{leftemize}[<+- | alert@+>]
+    \item Declare in-line:
+    \begin{leftemize}
+      \item \texttt{d = \{'key1' : 'val1', 'key2' : 'val2'\}}
+    \end{leftemize}
+    \item Declare an empty dictionary: \texttt{d = \{\}}
+    \item Get the list of keys with \texttt{d.keys()}
+    \item Get the list of values with \texttt{d.values()}
+    \item Can loop through dictionaries with ease:
+
+    \begin{minted}[bgcolor=bg, gobble=6, fontsize=\fontsize{6.75}{0}]{py}
+      >>> d = {'key1' : 'val1', 'key2' : 'val2'}
+      >>> for k, v in d.iteritems(): # replaced by items() in py3
+              print(k, v)
+
+          key2 val2
+          key1 val1
+    \end{minted}
+
+    \item Add / overwrite items with \texttt{d['key'] = 'value'}
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{Python is Powerful \emph{and} Flexible}
+  \begin{leftemize}[<+- | alert@+>]
+    \item By now you have heard me say something along the lines of "if it's more than 10 lines I just do it
+          in Python".
+    \item Here is why:
+    \begin{leftemize}
+      \item You have access to your favorite \href{https://docs.python.org/2/library/string.html#string-constants}{\underline{\texttt{POSIX} sets}}.
+      \item Formatting strings is \href{https://docs.python.org/2/library/string.html#format-examples}{\underline{superbly powerful}}.
+      \item Did I mention Python has probably the best documentation of any language \emph{ever}?
+      \item Very easy to get something out quick and correct.
+      \item Loops are flexible and easy.
+      \item Functional if you need it (\texttt{lambda}).
+      \begin{leftemize}
+        \item Extraordinary type-checking system.  Use \texttt{type(variable)} to see what it \emph{currently} is.
+      \end{leftemize}
+      \item Exception handling is easy.
+      \item Executing system calls (e.g. unix shell commands) is as easy as importing a module.
+      \item Operator overloading: read Kenneth Love's article in~\cite{overload}.  Many other excellent resources from him linked on that site.
+    \end{leftemize}
+  \end{leftemize}
+\end{frame}
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+%%%%% section python_overview
+%%%%
+%%%
+%%
+%
+
+%
+%%
+%%%
+%%%%
+%%%%% section scripting_with_python
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+\section{Scripting with Python}
+\label{sec:scripting_with_python}
+
+\begin{frame}[fragile]{Writing Python Code}
+  \begin{leftemize}[<+- | alert@+>]
+    \item PYTHON 3 IS NOT COMPATIBLE WITH PYTHON 2.
+    \begin{leftemize}
+      \item Easy example:
+      \item Python 2 (no need for parentheses): \texttt{print "a", "b", "c"}
+      \item Python 3 (need parentheses): \texttt{print("a", "b", "c")}
+    \end{leftemize}
+    \item Python is parsed by white-space:
+    \begin{leftemize}
+      \item Bad indentation will either lead to unexpected results, or program crash.
+    \end{leftemize}
+    \item In terms of the shebang:
+    \begin{leftemize}
+      \item Writing python2 code: \texttt{\#!/usr/bin/env python}
+      \item Writing python3 code: \texttt{\#!/usr/bin/env python3}
+    \end{leftemize}
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{Be Aware}
+  \begin{leftemize}[<+- | alert@+>]
+    \item The \texttt{xrange} function in Python 2 will prevent you from crashing on large lists.
+    \begin{leftemize}
+      \item Regular \texttt{range} will create an entire list first.
+    \end{leftemize}
+    \item The \texttt{xrange} functionality of iteration instead of list entirely replaced \texttt{range} in
+          python 3, so \texttt{xrange} does not exist anymore (just \texttt{range})!
+    \item There are many other important differences between python 2 and python 3.
+    \item In terms of comparisons:
+    \begin{leftemize}
+      \item The \texttt{==} operation calls \texttt{\_\_eq\_\_} (if defined), which is \emph{value} comparison.
+      \item Comparing \texttt{id(var1) == id(var2)} with the \texttt{is} keyword does \emph{reference} comparison
+            (are these two literally the same thing in memory).
+      \item Extremely important to know the difference for \texttt{str} objects, since strings are immutable.
+            Example on next slide.
+    \end{leftemize}
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{String Comparison}
+  \begin{minted}[bgcolor=bg, gobble=4, fontsize=\fontsize{7}{0}]{py}
+    #!/usr/bin/env python
+    #              ^^^^^^ could be python3 too...
+    # Define a simple function to print various relations...
+    # ...string formating is really convenient!
+    def eval(s1, s2):
+        print("'{0}' == '{1}': {2}".format(s1,s2,s1 == s2))
+        print("'{0}' is '{1}': {2}".format(s1,s2,s1 is s2))
+        print("  id(s1): {0}".format(id(s1)))
+        print("  id(s2): {0}".format(id(s2)))
+    #
+    # Make some strings and evaluate them...
+    #
+    x = "dog"
+    y = "cat"
+    eval(x,y)
+    #
+    # Change the strings and evaluate again...
+    #
+    print("\n...change value of y to dog...\n")
+    # This may seem like a crazy way to make "dog", but
+    # Python is smart enough to know that if you say
+    #
+    #     y = "dog"
+    #
+    # Given that x is already that value, it will point
+    # to it instead of making a new one.  This just forces
+    # the creation of a new string.
+    y = ''.join(char for char in ['d','o','g'])
+    eval(x,y)
+  \end{minted}
+\end{frame}
+
+\begin{frame}[fragile]{Working with Files}
+  \begin{leftemize}[<+- | alert@+>]
+    \item Although there are other ways to open files, you should do this way:
+
+    \begin{minted}[bgcolor=bg, gobble=6, fontsize=\fontsize{6.75}{0}]{py}
+      with open("filename", "r") as f:
+          for line in f:
+              print(line)
+    \end{minted}
+
+    \item There are different file modes, e.g. \texttt{r} is read, \texttt{w} is write (but will overwrite if
+          the file exists).
+    \item The \texttt{with} statement in python is pure magic, and if your code crashes for whatever reason
+          python will go through and close the file properly for you.  There are many other cases you will find
+          the \texttt{with} statement superior, e.g. with \texttt{threads} and \texttt{locks} (CS 4410).
+  \end{leftemize}
+\end{frame}
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+%%%%% section scripting_with_python
+%%%%
+%%%
+%%
+%
+
+%
+%%
+%%%
+%%%%
+%%%%% section git_branching_wrap_up
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+\section{Git Branching Wrap-up}
+\label{sec:git_branching_wrap_up}
+
+\begin{frame}[fragile]{Lets Make our Own Branches}
+  Let's make our own feature branch:
+
+  {\footnotesize\href{https://github.com/cs2043-sp16/lecture-demos/tree/master/lec13}{https://github.com/cs2043-sp16/lecture-demos/tree/master/lec13}}
+\end{frame}
+
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+%%%%% section git_branching_wrap_up
+%%%%
+%%%
+%%
+%
+
+
+\begin{frame}[allowframebreaks]{References}
+  \bibliography{references}
+  \bibliographystyle{abbrv}
+\end{frame}
+
+\end{document}
