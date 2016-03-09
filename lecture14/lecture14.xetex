@@ -1,0 +1,521 @@
+% Cornell CS 2043: Unix Tools and Scripting
+% Spring 2016
+%
+% http://cs2043-sp16.github.io/
+%
+% These slides have been created using the metroplis theme demo found here:
+%
+%     https://github.com/matze/mtheme.git
+%
+% I am a huge fan of the metropolis theme...thanks @matze!
+\input{../common-header.input}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% \begin
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\title{14 \-- Package Management}
+\subtitle{CS 2043: Unix Tools and Scripting, Spring 2016 \cite{prevSemesters}}
+\date{February 29th, 2016}
+\author{Stephen McDowell}
+\institute{Cornell University}
+
+\begin{document}
+\maketitle
+
+% TOC
+\begin{frame}{Table of contents}
+  \setbeamertemplate{section in toc}[sections numbered]
+  \tableofcontents[hideallsubsections]
+\end{frame}
+
+\begin{frame}{Some Logistics}
+  \begin{leftemize}[<+- | alert@+>]
+    \item Happy leap day!
+    \item Lots of great questions on Piazza, keep it up!
+    \item Today is going to be a lot of fun (at least for me).
+  \end{leftemize}
+\end{frame}
+
+%
+%%
+%%%
+%%%%
+%%%%% section package_management
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+\section{Package Management}
+\label{sec:package_management}
+
+\begin{frame}[fragile]{Package Management Overview}
+  \begin{leftemize}[<+- | alert@+>]
+    \item If you had to give one reason why Unix systems are superior to Windows: Package Management.
+    \item Provides the capability to install almost anything you can think of from your terminal.
+    \item Update to the latest version with one command.
+    \begin{leftemize}
+      \item No more download the latest installer nonsense!
+    \end{leftemize}
+    \item Various tools can be installed by installing a \emph{package}.
+    \begin{leftemize}
+      \item A package contains the files and other instructions to setup a piece of software.
+      \item Many packages depend on each other.
+      \item High-level package managers download packages, figure out the dependencies for you, and deal with
+            groups of packages.
+      \item Low-level managers unpack individual packages, run scripts, and get the software installed correctly.
+    \end{leftemize}
+    \item In general, these are "pre-compiled binaries": no compilation necessary.  It's already packaged nice
+          and neat just for you!
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{Package Managers in the Wild}
+  \begin{leftemize}[<+- | alert@+>]
+    \item GNU/Linux:
+    \begin{leftemize}
+      \item Two general families of \emph{packages} exist: \texttt{deb}, and \texttt{rpm} (low-level).
+      \item High-level package managers you are likely to encounter:
+      \begin{leftemize}
+        \item Debian/Ubuntu: \texttt{apt-get}.
+        \item Some claim that \texttt{aptitude} is superior, but I will only cover \texttt{apt-get}.  They are
+              roughly interchangeable.
+        \item SUSE/OpenSUSE: \texttt{zypper}.
+        \item Fedora: \texttt{dnf} (Fedora 22+).
+        \item \texttt{zypper} and \texttt{dnf} use \texttt{SAT}-based dependency solvers, which many argue is
+              fundamentally superior.  Though the dependency resolution phase is usually not the slowest part...installing
+              the packages is.  See~\cite{yum2dnf} for more info.
+        \item RHEL/CentOS: \texttt{yum} (until they adopt \texttt{dnf}).
+      \end{leftemize}
+    \end{leftemize}
+    \item Mac OSX:
+    \begin{leftemize}
+      \item Others exist, but the only one you should ever use is \texttt{brew}.
+      \item Don't user others (e.g. \texttt{port}), they are outdated / EOSL.
+    \end{leftemize}
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{Using Package Managers}
+  \begin{leftemize}[<+- | alert@+>]
+    \item Though the syntax for the commands are different depending on your OS, the concepts are all the same.
+    \begin{leftemize}
+      \item This lecture will focus on \texttt{apt-get}, \texttt{dnf}, and \texttt{brew}.
+      \item The \texttt{dnf} commands are almost entirely interchangeable with \texttt{yum}, by design.
+      \item Note that \texttt{brew} is a special snowflake, more on this later.
+    \end{leftemize}
+    \item What does your package manager give you?  The ability to
+    \begin{leftemize}
+      \item \texttt{install} new packages you do not have.
+      \item \texttt{remove} packages you have installed.
+      \item \texttt{update}\tsup{*} installed packages.
+      \item update the lists to search for files / updates from.
+      \item view \texttt{dependencies} of a given package.
+      \item a whole lot more!!!
+    \end{leftemize}
+  \end{leftemize}
+  \uncover<+->{\alert{\tsup{*} See next slide for a potential \texttt{update} pitfalls.}}
+\end{frame}
+
+\begin{frame}[fragile]{A Note on \texttt{update}}
+  \begin{leftemize}[<+- | alert@+>]
+    \item The \texttt{update} command has importantly different meanings in different package managers.
+    \item Some (\texttt{deb}) do \underline{not} default to system (read linux kernel) updates.
+    \item Some (\texttt{rpm}) \underline{DO} default to system updates!
+    \item The difference lies somewhat in philosophy, and somewhat in the differences between the two.
+    \item If your program needs a specific version of the linux kernel, you need to be very careful!
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{A Note on Names and their Meanings}
+  \begin{leftemize}[<+- | alert@+>]
+    \item You may see packages of the form:
+    \begin{leftemize}
+      \item \texttt{<package>.i[3456]86} (e.g. \texttt{.i686}): these are the \texttt{32-bit} packages.
+      \item \texttt{<package>.x86\_64}: these are the \texttt{64-bit} packages.
+      \item \texttt{<package>.noarch}: these are independent of the architecture.
+    \end{leftemize}
+    \item Development installations can have as many as three packages you need to install, e.g. if you need to
+          compile / link against a package in a C/C++ or often times even Python, Java, and many more languages.
+    \begin{leftemize}
+      \item The header files are usually called something like:
+      \begin{leftemize}
+        \item \texttt{deb}: usually \texttt{<package>-dev}
+        \item \texttt{rpm}: usually \texttt{<package>-devel}
+      \end{leftemize}
+      \item The library you will need to link against:
+      \begin{leftemize}
+        \item If applicable, \texttt{lib<package>} or something similar.
+      \end{leftemize}
+    \end{leftemize}
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{Example Development Installation}
+  \begin{leftemize}[<+- | alert@+>]
+    \item For example, if I needed to compile and link against Xrandr (X.Org X11 libXrandr runtime library) on Fedora, I would have to install
+    \begin{leftemize}
+      \item \texttt{libXrandr}: the library.
+      \item \texttt{libXrandr-devel}: the header files.
+      \item Not including \texttt{.x86\_64} is OK / encouraged, your package manager knows which one to install.
+      \item Though in certain special cases you may need to get the \texttt{32-bit} library as well.
+    \end{leftemize}
+    \item The \texttt{deb} versions should be similarly named, but just use the \texttt{search}
+          functionality of find the right names.
+    \item This concept has no meaning for \texttt{brew}, since it compiles everything.
+  \end{leftemize}
+\end{frame}
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+%%%%% section package_management
+%%%%
+%%%
+%%
+%
+
+%
+%%
+%%%
+%%%%
+%%%%% section system_specific_package_managers
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+\section{System Specific Package Managers}
+\label{sec:system_specific_package_managers}
+
+
+
+\begin{frame}[fragile]{Debian / Ubuntu Package Management}
+  \begin{leftemize}[<+- | alert@+>]
+    \item Installing and uninstalling:
+    \begin{leftemize}
+      \item Install a package:
+
+      \texttt{apt-get install <pkg1> <pkg2> ... <pkgN>}
+
+      \item Remove a package:
+
+      \texttt{apt-get remove <pkg1> <pkg2> ... <pkgN>}
+
+      \item Only one \texttt{pkg} required, but can specify many.
+      \item "Group" packages are available, but still the same command.
+    \end{leftemize}
+    \item Updating components:
+    \begin{leftemize}
+      \item Updating currently installed packages: \texttt{apt-get update}.
+      \item Update lists of packages available: \texttt{apt-get upgrade}.
+      \begin{leftemize}
+        \item If you instead specify a \texttt{package} name, it will only update / upgrade that package.
+      \end{leftemize}
+      \item Update core (incl. kernel): \texttt{apt-get dist-upgrade}.
+    \end{leftemize}
+    \item Searching for packages:
+    \begin{leftemize}
+      \item Different command: \texttt{apt-cache search <pkg>}
+    \end{leftemize}
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{RHEL / Fedora (\texttt{yum} and \texttt{dnf})}
+  \begin{leftemize}[<+- | alert@+>]
+    \item Installing and uninstalling:
+    \begin{leftemize}
+      \item Install a package:
+
+      \texttt{dnf install <pkg1> <pkg2> ... <pkgN>}
+
+      \item Remove a package:
+
+      \texttt{dnf remove <pkg1> <pkg2> ... <pkgN>}
+
+      \item Only one \texttt{pkg} required, but can specify many.
+      \item "Group" packages are available, but different command:
+
+      \texttt{dnf groupinstall 'Package Group Name'}
+
+    \end{leftemize}
+    \item Updating components:
+    \begin{leftemize}
+      \item Update EVERYTHING \texttt{dnf upgrade}.
+      \item \texttt{update} exists, but is essentially \texttt{upgrade}.
+      \begin{leftemize}
+        \item Specify a \texttt{package} name to only upgrade that package.
+      \end{leftemize}
+      \item Updating repository lists: \texttt{dnf check-update}
+    \end{leftemize}
+    \item Searching for packages:
+    \begin{leftemize}
+      \item Same command: \texttt{dnf search <pkg>}
+    \end{leftemize}
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{OSX Package Management: Install \texttt{brew} on your own}
+  \begin{leftemize}[<+- | alert@+>]
+    \item[1.] Install Xcode (if you have not already).
+
+    \texttt{cmd+space} then type App Store. Search for Xcode and install.
+
+    {\tiny This method requires a valid apple login / password.  Make one if you don't have it.  Hint: you don't
+    actually have to give them a credit card; I never do because I refuse to give them more money intentionally
+    or accidentally.  But updates will be ubiquitous and this method is preferred to alternatives.}
+
+    \item[2.] Install CMD Line Tools from terminal: {\footnotesize \texttt{xcode-select --install}}
+
+    \item[3.] Install XQuartz: \href{http://www.xquartz.org/}{http://www.xquartz.org/}
+
+    \texttt{brew} and many items you would install need linux-style \texttt{X11}.
+
+    \item[4.] Install brew: \href{http://brew.sh/}{http://brew.sh/}
+
+    Follow directions at top: Install Homebrew (paste the text into your terminal and hit enter.)
+
+    \item[5.] VERY IMPORTANT: READ WHAT THE OUTPUT IS!!!! It will tell you to do things, and you \emph{have} to do them.
+
+    Specifically:
+
+    {\footnotesize"You should run `brew doctor' *before* you install anything."}
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{OSX: Using \texttt{brew}}
+  \begin{leftemize}[<+- | alert@+>]
+    \item Installing and uninstalling:
+    \begin{leftemize}
+      \item Install a \emph{formula}:
+
+      \texttt{brew install <fmla1> <fmla2> ... <fmla2>}
+
+      \item Remove a formula:
+
+      \texttt{brew uninstall <fmla1> <fmla2> ... <fmlaN>}
+
+      \item Only one \texttt{fmla} required, but can specify many.
+      \item "Group" packages have no meaning in \texttt{brew}.
+    \end{leftemize}
+    \item Updating components:
+    \begin{leftemize}
+      \item Update \texttt{brew}, all \emph{taps}, and installed formulae listings. This does not update the actual
+      software you have installed with \texttt{brew}, just the definitions (more on next slide): \texttt{brew update}.
+
+      \item Update just installed formulae: \texttt{brew upgrade}.
+      \begin{leftemize}
+        \item Specify a \texttt{formula} name to only upgrade that formula.
+      \end{leftemize}
+    \end{leftemize}
+    \item Searching for packages:
+    \begin{leftemize}
+      \item Same command: \texttt{brew search <formula>}
+    \end{leftemize}
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{OSX: \texttt{brew} is a special snowflake (Part I)}
+  \begin{leftemize}[<+- | alert@+>]
+    \item Safe: confines itself (by default) in \texttt{/usr/local/Cellar}:
+    \begin{leftemize}
+      \item No \texttt{sudo}, plays nicely with OSX (e.g. Applications, \texttt{python3}).
+      \item Non-linking by default. If a conflict is detected, it will tell you.
+      \item Really important to read what \texttt{brew} tells you!!!
+    \end{leftemize}
+    \item \texttt{brew} is modular.  There is a main list of repositories, but there are also additional \emph{taps}:
+    \begin{leftemize}
+      \item A tap is effectively another repository list, like what a \texttt{.rpm} or \texttt{.deb} would give you
+            in linux.
+      \item Common taps people use:
+      \begin{leftemize}
+        \item \texttt{brew tap homebrew/science}
+
+        Various "scientific computing" tools, e.g. \texttt{opencv}.
+
+        \item \texttt{brew tap caskroom/cask}
+
+        Install \texttt{.app} applications! Safe: installs in the "Cellar", symlinks to \texttt{\textasciitilde/Applications},
+        but \emph{now these update with brew all on their own}!
+
+        E.g. \texttt{brew cask install vlc}
+      \end{leftemize}
+    \end{leftemize}
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{OSX: \texttt{brew} is a special snowflake (Part II)}
+  \begin{leftemize}[<+- | alert@+>]
+    \item \texttt{brew} installs \emph{formulas}.
+    \begin{leftemize}
+      \item A formula is \emph{not} a pre-compiled binary, it is a \texttt{ruby} script that provides rules for
+            where to download something from / how to compile it.
+      \item You download a \texttt{bottle} that gets \emph{poured}: download source and compile (ish).
+      \item Though more time consuming, can be quite convenient!
+      \begin{leftemize}
+        \item \texttt{brew options opencv}
+        \item \texttt{brew install --with-cuda --c++11 opencv}
+        \item It really really really is magical.  No need to understand the \texttt{opencv} build flags, because
+              the authors of the \texttt{brew} formula are kind and wonderful people.
+        \item \texttt{brew reinstall --with-missed-option formula}
+      \end{leftemize}
+    \end{leftemize}
+    \item Of course, there is a whole lot more that \texttt{brew} does, just like the other package managers.
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{OSX: \texttt{brew} is a special snowflake (Part III)}
+  \begin{leftemize}
+    \item You REALLY need to pay attention to \texttt{brew} and what it says.  Seriously.
+    \item Example: after installing \texttt{opencv}, it tells me:
+
+    \begin{minted}[bgcolor=bg, gobble=6, fontsize=\fontsize{6.05}{0}]{py}
+      ==> Caveats
+      Python modules have been installed and Homebrew's site-packages is not
+      in your Python sys.path, so you will not be able to import the modules
+      this formula installed. If you plan to develop with these modules,
+      please run:
+        mkdir -p /Users/sven/.local/lib/python2.7/site-packages
+        echo 'import site; site.addsitedir("/usr/local/lib/python2.7/site-packages")' >> \
+          /Users/sven/.local/lib/python2.7/site-packages/homebrew.pth
+      # (continued onto newline so you can read, it gives you copy-paste format!)
+    \end{minted}
+
+    \item Obviously I want to use \texttt{opencv} with \texttt{Python}, so I am going to follow what \texttt{brew}
+          tells me to do.
+    \item If it may cause problems, it will tell you what the problems might be.
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{Less Common Package Management Operations}
+  \begin{leftemize}[<+- | alert@+>]
+    \item Many people don't realize that if you install package \texttt{X} and it installed a bunch of dependencies,
+          they don't remove the dependencies when you remove \texttt{X}.
+    \begin{leftemize}
+      \item \texttt{apt-get autoremove}
+      \item \texttt{dnf autoremove}
+      \item \texttt{brew doctor}
+    \end{leftemize}
+    \item View the list of repositories being checked:
+    \begin{leftemize}
+      \item \texttt{apt-cache policy} (well, sort of...\texttt{apt} doesn't have it)
+      \item \texttt{dnf repolist [enabled|disabled|all]}
+      \begin{leftemize}
+        \item Some repositories for \texttt{dnf} are \emph{disabled} by default (with good reason).  Usually you
+              want to just
+
+        \texttt{dnf enablerepo=<name> install <thing>}
+
+        e.g. if you have \texttt{rawhide} (development branch for fedora).
+      \end{leftemize}
+      \item \texttt{brew tap}
+    \end{leftemize}
+  \end{leftemize}
+\end{frame}
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+%%%%% section system_specific_package_managers
+%%%%
+%%%
+%%
+%
+
+%
+%%
+%%%
+%%%%
+%%%%% section other_managers
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+\section{Other Managers}
+\label{sec:other_managers}
+
+\begin{frame}[fragile]{Like What?}
+  \begin{leftemize}[<+- | alert@+>]
+    \item There are so many package managers out there for different things, too many to list them all!
+    \item Ruby: \texttt{gem}
+    \item Anaconda Python: \texttt{conda}
+    \item Python: \texttt{pip}
+    \item Python: \texttt{easy\_install} (but really, just use \texttt{pip})
+    \item Python3: \texttt{pip3}
+    \item \LaTeX: \texttt{tlmgr} (uses the CTAN database)
+    \item Perl: \texttt{cpan}
+    \item Sublime Text has its own package manager: Package Control.
+    \item Many many others...
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{Like How?}
+  \begin{leftemize}[<+- | alert@+>]
+    \item Some notes and warnings about Python package management.
+    \item Notes:
+    \begin{leftemize}
+      \item If you install something with \texttt{pip}, and try to use it with Python3, it will not work.
+            You have to also install it with \texttt{pip3}.
+      \item OSX Specifically: advise only using \texttt{brew} or Anaconda Python.  The system Python can get
+            really damaged if you modify it, you are better off leaving it alone.
+      \item This is why I am having you install \texttt{python3} on the next page.
+    \end{leftemize}
+    \item Warnings:
+    \begin{leftemize}
+      \item Don't mix \texttt{easy\_install} and \texttt{pip}.  Choose one, stick with it.
+      \item Don't mix \texttt{pip} with \texttt{conda}.  If you have Anaconda python, just stick to using \texttt{conda}.
+      \item If you installed Anaconda Python 2, you can still install Python 3 and use \texttt{pip3}, but
+            things may get a little weird with updating \texttt{pip3}.  Don't update \texttt{pip3}, or install
+            Anaconda Python3 as well.
+    \end{leftemize}
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{Like Python3!!!}
+  \begin{leftemize}[<+- | alert@+>]
+    \item Let's install Python 3 (system specific):
+    \begin{minted}[gobble=6,fontsize=\footnotesize]{bash}
+      # Ubuntu
+      apt-get install build-essential python3-dev python3-pip
+
+      # Fedora 23 [ALREADY HAVE IT! Need dev tools though]
+      dnf groupinstall 'Development Tools'
+      dnf install python3-devel
+
+      # OSX
+      brew install python3
+    \end{minted}
+
+    \item Now that we have \texttt{python3}, lets install a cool debugger:
+
+    \begin{minted}[gobble=6,fontsize=\footnotesize]{bash}
+      pip3 install simplegeneric pickleshare pexpect ipdb
+    \end{minted}
+
+    \item You can now debug the lecture 14 demo script:
+
+    {\tiny \href{https://github.com/cs2043-sp16/lecture-demos/tree/master/lec14}{https://github.com/cs2043-sp16/lecture-demos/tree/master/lec14}}
+  \end{leftemize}
+\end{frame}
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+%%%%% section other_managers
+%%%%
+%%%
+%%
+%
+
+\begin{frame}[allowframebreaks]{References}
+  \bibliography{references}
+  \bibliographystyle{abbrv}
+\end{frame}
+
+\end{document}
