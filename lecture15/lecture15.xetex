@@ -1,0 +1,275 @@
+% Cornell CS 2043: Unix Tools and Scripting
+% Spring 2016
+%
+% http://cs2043-sp16.github.io/
+%
+% These slides have been created using the metroplis theme demo found here:
+%
+%     https://github.com/matze/mtheme.git
+%
+% I am a huge fan of the metropolis theme...thanks @matze!
+\input{../common-header.input}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% \begin
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\title{15 \-- Build Systems, Git Merging \& Working Across Branches}
+\subtitle{CS 2043: Unix Tools and Scripting, Spring 2016 \cite{prevSemesters}}
+\date{March 2nd, 2016}
+\author{Stephen McDowell}
+\institute{Cornell University}
+
+\begin{document}
+\maketitle
+
+% TOC
+\begin{frame}{Table of contents}
+  \setbeamertemplate{section in toc}[sections numbered]
+  \tableofcontents[hideallsubsections]
+\end{frame}
+
+\begin{frame}{Some Logistics}
+  \begin{leftemize}[<+- | alert@+>]
+    \item Updates to the demos and some backlogged lectures are up.
+    \item Python goodies, why I had you install \texttt{ipdb} (and Python 3)
+    \item The Week of the 18th proposals (purely supplemental):
+    \begin{leftemize}
+      \item Monday, March 14th: how to install Linux natively.
+      \item Wednesday, March 16th: in-depth build-systems, examples on compiling from source and when you may
+            need to do it.
+      \item Friday, March 18th: tournament? Hosted by not me (out of town).
+      \item Suggestions welcome if you would rather see something else.
+      \item Alternate possibility: filesystems, automounting, management, growing / shrinking volumes.
+    \end{leftemize}
+    \item HW2 due tonight...
+  \end{leftemize}
+\end{frame}
+
+%
+%%
+%%%
+%%%%
+%%%%% section build_systems
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+\section{Build Systems}
+\label{sec:build_systems}
+
+\begin{frame}[fragile]{What for?}
+  \begin{leftemize}[<+- | alert@+>]
+    \item Build systems are there to make your life easy.  It would be entirely infeasible to require an individual
+          user to compile everything on their own without guidance.
+    \item With good build systems comes the implicit necessity for good documentation!
+    \begin{leftemize}
+      \item A \texttt{README} at the very least, preferably an \texttt{INSTALL} file with further guidance, listing
+            of required packages, platform notes (if applicable), etc.
+    \end{leftemize}
+    \item The core concept: automate as much as possible.
+    \begin{leftemize}
+      \item If for whatever reason you have to compile the source (your own project, need alternative functionality),
+            you will \emph{need} to know how to use these tools.
+    \end{leftemize}
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{Build Systems in the Wild}
+  \begin{leftemize}[<+- | alert@+>]
+    \item You will likely encounter the following kinds of build systems:
+    \begin{leftemize}
+      \item A \texttt{Make} project (just includes a \texttt{Makefile}).
+      \item A \texttt{CMake} project (includes a \texttt{CMakeLists.txt} file).
+      \item An auto-tools project (usually of the form \texttt{setup.sh}).
+      \item A Python build (\texttt{python setup.py install}).
+    \end{leftemize}
+    \item Each have their quirks and benefits.
+    \begin{leftemize}
+      \item You may have to create your own.
+      \item Or you may be able to get away with just knowing how to execute them.
+      \item It very much depends on the situation.
+    \end{leftemize}
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{Make}
+  \begin{leftemize}[<+- | alert@+>]
+    \item Manage compilation of programs written in languages like \texttt{C/C++}.
+    \item Used to automatically update any set of files that depend on another set of files.
+    \item The \texttt{Makefile} (capital \texttt{M}) is the proper name:
+    \begin{leftemize}
+      \item If there exists a \texttt{Makefile} in the current directory, just execute \texttt{make}.
+      \begin{leftemize}
+        \item ...assuming it was written correctly...
+      \end{leftemize}
+      \item Can execute \texttt{make -f <filename>} if named something else.
+    \end{leftemize}
+    \item The \texttt{Makefile} describes how files depend on each other, and how to update out-of-date files.
+    \item Makes use of patterns, rules, and variables to eliminate redundancy.
+    \item Uses macros and control operation.
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{A Sample Makefile}
+  \begin{minted}[bgcolor=bg,gobble=4]{make}
+    myapp: file1.o file2.o
+        gcc -o myapp file1.o file2.o
+    file1.o: file1.c macros.h
+        gcc -c file1.c
+    file2.o: file2.c macros.h
+        gcc -c file2.c
+  \end{minted}
+  \pause
+  \begin{leftemize}[<+- | alert@+>]
+    \item Describes the dependencies of \texttt{myapp}: the compiled \texttt{file1} and \texttt{file2} object files.
+    \item These dependencies are recursively defined in the subsequent \texttt{file1.o} and \texttt{file2.o} targets.
+    \item Both of these targets depend on \texttt{macros.h}.
+    \item You can define as many targets as you need.
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{Make Specifics}
+  \begin{leftemize}[<+- | alert@+>]
+    \item Properly defined? \texttt{.PHONY}, \texttt{all}, \texttt{clean}
+    \item Must use \texttt{tab} characters. ALWAYS. ewwwww....
+    \item Automatic generation magic.
+    \item Lecture slides \texttt{Makefile}.
+    \item The syntax is pretty crazy.
+    \item \texttt{make} followed by \texttt{sudo make install}
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{CMake}
+  \begin{leftemize}[<+- | alert@+>]
+    \item \texttt{C}onfigure \texttt{Make}.
+    \item Cross-platform if done right.
+    \item Example \texttt{nori}.
+    \item \texttt{CCMake}: \texttt{C}onfigure \texttt{CMake}.  LOL.
+    \item Creates build systems for you.
+    \begin{leftemize}
+      \item General idea (on Unix systems):
+
+      \begin{minted}[bgcolor=bg,gobble=8]{bash}
+        >>> mkdir build
+        >>> cd build
+        >>> cmake ..
+        >>> ccmake ..
+        >>> make
+      \end{minted}
+    \end{leftemize}
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{Autotools}
+  Basically you just run \texttt{setup.sh}.  If it fails, the standard is to tell you exactly why, e.g. point
+  you to files that you need or libraries you need to install.
+\end{frame}
+
+\begin{frame}[fragile]{Python Setup}
+  \begin{leftemize}[<+- | alert@+>]
+    \item Generally: \texttt{python setup.py install}
+    \item You may need to put a \texttt{sudo} in front of that.
+  \end{leftemize}
+\end{frame}
+
+\begin{frame}[fragile]{Packaging your Packages}
+  \begin{leftemize}
+    \item Make an \texttt{rpm}:
+
+    {\tiny\href{http://www.thegeekstuff.com/2015/02/rpm-build-package-example/}{http://www.thegeekstuff.com/2015/02/rpm-build-package-example/}}
+
+    \item Make a \texttt{ppa}:
+
+    {\tiny\href{http://askubuntu.com/questions/71510/how-do-i-create-a-ppa}{http://askubuntu.com/questions/71510/how-do-i-create-a-ppa}}
+  \end{leftemize}
+\end{frame}
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+%%%%% section build_systems
+%%%%
+%%%
+%%
+%
+
+%
+%%
+%%%
+%%%%
+%%%%% section merging_like_a_boss
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+\section{Merging Like a Boss}
+\label{sec:merging_like_a_boss}
+
+\begin{frame}[fragile]{Lets do it}
+
+
+\begin{minted}[fontsize=\footnotesize]{bash}
+# http://www.rosipov.com/blog/use-vimdiff-as-git-mergetool/
+git config merge.tool vimdiff
+git config merge.conflictstyle diff3
+
+# http://stackoverflow.com/a/1251696/3814202
+git config --global mergetool.keepBackup false
+\end{minted}
+\end{frame}
+
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+%%%%% section merging_like_a_boss
+%%%%
+%%%
+%%
+%
+
+%
+%%
+%%%
+%%%%
+%%%%% section working_across_branches
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+\section{Working Across Branches}
+\label{sec:working_across_branches}
+
+\begin{frame}[fragile]{What do you take from where?}
+  \begin{leftemize}[<+- | alert@+>]
+    \item \texttt{git pull origin <branch>}
+    \item \texttt{git checkout <branch> -- file}
+    \item \texttt{git ls-tree}
+    \item \texttt{get crazy with it}
+  \end{leftemize}
+\end{frame}
+
+%%%%%
+%%%%%
+%%%%%
+%%%%%
+%%%%% section working_across_branches
+%%%%
+%%%
+%%
+%
+
+\begin{frame}[allowframebreaks]{References}
+  \bibliography{references}
+  \bibliographystyle{abbrv}
+\end{frame}
+
+\end{document}
